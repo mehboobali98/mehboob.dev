@@ -22,7 +22,7 @@ const formatted = date.toLocaleDateString('en-US', {
 <a
   href={`/blog/${post.id}`}
   data-reveal
-  class="group block py-8 border-t border-line hover:border-signal transition-colors"
+  class="post-node group block py-8 border-t border-line hover:border-signal transition-colors"
 >
   <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 font-mono text-xs text-quiet">
     <time datetime={date.toISOString()}>{formatted}</time>

@@ -330,3 +330,76 @@ body {
   --astro-code-token-link: var(--color-signal);
 }
 
+/* Extending the node-graph motif rather than inventing a second one. A chronological
+   list of posts is a path through the graph, so each row sits on the path as a node.
+   The line is the quiet mesh colour; the node picks up the signal colour on hover, the
+   same way a stat node does in Numbers. No animation beyond that colour change. */
+@media (min-width: 640px) {
+  .post-node {
+    position: relative;
+    padding-left: 2.25rem;
+  }
+
+  /* The path. Spans the full row height, so consecutive rows join into one line. */
+  .post-node::before {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line);
+  }
+
+  /* The node, sitting on the path, aligned to the row's date line. */
+  .post-node::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2.55rem;
+    width: 0.8125rem;
+    height: 0.8125rem;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    border: 1px solid var(--color-line);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .post-node:hover::after,
+  .post-node:focus-visible::after {
+    border-color: var(--color-signal);
+    background: var(--color-signal);
+  }
+}
+
+/* An edge leaving a case study toward its long-form write-up. Same two parts as the
+   graph: a node and a connector. Used only where a real relationship exists between
+   two pieces of content, never as a bullet. */
+.edge-link {
+  position: relative;
+  padding-left: 2.25rem;
+}
+
+.edge-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: -0.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-signal);
+  background: var(--color-ink);
+}
+
+.edge-link::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--color-signal);
+  opacity: 0.5;
+}
