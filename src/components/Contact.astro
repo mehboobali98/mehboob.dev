@@ -1,0 +1,45 @@
+---
+const resumes = [
+  { label: 'Backend / Systems', href: '/resume/Mehboob-Ali-Backend.docx' },
+  { label: 'AI / Agentic Engineering', href: '/resume/Mehboob-Ali-AI-Agentic.docx' },
+  { label: 'Full-Stack', href: '/resume/Mehboob-Ali-FullStack.docx' },
+];
+---
+
+<section id="contact" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
+  <p class="font-mono text-xs text-signal tracking-widest mb-3">GET IN TOUCH</p>
+  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-xl">
+    Open to remote or relocation. Email is the fastest way to reach me.
+  </h2>
+
+  <a
+    href="mailto:havoc6444@gmail.com"
+    class="inline-block mt-8 font-display italic text-3xl sm:text-4xl text-signal hover:underline"
+  >
+    havoc6444@gmail.com
+  </a>
+
+  <div class="mt-16">
+    <p class="font-mono text-xs text-quiet tracking-widest mb-5">RESUME: PICK WHICHEVER FITS THE ROLE</p>
+    <div class="flex flex-wrap gap-3">
+      {resumes.map((r) => (
+        <a
+          href={r.href}
+          download
+          class="px-5 py-2.5 border border-line rounded-full text-sm text-paper hover:border-signal hover:text-signal transition-colors font-mono"
+        >
+          {r.label} &darr;
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<footer class="px-6 sm:px-12 lg:px-20 py-10 border-t border-line flex flex-col sm:flex-row gap-4 sm:justify-between font-mono text-xs text-quiet">
+  <p>Mehboob Ali, Lahore, Pakistan</p>
+  <div class="flex gap-6">
+    <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">GitHub</a>
+    <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">LinkedIn</a>
+    <a href="mailto:havoc6444@gmail.com" class="hover:text-signal transition-colors">Email</a>
+  </div>
+</footer>

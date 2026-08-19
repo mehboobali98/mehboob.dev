@@ -1,0 +1,58 @@
+---
+const studies = [
+  {
+    id: 'sync',
+    title: 'The sync job that took half a day',
+    stack: ['Ruby on Rails', 'Sidekiq', 'PostgreSQL'],
+    body: [
+      "AssetSonar's device sync was taking 12 to 15 hours to run. New hardware wouldn't show up for most of a working day, and customers noticed.",
+      "The cause was the ordinary, expensive kind: N+1 queries and no batching, on a table that had been accumulating devices for years. I rebuilt the pipeline around batched writes and cut the redundant lookups.",
+      "Under an hour now. The batching pattern stuck around a lot longer than the original fix did. Every MDM integration added since has been built on top of it.",
+    ],
+  },
+  {
+    id: 'rmine',
+    title: 'rmine',
+    stack: ['Go', 'Claude Code SDK', 'Redmine API'],
+    body: [
+      "I wanted to know what five years of my own ticket history actually said. Nothing existing made that easy, so I wrote something: a Redmine CLI in Go, with a Claude Code skill built directly in, so an agent can query tickets and time logs on its own instead of me copy-pasting API responses into a prompt.",
+      "Open source now. The rest of the team runs it day to day, and the numbers section above this one came straight out of it. Not a demo. Just what the tool actually found.",
+    ],
+  },
+  {
+    id: 'cmdb',
+    title: 'A CMDB that actually models relationships',
+    stack: ['Ruby on Rails', 'PostgreSQL', 'Graph modeling'],
+    body: [
+      "Most CMDBs are static. An asset points to a user, maybe a location, and that's about it. Anything past that takes a support ticket.",
+      "We wanted something that could answer a real question: everything that touches this server, three hops out. I led the design and the build, a data model supporting n-level relationship traversal plus the ITSM-integrated UI on top of it. Seven months, architecture to production, leading a five-person team through it.",
+      "Highest concentration of product-flagged Key Features of anything I shipped that year.",
+    ],
+  },
+];
+---
+
+<section id="work" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
+  <p class="font-mono text-xs text-signal tracking-widest mb-3">SELECTED WORK</p>
+  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+    Three things I'd actually want to talk about in an interview.
+  </h2>
+
+  <div class="mt-16 flex flex-col gap-20">
+    {studies.map((s) => (
+      <article id={s.id} data-reveal class="max-w-2xl">
+        <h3 class="font-display font-semibold text-2xl sm:text-3xl text-paper">{s.title}</h3>
+        <div class="flex flex-wrap gap-2 mt-4">
+          {s.stack.map((t) => (
+            <span class="font-mono text-[11px] px-2.5 py-1 border border-line rounded-full text-quiet">{t}</span>
+          ))}
+        </div>
+        <div class="mt-6 flex flex-col gap-4">
+          {s.body.map((p) => (
+            <p class="text-paper/80 leading-relaxed">{p}</p>
+          ))}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

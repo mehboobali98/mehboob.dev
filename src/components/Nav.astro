@@ -1,0 +1,52 @@
+---
+const links = [
+  { href: '#numbers', label: 'Numbers' },
+  { href: '#work', label: 'Work' },
+  { href: '#open-source', label: 'Open Source' },
+  { href: '#now', label: 'Now' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<!-- Mobile top bar -->
+<header class="lg:hidden sticky top-0 z-30 bg-ink/95 backdrop-blur border-b border-line">
+  <div class="flex items-center justify-between px-5 py-4">
+    <a href="#top" class="font-display font-semibold text-paper text-lg">Mehboob Ali</a>
+  </div>
+  <nav class="flex gap-4 font-mono text-xs text-quiet overflow-x-auto px-5 pb-3 -mt-1">
+    {links.map((l) => (
+      <a href={l.href} class="hover:text-signal transition-colors whitespace-nowrap shrink-0">{l.label}</a>
+    ))}
+    <span class="shrink-0 w-1">&nbsp;</span>
+  </nav>
+</header>
+
+<!-- Desktop sticky sidebar -->
+<aside class="hidden lg:flex flex-col justify-between fixed top-0 left-0 h-screen w-[300px] px-12 py-16 border-r border-line">
+  <div>
+    <a href="#top" class="block">
+      <span class="font-display font-semibold text-2xl text-paper leading-tight">Mehboob<br/>Ali</span>
+    </a>
+    <p class="font-mono text-xs text-quiet mt-3 leading-relaxed">
+      Principal Software<br/>Engineer, 7Vals
+    </p>
+
+    <nav class="mt-14 flex flex-col gap-4">
+      {links.map((l) => (
+        <a
+          href={l.href}
+          class="group flex items-center gap-3 font-mono text-xs tracking-wide text-quiet hover:text-paper transition-colors"
+        >
+          <span class="h-px w-6 bg-line group-hover:w-10 group-hover:bg-signal transition-all"></span>
+          {l.label.toUpperCase()}
+        </a>
+      ))}
+    </nav>
+  </div>
+
+  <div class="flex flex-col gap-2 font-mono text-xs text-quiet">
+    <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">github.com/mehboobali98</a>
+    <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">linkedin.com/in/mehboobali98</a>
+    <a href="mailto:havoc6444@gmail.com" class="hover:text-signal transition-colors">havoc6444@gmail.com</a>
+  </div>
+</aside>

@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@import "@fontsource/fraunces/400.css";
+@import "@fontsource/fraunces/600.css";
+@import "@fontsource/fraunces/900.css";
+@import "@fontsource/fraunces/900-italic.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@theme {
+  /* Color -- dark ink-navy system, warm off-white text, single amber signal color.
+     Deliberately not the near-black+neon-accent default, and not cream+terracotta. */
+  --color-ink: #0F1319;
+  --color-surface: #171C24;
+  --color-surface-2: #1D242E;
+  --color-line: #2A313D;
+  --color-quiet: #6B7688;
+  --color-paper: #F0EDE6;
+  --color-signal: #E0A84E;
+  --color-signal-dim: #E0A84E33;
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink);
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+}
+
+/* Scroll reveal: only takes effect once JS confirms motion is welcome (see reveal.js
+   inline in Layout.astro). Content is fully visible by default -- nothing depends on
+   JS running for the page to be readable. */
+[data-reveal].reveal-pending {
+  opacity: 0;
+  transform: translateY(18px);
+}
+[data-reveal] {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Selected point on the numbers graph. Ring only, no transform -- the node already
+   composes -translate-x/y and hover:scale through Tailwind's transform vars, and a
+   second transform here would silently cancel them. */
+.stat-node {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.stat-node.is-active {
+  box-shadow: 0 0 0 5px var(--color-signal-dim);
+}

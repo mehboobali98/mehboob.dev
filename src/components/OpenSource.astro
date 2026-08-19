@@ -1,0 +1,103 @@
+---
+const projects = [
+  {
+    name: 'rmine',
+    tag: 'Go',
+    repo: 'mehboobali98/rmine',
+    desc: 'Redmine CLI with a Claude Code skill built in, plus a companion spec-estimator skill (rmine-skills). Adopted by the team at 7Vals.',
+    href: 'https://github.com/mehboobali98/rmine',
+    cta: 'View on GitHub',
+  },
+  {
+    name: 'bitwise_attributes',
+    tag: 'Ruby gem',
+    repo: 'mehboobali98/bitwise_attributes',
+    desc: 'Packs boolean flag attributes into a single ActiveRecord integer column. Started as an internal pattern I used for two years before publishing it.',
+    href: 'https://github.com/mehboobali98/bitwise_attributes',
+    cta: 'View on GitHub',
+  },
+];
+
+// Fetched once at build time -- not client-side, so no runtime API calls or rate-limit
+// risk for site visitors. Falls back to just the tag if GitHub is unreachable or rate-limits
+// the build (e.g. repeated local builds in a short window).
+async function fetchRepoStats(repo: string) {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}`, {
+      headers: { 'User-Agent': 'mehboobali-portfolio-build', Accept: 'application/vnd.github+json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pushedAt = data.pushed_at ? new Date(data.pushed_at) : null;
+    return {
+      stars: typeof data.stargazers_count === 'number' ? data.stargazers_count : null,
+      pushedAt,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function timeAgo(date: Date | null) {
+  if (!date) return null;
+  const days = Math.floor((Date.now() - date.getTime()) / 86400000);
+  if (days < 1) return 'today';
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  return `${Math.floor(months / 12)}y ago`;
+}
+
+const stats = await Promise.all(projects.map((p) => fetchRepoStats(p.repo)));
+
+const alsoBuilt = [
+  'A closed-loop agent that plans, tiers, implements, and opens a PR (or escalates) for a Redmine ticket, using the Claude Code SDK. Still a prototype, dry-run tested so far.',
+  'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history',
+  'Cursor rules and Claude Code skills for our Rails/React codebase, merged into the main repo and used by the whole engineering team',
+];
+---
+
+<section id="open-source" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
+  <p class="font-mono text-xs text-signal tracking-widest mb-3">OPEN SOURCE</p>
+  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+    Public, verifiable, and maintained.
+  </h2>
+
+  <div class="mt-14 grid sm:grid-cols-2 gap-6">
+    {projects.map((p, i) => (
+      <a
+        href={p.href}
+        target="_blank"
+        rel="noopener"
+        data-reveal
+        class="group block p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+      >
+        <div class="flex items-baseline justify-between">
+          <h3 class="font-display font-semibold text-2xl text-paper">{p.name}</h3>
+          <span class="font-mono text-[11px] text-quiet">{p.tag}</span>
+        </div>
+        <p class="mt-4 text-paper/75 leading-relaxed text-sm">{p.desc}</p>
+        <div class="mt-6 flex items-center justify-between">
+          <p class="font-mono text-xs text-signal group-hover:underline">{p.cta} &rarr;</p>
+          {stats[i] && (
+            <p class="font-mono text-[11px] text-quiet flex items-center gap-3">
+              {stats[i]!.stars !== null && <span>&#9733; {stats[i]!.stars}</span>}
+              {stats[i]!.pushedAt && <span>{timeAgo(stats[i]!.pushedAt)}</span>}
+            </p>
+          )}
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <div class="mt-14 max-w-2xl">
+    <p class="font-mono text-xs text-quiet tracking-widest mb-4">ALSO BUILT (INTERNAL)</p>
+    <ul class="flex flex-col gap-3">
+      {alsoBuilt.map((item) => (
+        <li class="text-sm text-paper/70 leading-relaxed pl-5 relative before:content-['\2014'] before:absolute before:left-0 before:text-quiet">
+          {item}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

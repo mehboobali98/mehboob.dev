@@ -1,0 +1,118 @@
+---
+const stats = [
+  { x: 90, y: 260, n: '5', label: 'years', desc: 'The short version: I started out implementing specs at 7Vals. Somewhere in there I started writing them instead.' },
+  { x: 300, y: 120, n: '276', label: 'features shipped', desc: '72% of them live in production; the rest killed, deprioritized, or still in flight.' },
+  { x: 560, y: 300, n: '22', label: 'Key Features', desc: 'Product-flagged, go-to-market work. Not the routine maintenance stuff.' },
+  { x: 820, y: 150, n: '3', label: 'promotions', desc: 'Software Engineer to Principal. Four titles, five years.' },
+  { x: 1080, y: 240, n: '7', label: 'months', desc: "Zero to production on the CMDB module. Newest number on this list." },
+];
+
+const pathD = stats.map((s, i) => `${i === 0 ? 'M' : 'L'}${s.x},${s.y}`).join(' ');
+---
+
+<section id="numbers" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
+  <div data-reveal>
+  <p class="font-mono text-xs text-signal tracking-widest mb-3">BY THE NUMBERS</p>
+  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+    I built a tool to analyze my own delivery history. This is what it found.
+  </h2>
+  <p class="mt-4 text-paper/70 max-w-xl leading-relaxed">
+    <a href="#rmine" class="text-signal hover:underline">rmine</a>, a CLI I wrote, pulled five years of my own
+    Redmine tickets and time logs and scored them. Hover or tap a point below.
+  </p>
+  </div>
+
+  <div class="mt-16 grid lg:grid-cols-[1fr_340px] gap-10 items-center">
+    <div class="relative w-full overflow-visible">
+      <svg viewBox="0 0 1200 420" class="w-full h-auto" aria-hidden="true">
+        <g stroke="#2A313D" stroke-width="1" stroke-opacity="0.6">
+          <line x1="211" y1="282" x2="271" y2="321"/><line x1="211" y1="282" x2="200" y2="331"/>
+          <line x1="211" y1="282" x2="165" y2="373"/><line x1="211" y1="282" x2="162" y2="201"/>
+          <line x1="211" y1="282" x2="278" y2="251"/><line x1="757" y1="202" x2="694" y2="297"/>
+          <line x1="271" y1="321" x2="278" y2="251"/><line x1="957" y1="215" x2="941" y2="108"/>
+          <line x1="957" y1="215" x2="896" y2="310"/><line x1="606" y1="110" x2="699" y2="46"/>
+          <line x1="606" y1="110" x2="597" y2="64"/><line x1="606" y1="110" x2="544" y2="167"/>
+          <line x1="24" y1="161" x2="162" y2="201"/><line x1="24" y1="161" x2="51" y2="55"/>
+          <line x1="699" y1="46" x2="597" y2="64"/><line x1="941" y1="108" x2="1024" y2="109"/>
+          <line x1="290" y1="36" x2="237" y2="34"/><line x1="1177" y1="301" x2="1144" y2="360"/>
+          <line x1="1177" y1="301" x2="1091" y2="357"/><line x1="1177" y1="301" x2="1174" y2="167"/>
+          <line x1="1124" y1="160" x2="1024" y2="109"/><line x1="1124" y1="160" x2="1174" y2="167"/>
+          <line x1="200" y1="331" x2="165" y2="373"/><line x1="546" y1="230" x2="418" y2="204"/>
+          <line x1="546" y1="230" x2="495" y2="159"/><line x1="546" y1="230" x2="544" y2="167"/>
+          <line x1="546" y1="230" x2="595" y2="207"/><line x1="418" y1="204" x2="495" y2="159"/>
+          <line x1="1144" y1="360" x2="1091" y2="357"/><line x1="896" y1="310" x2="853" y2="397"/>
+          <line x1="694" y1="297" x2="595" y2="207"/><line x1="162" y1="201" x2="278" y2="251"/>
+          <line x1="495" y1="159" x2="544" y2="167"/><line x1="544" y1="167" x2="595" y2="207"/>
+        </g>
+        <g fill="#3E4A5C">
+          <circle cx="211" cy="282" r="2.4"/><circle cx="757" cy="202" r="2.4"/><circle cx="271" cy="321" r="2.4"/>
+          <circle cx="957" cy="215" r="2.4"/><circle cx="606" cy="110" r="2.4"/><circle cx="24" cy="161" r="2.4"/>
+          <circle cx="699" cy="46" r="2.4"/><circle cx="941" cy="108" r="2.4"/><circle cx="290" cy="36" r="2.4"/>
+          <circle cx="1177" cy="301" r="2.4"/><circle cx="597" cy="64" r="2.4"/><circle cx="1124" cy="160" r="2.4"/>
+          <circle cx="200" cy="331" r="2.4"/><circle cx="165" cy="373" r="2.4"/><circle cx="546" cy="230" r="2.4"/>
+          <circle cx="418" cy="204" r="2.4"/><circle cx="237" cy="34" r="2.4"/><circle cx="1024" cy="109" r="2.4"/>
+          <circle cx="1144" cy="360" r="2.4"/><circle cx="896" cy="310" r="2.4"/><circle cx="694" cy="297" r="2.4"/>
+          <circle cx="162" cy="201" r="2.4"/><circle cx="1091" cy="357" r="2.4"/><circle cx="495" cy="159" r="2.4"/>
+          <circle cx="544" cy="167" r="2.4"/><circle cx="1174" cy="167" r="2.4"/><circle cx="51" cy="55" r="2.4"/>
+          <circle cx="853" cy="397" r="2.4"/><circle cx="595" cy="207" r="2.4"/><circle cx="278" cy="251" r="2.4"/>
+        </g>
+
+        <path d={pathD} fill="none" stroke="#E0A84E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+        {stats.map((s) => (
+          <circle cx={s.x} cy={s.y} r="16" fill="#E0A84E" fill-opacity="0.14" />
+        ))}
+      </svg>
+
+      <div class="absolute inset-0">
+        {stats.map((s, i) => (
+          <button
+            type="button"
+            class="stat-node absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-signal flex items-center justify-center text-ink font-mono text-[10px] font-semibold hover:scale-110 focus-visible:scale-110 transition-transform cursor-pointer"
+            style={`left:${(s.x / 1200) * 100}%; top:${(s.y / 420) * 100}%;`}
+            data-idx={i}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            aria-label={`${s.n} ${s.label}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="font-mono">
+      <div id="stat-display" aria-live="polite">
+        <p id="stat-n" class="font-display font-black text-6xl text-signal leading-none">5</p>
+        <p id="stat-label" class="mt-3 text-paper text-lg">years</p>
+        <p id="stat-desc" class="mt-4 text-sm text-quiet leading-relaxed">The short version: I started out implementing specs at 7Vals. Somewhere in there I started writing them instead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ stats }}>
+  const nEl = document.getElementById('stat-n');
+  const labelEl = document.getElementById('stat-label');
+  const descEl = document.getElementById('stat-desc');
+  const nodes = document.querySelectorAll('.stat-node');
+
+  function show(idx) {
+    const s = stats[idx];
+    nEl.textContent = s.n;
+    labelEl.textContent = s.label;
+    descEl.textContent = s.desc;
+    nodes.forEach((node, i) => {
+      node.classList.toggle('is-active', i === idx);
+      node.setAttribute('aria-pressed', String(i === idx));
+    });
+  }
+
+  nodes.forEach((node) => {
+    const idx = Number(node.getAttribute('data-idx'));
+    node.addEventListener('mouseenter', () => show(idx));
+    node.addEventListener('focus', () => show(idx));
+    node.addEventListener('click', () => show(idx));
+  });
+
+  show(0);
+</script>

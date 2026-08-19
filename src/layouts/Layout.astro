@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Mehboob Ali | Backend Software Engineer',
+  description = 'Principal Software Engineer building backend systems, distributed workflows, and the tools that help teams ship them faster.',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0F1319" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body class="font-body antialiased">
+    <slot />
+    <script>
+      // Progressive enhancement: elements start fully visible. Only if JS runs AND the
+      // visitor hasn't asked for reduced motion do we hide-then-reveal them on scroll.
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        const targets = document.querySelectorAll('[data-reveal]');
+        targets.forEach((el) => el.classList.add('reveal-pending'));
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.remove('reveal-pending');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>
