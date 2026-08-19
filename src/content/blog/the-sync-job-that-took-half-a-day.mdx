@@ -1,0 +1,138 @@
+---
+title: The sync job that took half a day
+description: >-
+  A device sync was running 12 to 15 hours against millions of software records.
+  The fix was batching and eager loading, but the lasting part was measuring first.
+date: 2026-08-18
+tags: ['Ruby on Rails', 'Performance']
+---
+
+AssetSonar’s OCS synchronization brings device and software inventory into the
+product. It was intended to run hourly. By the time I was moved onto the
+performance problem, a production synchronization was taking roughly
+**12–15 hours**.
+
+The workload involved **millions of software records across thousands of
+devices**. At that point this wasn’t just a slow background job—the
+synchronization could no longer keep up with its own schedule.
+
+<p data-ownership><strong>My role:</strong> I was brought onto the problem to diagnose the production bottlenecks, establish performance measurements, and redesign the synchronization path.</p>
+
+<dl data-runtime-shift aria-label="Synchronization runtime before and after the redesign">
+  <div>
+    <dt>Before</dt>
+    <dd>12–15 hours</dd>
+  </div>
+  <div>
+    <dt>After</dt>
+    <dd>Under 1 hour</dd>
+  </div>
+</dl>
+
+## I instrumented it before changing it
+
+I didn’t want to optimize from intuition alone, so I first added production
+statistics to Datadog.
+
+That gave us a baseline for how long synchronization was actually taking and a
+way to compare the system before and after the changes. We used production
+measurements across a **15-day window**, rather than judging the result from a
+single run.
+
+Once the flow was observable, I started tracing where the time was going.
+
+The biggest problems were **N+1 query patterns and expensive record-by-record
+processing**. The existing flow largely fetched, processed, and persisted
+records individually, repeatedly loading related data along the way.
+
+None of those operations looked catastrophic on its own. The problem was what
+happened when that processing model met millions of software records.
+
+## Changing the unit of work
+
+The important decision was to treat this as a **data-access and processing-model
+problem**, not a worker-capacity problem.
+
+Adding more workers wasn’t feasible, and it wouldn’t have removed the repeated
+database work anyway. More concurrency wouldn’t fix an inefficient unit of
+work.
+
+I redesigned the synchronization around two main ideas:
+
+- **batching**, so records could be processed as groups rather than one at a
+  time;
+- **eager loading**, so related data was loaded deliberately instead of
+  repeatedly during individual record processing.
+
+<figure data-processing-model aria-labelledby="processing-model-caption">
+  <figcaption id="processing-model-caption">
+    <strong>Processing model — before and after</strong>
+  </figcaption>
+
+  <div data-model-comparison>
+    <section aria-labelledby="before-model-title">
+      <h3 id="before-model-title">Before</h3>
+      <ol data-model-flow>
+        <li>Inventory</li>
+        <li>Fetch record</li>
+        <li>Load related data</li>
+        <li>Process</li>
+        <li>Persist</li>
+      </ol>
+      <p data-repeat-note>↻ repeat per record</p>
+    </section>
+
+    <section aria-labelledby="after-model-title">
+      <h3 id="after-model-title">After</h3>
+      <ol data-model-flow>
+        <li>Inventory</li>
+        <li>Collect batch</li>
+        <li>Eager-load related data</li>
+        <li>Process batch</li>
+        <li>Persist / update</li>
+      </ol>
+    </section>
+  </div>
+
+  <p data-diagram-note>The diagram is intentionally limited to the generalized processing-model difference; proprietary implementation details are omitted.</p>
+</figure>
+
+This substantially reduced the repeated database work we had identified.
+
+We didn’t try to redesign every part of synchronization in the same change. The
+objective was narrower: fix the processing model responsible for the production
+runtime and measure whether it worked.
+
+Additional background-job partitioning came later as the synchronization
+architecture continued to evolve. It wasn’t part of the original change that
+produced the 12–15 hour to under-1-hour improvement.
+
+## The result
+
+After the redesign, synchronization completed in **under one hour**.
+
+The comparison came from the Datadog instrumentation and the 15-day production
+measurements established before the changes, bringing the pipeline back inside
+its intended hourly window.
+
+More importantly, the approach wasn’t specific to one OCS path. The
+batching-oriented pattern was reused in later MDM and device integrations, so
+what started as a performance fix became part of how we approached
+synchronization more broadly.
+
+## What I took from it
+
+Today, I would make batch-oriented processing and deliberate eager loading part
+of the design from the beginning for a synchronization workload like this.
+
+I’d also add performance instrumentation much earlier. Runtime, throughput, and
+query behavior are easier to reason about when they are visible before they
+become production problems.
+
+And I’d put clearer boundaries between fetching, processing, and persistence.
+Those boundaries make it easier to measure each stage independently and make
+future changes without having to untangle the whole pipeline.
+
+The lasting lesson wasn’t simply that batching was faster. It was that
+**performance characteristics are part of the architecture**, especially when a
+system’s workload is expected to grow.

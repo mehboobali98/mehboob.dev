@@ -1,0 +1,182 @@
+---
+title: What changed when an agent started using my CLI
+description: >-
+  rmine was built for two callers from the start: me at a terminal, and a coding agent.
+  The design decisions that only make sense because of the second one.
+date: 2026-08-20
+tags: ['Go', 'Agents', 'Developer Tooling']
+---
+
+`rmine` exists because Redmine involved too much repetitive UI work. Navigating and
+filtering issues, updating state, logging time, all through a browser, several times a
+day.
+
+So I wrote a CLI. Issues, projects, time entries, from the terminal. It's a Go binary,
+MIT licensed, and the interesting part isn't the Redmine client. It's that I was
+writing for two callers at once.
+
+## Two audiences, from the start
+
+One caller is me, at a terminal. The other is a coding agent.
+
+That wasn't a retrofit. It did take until `v0.3.0` for the agent-facing piece to
+actually ship, and everything before that release is a perfectly ordinary CLI, so I
+understand why it looks like an afterthought from the outside. It wasn't. Agent use
+shaped which workflows I bothered to expose at all, and it kept shaping them
+afterwards: attachments and opt-in comments landed in `v0.4.0` because both callers
+turned out to need them.
+
+What follows is the set of decisions that only make sense once the second caller
+exists.
+
+## Why a CLI and not an MCP server
+
+Worth answering early, because it's the first thing anyone asks.
+
+A CLI gives one interface to three consumers. I can type it. A shell script can
+compose it. An agent can invoke it. Deterministic commands mean the agent never has to
+reason about Redmine's browser UI or reconstruct its API surface for each task, which
+is where most of the flakiness would have come from.
+
+It also isn't tied to any single agent protocol. A CLI can sit underneath a skill, or
+underneath MCP-style tooling later, without being rewritten for either. That felt like
+the smaller bet, and it has a lower maintenance surface than standing up a separate
+service.
+
+Go, for its part, was chosen so installation is a single binary with no Ruby, Python,
+or Node runtime required on the machine. GoReleaser produces CGO-free builds for
+macOS, Linux, and Windows across AMD64 and ARM64. I also wanted an excuse to build
+something substantial in Go, which I'd rather say than pretend the decision was purely
+technical.
+
+## The binary carries its own manual
+
+This is the part I'd defend hardest.
+
+The file that teaches Claude Code how to drive `rmine` is compiled into the binary:
+
+```go
+//go:embed SKILL.md
+var skillMD []byte
+```
+
+`rmine skill install` writes it to `~/.claude/skills/rmine/SKILL.md`, and `rmine config
+init` offers to do it as the last step of setup. The ordinary path through first-run
+setup ends with the agent already taught.
+
+Embedding it rather than publishing it separately is about version skew. A README
+describes whatever version its last editor had in mind. A wiki page describes whatever
+somebody remembered to update. A file compiled into the binary describes the binary it
+came out of, because it is the binary it came out of. Upgrading the tool and
+refreshing its instructions became the same act.
+
+The install overwrites unconditionally. That reads as careless and isn't: the file is
+generated, nobody is meant to hand-edit it, and there's no state an overwrite could
+destroy. I left that reasoning in a comment above the function so I don't come back
+later and add a merge prompt out of misplaced politeness.
+
+## Writing for a model means writing down what isn't there
+
+Documentation for people describes what a tool does. Documentation for a model also
+has to describe what it doesn't do, because the gaps are where it invents.
+
+The bluntest line in the skill file:
+
+> `--assignee` is a numeric Redmine user ID, or the literal `me` for the
+> authenticated user — **that's it**. There is no name-to-ID lookup for other users;
+> don't guess or invent one.
+
+The emphasis is load-bearing. `--assignee alice` is exactly what a model produces if
+the question is left open, because every other name-shaped flag in the tool accepts a
+name. The command looks right. It fails. And it fails in a way that reads as confusing
+rather than obvious, because its shape matches everything around it.
+
+A person skims a flag list and moves on. A model skims a flag list and fills in the
+feature that appears to be missing.
+
+## Let the server say no
+
+Redmine's required fields vary per instance, per project, and per tracker within a
+project. There's no dependable way to know them up front, because the
+field-configuration API is admin-only.
+
+I could have shipped a guess. Instead the tool doesn't validate at all. It sends the
+write and hands Redmine's own complaint straight back:
+
+```
+redmine returned 422: Category cannot be blank
+```
+
+The skill file then tells the agent, in as many words, not to pre-validate. Issue the
+create, read the error, retry with the field it named.
+
+This is the decision I'd generalise furthest. For a caller in a loop, the error message
+is the interface. `Category cannot be blank` names the missing field, so the next
+attempt is determined. `Invalid request` names nothing, so the next attempt is a guess,
+and guessing is where a loop starts costing money.
+
+I didn't write a validation layer. I wrote an error type that doesn't throw away what
+the server said.
+
+## Absorb the arithmetic
+
+Two small things, same principle.
+
+`--due-within 7` and `--due-next-week` work out the date range inside the tool. Date
+maths is a dependable way for a model to be confidently wrong, and doing it properly is
+a few lines of Go.
+
+`--project`, `--status` and `--category` match case-insensitively, so `in progress`
+finds `In Progress` without anyone needing to know the server's casing. That's one
+`strings.EqualFold`, and it removes an entire class of exact-string failure for both
+callers.
+
+Neither is clever. Both move work from the non-deterministic caller to the
+deterministic one.
+
+## Every token it returns is a token something carries
+
+`rmine issue view 1234` returns the issue and its attachments. It doesn't return the
+comments unless you ask with `--comments`.
+
+That split exists because a long ticket's history can dwarf the ticket itself.
+Scrolling past it costs me nothing. An agent reading it pulls the whole history into a
+context window, where it sits for the rest of the session.
+
+`--limit` defaults to 25 for the same reason, and `--all` is there for when you mean
+it.
+
+The skill file also notes that a journal entry with empty `notes` is a bare field
+change rather than a comment, and is usually worth skipping. That one isn't about
+volume. It's about not making the model infer a data model it can't see.
+
+## The traps get written down too
+
+`--subject` uses Redmine's advanced filter syntax underneath, and that syntax doesn't
+default to open-only the way the plain filters do. Search by subject and closed tickets
+come back with everything else.
+
+Nobody derives that from the flag name. It's in the skill file because it produces
+results that look plausible and are wrong, which is the failure I'd least like an
+automated caller to hit quietly.
+
+## Two things it still doesn't do
+
+There's no name-to-ID lookup for users, which is why the skill file has to explicitly
+warn the agent away from inventing one.
+
+Custom fields are addressed by repeatable numeric `id=value` flags, because their
+definitions vary by server, project, and tracker. Repeating an ID is how you write a
+multi-value field. Finding an ID in the first place means inspecting an issue that
+already has it set, which is a real rough edge.
+
+There's also a naming detail I'm fond of. The project was originally called `rdm`,
+until I worked out that the Oh My Zsh Rails plugin claims `rdm` as an alias for `rails
+db:migrate`. It shadowed the binary for every Rails developer who might install it,
+which is most of the intended audience. Renaming it to `rmine` was cheaper than
+explaining that forever.
+
+If there's one thing to take from the rest of it: a developer tool can serve people and
+agents through the same deterministic interface, and machine-readable output stops
+being a nice-to-have the moment that tool becomes infrastructure for something that
+isn't a person.
