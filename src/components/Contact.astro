@@ -1,36 +1,42 @@
 ---
+// Five tailored variants, each shipped as PDF and DOCX. PDF is listed first because
+// it's the one that renders the same everywhere, including on a phone; the DOCX is
+// there for recruiters and ATS uploads that want an editable file.
+const base = '/resume/Mehboob_Ali_';
 const resumes = [
-  { label: 'Backend / Systems', href: '/resume/Mehboob-Ali-Backend.docx' },
-  { label: 'AI / Agentic Engineering', href: '/resume/Mehboob-Ali-AI-Agentic.docx' },
-  { label: 'Full-Stack', href: '/resume/Mehboob-Ali-FullStack.docx' },
+  { label: 'Staff / Principal / Tech Lead', file: 'Staff_Principal_Tech_Lead_Resume' },
+  { label: 'Backend / Platform', file: 'Backend_Platform_Resume' },
+  { label: 'Applied AI / LLM', file: 'Applied_AI_LLM_Resume' },
+  { label: 'Developer Productivity / AI Enablement', file: 'Developer_Productivity_AI_Enablement_Resume' },
+  { label: 'Full-Stack / Product', file: 'Fullstack_Product_Resume' },
 ];
 ---
 
-<section id="contact" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
-  <p class="font-mono text-xs text-signal tracking-widest mb-3">GET IN TOUCH</p>
-  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-xl">
+<section id="contact" class="px-6 sm:px-12 lg:px-20 py-24 border-t border-line">
+  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-xl">
     Open to remote or relocation. Email is the fastest way to reach me.
   </h2>
 
   <a
-    href="mailto:havoc6444@gmail.com"
-    class="inline-block mt-8 font-display italic text-3xl sm:text-4xl text-signal hover:underline"
+    href="mailto:imehboobali@outlook.com"
+    class="inline-block mt-8 font-display wonk italic text-3xl sm:text-4xl text-signal hover:underline"
   >
-    havoc6444@gmail.com
+    imehboobali@outlook.com
   </a>
 
-  <div class="mt-16">
-    <p class="font-mono text-xs text-quiet tracking-widest mb-5">RESUME: PICK WHICHEVER FITS THE ROLE</p>
-    <div class="flex flex-wrap gap-3">
+  <div class="mt-16 max-w-2xl">
+    <p class="font-mono text-xs text-quiet tracking-widest mb-2">RESUME: PICK WHICHEVER FITS THE ROLE</p>
+    <div class="flex flex-col">
       {resumes.map((r) => (
-        <a
-          href={r.href}
-          download
-          class="px-5 py-2.5 border border-line rounded-full text-sm text-paper hover:border-signal hover:text-signal transition-colors font-mono"
-        >
-          {r.label} &darr;
-        </a>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 border-t border-line">
+          <p class="text-paper">{r.label}</p>
+          <p class="flex gap-4 font-mono text-xs shrink-0">
+            <a href={`${base}${r.file}.pdf`} download class="text-signal hover:underline">PDF &darr;</a>
+            <a href={`${base}${r.file}.docx`} download class="text-quiet hover:text-signal transition-colors">DOCX</a>
+          </p>
+        </div>
       ))}
+      <div class="border-t border-line"></div>
     </div>
   </div>
 </section>
@@ -40,6 +46,6 @@ const resumes = [
   <div class="flex gap-6">
     <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">GitHub</a>
     <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">LinkedIn</a>
-    <a href="mailto:havoc6444@gmail.com" class="hover:text-signal transition-colors">Email</a>
+    <a href="mailto:imehboobali@outlook.com" class="hover:text-signal transition-colors">Email</a>
   </div>
 </footer>
