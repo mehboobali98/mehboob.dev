@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import PostRow from './PostRow.astro';
+
+// Three at most. The homepage is a summary of each thing, not the archive -- /blog is
+// where the full list lives. Renders nothing at all when there are no published posts,
+// so an empty section can never appear on the homepage.
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+{posts.length > 0 && (
+  <section id="writing" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
+    <p class="font-mono text-xs text-signal tracking-widest mb-3">WRITING</p>
+    <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+      The parts that needed more than three paragraphs.
+    </h2>
+
+    <div class="mt-14 max-w-3xl flex flex-col">
+      {posts.map((post) => <PostRow post={post} />)}
+      <div class="border-t border-line"></div>
+    </div>
+
+    <a href="/blog" class="inline-block mt-10 font-mono text-xs text-signal hover:underline">
+      All writing &rarr;
+    </a>
+  </section>
+)}
