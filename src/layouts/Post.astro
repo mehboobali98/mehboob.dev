@@ -1,0 +1,55 @@
+---
+import Layout from './Layout.astro';
+import Nav from '../components/Nav.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, date, tags } = post.data;
+
+const formatted = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Layout title={`${title} | Mehboob Ali`} description={description}>
+  <Nav />
+  <main class="lg:ml-[300px]">
+    <article class="px-6 sm:px-12 lg:px-20 py-20 lg:py-28">
+      <!-- 68ch keeps the measure in the comfortable range for body copy. The header
+           shares the same column so the title doesn't outrun the text under it. -->
+      <div class="max-w-[68ch]">
+        <a href="/blog" class="font-mono text-xs text-quiet hover:text-signal transition-colors">
+          &larr; All writing
+        </a>
+
+        <h1 class="mt-8 font-display wonk font-semibold text-[2.1rem] sm:text-5xl leading-[1.05] tracking-[-0.02em] text-paper">
+          {title}
+        </h1>
+
+        <div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-quiet">
+          <time datetime={date.toISOString()}>{formatted}</time>
+          {tags.length > 0 && <span class="text-line">/</span>}
+          {tags.map((t) => <span>{t}</span>)}
+        </div>
+
+        <div class="prose mt-14">
+          <slot />
+        </div>
+
+        <div class="mt-20 pt-8 border-t border-line flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-quiet">
+          <a href="/blog" class="hover:text-signal transition-colors">&larr; All writing</a>
+          <a href="mailto:imehboobali@outlook.com" class="hover:text-signal transition-colors">
+            Reply by email
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+</Layout>

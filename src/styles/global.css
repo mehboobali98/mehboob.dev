@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
-@import "@fontsource/fraunces/400.css";
-@import "@fontsource/fraunces/600.css";
-@import "@fontsource/fraunces/900.css";
-@import "@fontsource/fraunces/900-italic.css";
+/* Variable Fraunces, wonk subset: same 84KB the four static weights cost, but it
+   carries the full 100-900 wght range plus the WONK axis. WONK 1 swaps in Fraunces'
+   alternate glyphs (the curled g, the angular r) -- that's the axis that makes this
+   face unmistakable rather than just "a serif". Used on display type only. */
+@import "@fontsource-variable/fraunces/wonk.css";
+@import "@fontsource-variable/fraunces/wonk-italic.css";
 @import "@fontsource/ibm-plex-sans/400.css";
 @import "@fontsource/ibm-plex-sans/500.css";
 @import "@fontsource/ibm-plex-sans/600.css";
@@ -22,7 +24,7 @@
   --color-signal: #E0A84E;
   --color-signal-dim: #E0A84E33;
 
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
@@ -79,3 +81,252 @@ body {
 .stat-node.is-active {
   box-shadow: 0 0 0 5px var(--color-signal-dim);
 }
+
+/* Display type opts into Fraunces' wonky alternates. Body and UI text never does --
+   the alternates are characterful at 40px+ and noisy at 16px. */
+.wonk {
+  font-variation-settings: "WONK" 1;
+}
+
+/* Long-form reading styles for MDX post bodies. Written by hand rather than pulling in
+   @tailwindcss/typography: the plugin ships an opinionated gray-scale prose theme that
+   would have to be overridden token by token to match this palette anyway, and the
+   dependency isn't worth it for one layout. Applied via a .prose wrapper because MDX
+   content is injected at render time and never picks up Astro's scoped-style attribute. */
+.prose {
+  color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.prose > * + * {
+  margin-top: 1.4em;
+}
+
+.prose h2 {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  color: var(--color-paper);
+  margin-top: 2.75em;
+  margin-bottom: 0.2em;
+}
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--color-paper);
+  margin-top: 2em;
+  margin-bottom: 0.1em;
+}
+
+.prose strong {
+  color: var(--color-paper);
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--color-signal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+
+.prose li::marker {
+  color: var(--color-quiet);
+}
+
+.prose li + li {
+  margin-top: 0.5em;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--color-signal);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--color-paper) 70%, transparent);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  padding: 1.15rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Code inside a block owns none of the inline chip styling. */
+.prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  margin: 3em 0;
+}
+
+.prose img {
+  border-radius: 6px;
+  border: 1px solid var(--color-line);
+}
+
+/* A pulled-out before/after figure. Deliberately built from the same thin rules and mono
+   labels as the rest of the site rather than as a new decorative motif -- the node graph
+   in Numbers stays the only signature visual. */
+.prose figure[data-processing-model] {
+  margin-top: 2.5em;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 1.75rem;
+}
+
+.prose figure[data-processing-model] figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-quiet);
+  margin-bottom: 1.5rem;
+}
+
+.prose [data-model-comparison] {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .prose [data-model-comparison] {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.prose [data-model-comparison] h3 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-signal);
+  margin: 0 0 0.9rem;
+}
+
+.prose ol[data-model-flow] {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.prose ol[data-model-flow] li {
+  counter-increment: step;
+  position: relative;
+  padding: 0.4rem 0 0.4rem 2rem;
+  border-top: 1px solid var(--color-line);
+  margin: 0;
+  color: color-mix(in srgb, var(--color-paper) 75%, transparent);
+}
+
+.prose ol[data-model-flow] li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  color: var(--color-quiet);
+}
+
+.prose [data-repeat-note] {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-signal);
+  margin-top: 0.75rem;
+}
+
+.prose [data-diagram-note],
+.prose [data-ownership] {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-quiet);
+}
+
+.prose [data-diagram-note] {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.prose [data-ownership] {
+  border-left: 2px solid var(--color-line);
+  padding-left: 1.25rem;
+}
+
+/* Before/after runtime pair, rendered as a definition list in the MDX source. */
+.prose dl[data-runtime-shift] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  padding: 1.25rem 0;
+}
+
+.prose dl[data-runtime-shift] dt {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-quiet);
+  margin-bottom: 0.35rem;
+}
+
+.prose dl[data-runtime-shift] dd {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-size: 1.5rem;
+  color: var(--color-signal);
+  margin: 0;
+}
+
+/* Syntax highlighting. Deliberately amber + greyscale rather than a conventional
+   multi-hue scheme: keywords and literals carry the signal color, everything else is
+   the paper/quiet ramp. Enough differentiation to read a snippet, no second accent. */
+:root {
+  --astro-code-color-text: color-mix(in srgb, var(--color-paper) 78%, transparent);
+  --astro-code-color-background: transparent;
+  --astro-code-token-comment: var(--color-quiet);
+  --astro-code-token-keyword: var(--color-signal);
+  --astro-code-token-constant: var(--color-signal);
+  --astro-code-token-string: var(--color-paper);
+  --astro-code-token-string-expression: var(--color-paper);
+  --astro-code-token-function: color-mix(in srgb, var(--color-paper) 92%, transparent);
+  --astro-code-token-parameter: color-mix(in srgb, var(--color-paper) 78%, transparent);
+  --astro-code-token-punctuation: var(--color-quiet);
+  --astro-code-token-link: var(--color-signal);
+}
+
