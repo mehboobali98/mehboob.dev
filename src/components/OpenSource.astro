@@ -7,6 +7,7 @@ const projects = [
     desc: 'Redmine CLI with a Claude Code skill built in, plus a companion spec-estimator skill (rmine-skills). Adopted by the team at 7Vals.',
     href: 'https://github.com/mehboobali98/rmine',
     cta: 'View on GitHub',
+    post: '/blog/designing-a-cli-for-agents',
   },
   {
     name: 'bitwise_attributes',
@@ -15,6 +16,7 @@ const projects = [
     desc: 'Packs boolean flag attributes into a single ActiveRecord integer column. Started as an internal pattern I used for two years before publishing it.',
     href: 'https://github.com/mehboobali98/bitwise_attributes',
     cta: 'View on GitHub',
+    post: '/blog/two-years-before-i-published-it',
   },
 ];
 
@@ -59,34 +61,40 @@ const alsoBuilt = [
 
 <section id="open-source" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
   <p class="font-mono text-xs text-signal tracking-widest mb-3">OPEN SOURCE</p>
-  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
     Public, verifiable, and maintained.
   </h2>
 
   <div class="mt-14 grid sm:grid-cols-2 gap-6">
     {projects.map((p, i) => (
-      <a
-        href={p.href}
-        target="_blank"
-        rel="noopener"
+      <div
         data-reveal
-        class="group block p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+        class="group flex flex-col p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
       >
         <div class="flex items-baseline justify-between">
           <h3 class="font-display font-semibold text-2xl text-paper">{p.name}</h3>
           <span class="font-mono text-[11px] text-quiet">{p.tag}</span>
         </div>
         <p class="mt-4 text-paper/75 leading-relaxed text-sm">{p.desc}</p>
-        <div class="mt-6 flex items-center justify-between">
-          <p class="font-mono text-xs text-signal group-hover:underline">{p.cta} &rarr;</p>
+        <div class="mt-6 flex items-center justify-between gap-4">
+          <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
+            <a href={p.href} target="_blank" rel="noopener" class="text-signal hover:underline">
+              {p.cta} &rarr;
+            </a>
+            {p.post && (
+              <a href={p.post} class="text-quiet hover:text-signal transition-colors">
+                Read the post &rarr;
+              </a>
+            )}
+          </div>
           {stats[i] && (
-            <p class="font-mono text-[11px] text-quiet flex items-center gap-3">
+            <p class="font-mono text-[11px] text-quiet flex items-center gap-3 shrink-0">
               {stats[i]!.stars !== null && <span>&#9733; {stats[i]!.stars}</span>}
               {stats[i]!.pushedAt && <span>{timeAgo(stats[i]!.pushedAt)}</span>}
             </p>
           )}
         </div>
-      </a>
+      </div>
     ))}
   </div>
 

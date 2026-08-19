@@ -13,7 +13,7 @@ const pathD = stats.map((s, i) => `${i === 0 ? 'M' : 'L'}${s.x},${s.y}`).join(' 
 <section id="numbers" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
   <div data-reveal>
   <p class="font-mono text-xs text-signal tracking-widest mb-3">BY THE NUMBERS</p>
-  <h2 class="font-display font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
+  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
     I built a tool to analyze my own delivery history. This is what it found.
   </h2>
   <p class="mt-4 text-paper/70 max-w-xl leading-relaxed">
@@ -88,6 +88,19 @@ const pathD = stats.map((s, i) => `${i === 0 ? 'M' : 'L'}${s.x},${s.y}`).join(' 
       </div>
     </div>
   </div>
+
+  <div class="mt-16 max-w-2xl pt-6 border-t border-line">
+    <p class="font-mono text-xs text-quiet tracking-widest mb-3">METHOD</p>
+    <p class="text-sm text-paper/70 leading-relaxed">
+      Pulled with <a href="https://github.com/mehboobali98/rmine" target="_blank" rel="noopener" class="text-signal hover:underline">rmine</a>,
+      the CLI above: closed issues assigned to me across five years, exported with
+      <code class="font-mono text-xs text-paper/80">-o json</code>, then grouped by tracker and by the
+      product's own feature flag. The tool is open source. The Redmine instance behind
+      these numbers is my employer's, so you can read the method but you can't run it.
+      Where a number is a range or an estimate, it's written as one.
+    </p>
+  </div>
+
 </section>
 
 <script define:vars={{ stats }}>
