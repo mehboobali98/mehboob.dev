@@ -18,7 +18,11 @@ const formatted = date.toLocaleDateString('en-US', {
 });
 ---
 
-<Layout title={`${title} | Mehboob Ali`} description={description}>
+<Layout
+  title={`${title} | Mehboob Ali`}
+  description={description}
+  article={{ headline: title, datePublished: date.toISOString(), keywords: tags }}
+>
   <Nav />
   <main class="lg:ml-[300px]">
     <article class="px-6 sm:px-12 lg:px-20 py-20 lg:py-28">
