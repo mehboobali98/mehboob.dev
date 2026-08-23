@@ -1,4 +1,6 @@
 ---
+import DeliveryChart from './DeliveryChart.astro';
+
 // Every number here used to be behind a hover, and the section opened on "5 years",
 // the least interesting figure in the set. They are all plain text now and the section
 // needs no JavaScript at all.
@@ -77,8 +79,12 @@ const stats = [
     </dl>
   </div>
 
-  <!-- A footnote to the numbers, so it sits under them. -->
-  <div class="band band--dense shell">
+  <!-- The shape behind the totals, and the method that produced them. -->
+  <div class="band band--dense shell section-grid">
+    <div>
+      <p class="t-micro mb-5">Features per year</p>
+      <DeliveryChart />
+    </div>
     <div class="measure-sm">
       <p class="t-micro mb-3">Method</p>
       <p class="text-paper/70 leading-relaxed" style="font-size: var(--type-meta)">

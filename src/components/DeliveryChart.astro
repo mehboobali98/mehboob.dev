@@ -1,0 +1,98 @@
+---
+// Features delivered per work-year, straight out of the rmine export that produced every
+// other number in this section. One series, because the story is the trajectory and a
+// second fill would only be there to look like a chart.
+//
+// "Work-year" is the year holding most of the logged hours, not Redmine's created_on.
+// created_on is when a ticket was filed, which for long-lived specs puts the work in the
+// wrong year entirely.
+const years = [
+  { year: '2021', total: 13 },
+  { year: '2022', total: 22 },
+  { year: '2023', total: 49 },
+  { year: '2024', total: 74 },
+  { year: '2025', total: 76 },
+  // The export was pulled 29 July 2026, so this year is seven months, not twelve. Drawn
+  // hollow and labelled, because a solid bar next to five full years would read as a
+  // decline that didn't happen.
+  { year: '2026', total: 42, partial: true },
+];
+
+const max = 76;
+const barW = 44;
+const gap = 24;
+const plotH = 132;
+const baseline = 168;
+const left = 4;
+---
+
+<figure>
+  <svg viewBox="0 0 412 210" class="w-full h-auto" role="img" aria-labelledby="dc-title dc-desc">
+    <title id="dc-title">Features delivered per year, 2021 to 2026</title>
+    <desc id="dc-desc">
+      13 in 2021, 22 in 2022, 49 in 2023, 74 in 2024, 76 in 2025, and 42 in the first seven
+      months of 2026. 276 in total.
+    </desc>
+
+    {years.map((d, i) => {
+      const h = Math.round((d.total / max) * plotH);
+      const x = left + i * (barW + gap);
+      return (
+        <>
+          <rect
+            x={x}
+            y={baseline - h}
+            width={barW}
+            height={h}
+            rx="4"
+            fill={d.partial ? 'transparent' : 'var(--color-signal)'}
+            stroke={d.partial ? 'var(--color-signal)' : 'none'}
+            stroke-width={d.partial ? 1.5 : 0}
+            stroke-dasharray={d.partial ? '4 3' : undefined}
+          />
+          <text
+            x={x + barW / 2}
+            y={baseline - h - 9}
+            text-anchor="middle"
+            font-family="var(--font-mono)"
+            font-size="13"
+            fill="var(--color-paper)"
+          >{d.total}</text>
+          <text
+            x={x + barW / 2}
+            y={baseline + 18}
+            text-anchor="middle"
+            font-family="var(--font-mono)"
+            font-size="11"
+            fill="var(--color-quiet)"
+          >{d.year}</text>
+          {d.partial && (
+            <text
+              x={x + barW / 2}
+              y={baseline + 33}
+              text-anchor="middle"
+              font-family="var(--font-mono)"
+              font-size="9.5"
+              fill="var(--color-quiet)"
+            >to Jul</text>
+          )}
+        </>
+      );
+    })}
+
+    <line
+      x1="0"
+      y1={baseline + 0.5}
+      x2="412"
+      y2={baseline + 0.5}
+      stroke="var(--color-line)"
+      stroke-width="1"
+    />
+  </svg>
+
+  <figcaption class="mt-4 max-w-[30rem] text-[0.8125rem] leading-relaxed text-quiet">
+    276 features across five years, counted by the year most of the work was logged in
+    rather than the year the ticket was filed. 2026 is hollow because the export stops at
+    the end of July.
+  </figcaption>
+</figure>
