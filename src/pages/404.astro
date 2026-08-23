@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+
+// A real 404 rather than the host's default. Same ground and type as the hero, so a
+// wrong URL still looks like part of the site rather than the end of it.
+---
+
+<Layout
+  title="Not found | Mehboob Ali"
+  description="That page doesn't exist."
+>
+  <Nav />
+  <main>
+    <section class="hero">
+      <div class="shell w-full px-[clamp(1.25rem,5vw,5rem)] py-16">
+        <p class="marker mb-7">404</p>
+
+        <h1 class="t-display-1 text-paper max-w-[16ch]">
+          That page isn't here.
+        </h1>
+
+        <p class="mt-7 text-paper/75 leading-relaxed measure">
+          Either it moved or it never existed. The writing is the most likely thing you
+          were after.
+        </p>
+
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a
+            href="/"
+            class="px-6 py-3 bg-signal text-ink font-medium rounded-sm hover:bg-signal/90 transition-colors"
+          >
+            Back to the start
+          </a>
+          <a
+            href="/blog"
+            class="px-6 py-3 border border-line-strong text-paper font-medium rounded-sm hover:border-signal hover:text-signal transition-colors"
+          >
+            All writing
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

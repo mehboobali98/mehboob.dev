@@ -1,0 +1,14 @@
+{
+  // Deployed as a Worker with static assets rather than a Pages project. There is no
+  // Worker script: with no "main", the whole thing is the contents of ./dist, served
+  // from Cloudflare's edge. `npm run build` produces that directory, then
+  // `npx wrangler deploy` uploads it.
+  "name": "mehboob-dev",
+  "compatibility_date": "2026-08-23",
+  "assets": {
+    "directory": "./dist",
+    // Serve dist/404.html for a path that doesn't exist, instead of Cloudflare's own
+    // bare 404. src/pages/404.astro generates it.
+    "not_found_handling": "404-page"
+  }
+}
