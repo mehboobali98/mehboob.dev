@@ -93,18 +93,45 @@ npm run preview   # serve the built dist/ locally, to sanity-check before deploy
 The build output in `dist/` is a fully static site — any static host works. Two free options that
 both give you a custom domain with automatic HTTPS in a few clicks:
 
-**Cloudflare Pages** (recommended — pairs naturally if you also buy the domain through Cloudflare):
-1. Push this project to a GitHub repo.
-2. In the Cloudflare dashboard: Workers & Pages -> Create -> Pages -> connect the repo.
-3. Build command: `npm run build`. Output directory: `dist`.
-4. Deploy, then add your custom domain under the project's Custom Domains tab.
+Live at https://mehboob.dev, deployed as a **Cloudflare Worker with static assets**
+(not Pages — Cloudflare now defaults new projects to Workers, and a static site works
+fine there). Repo: `mehboobali98/mehboob.dev`.
 
-**Vercel:**
-1. Push to GitHub.
-2. Import the repo at vercel.com/new — it auto-detects Astro, no config needed.
-3. Add your custom domain under Project Settings -> Domains.
+- Build command `npm run build`, deploy command `npx wrangler deploy`, path `/`.
+- `wrangler.jsonc` is what makes it deployable. It has no `main`, so the deployment is
+  just the contents of `dist/` served from the edge.
+- Non-production branches run `npx wrangler versions upload`, which uploads a preview
+  version without promoting it.
 
-Either way: connect the repo once, and every future `git push` redeploys automatically.
+**If a push doesn't deploy, check this first.** The Git connection and the Worker are
+separate things, and a Worker created through the dashboard can end up with no repo
+attached, or attached without push access. The symptom is a Deployments tab where every
+version says "Manually deployed" and Recent builds has one entry from whenever the Worker
+was created. Fix it under Settings -> Builds: repository connected, production branch
+`main`, automatic deployments on.
+
+`.github/workflows/build.yml` runs the same build on every PR and push, so a broken build
+is caught in GitHub before it ever reaches Cloudflare.
+
+### DNS and mail
+
+| record | purpose |
+|---|---|
+| `mehboob.dev` -> Worker `mehboob-dev`, proxied | the site |
+| `www` CNAME -> `mehboob.dev`, proxied | plus a Redirect Rule, 301 to the apex |
+| MX -> `route1/2/3.mx.cloudflare.net` | Cloudflare Email Routing |
+| TXT `v=spf1 include:_spf.mx.cloudflare.net ~all` | added by Email Routing |
+
+The `www` CNAME on its own is not enough. Without the redirect rule, traffic reaches
+Cloudflare and finds nothing bound to that hostname, and the response is a 522 that looks
+like the site is down. The rule uses a wildcard: `https://www.*` captures host and path
+together into `${1}`, and the target `https://${1}` rebuilds the URL against the apex, so
+deep links survive. "Preserve query string" is a separate checkbox and has to be ticked.
+
+Mail is forward-only: `mehboob@mehboob.dev` lands in an Outlook inbox, and nothing sends
+as `@mehboob.dev`. That means a strict DMARC policy is safe (`_dmarc` TXT,
+`v=DMARC1; p=reject;`), which is worth adding because SPF alone is `~all` and most
+receivers won't act on a softfail.
 
 ## Domain
 
