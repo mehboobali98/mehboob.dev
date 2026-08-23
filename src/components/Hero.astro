@@ -1,4 +1,6 @@
 ---
+import { mailto } from '../site';
+
 // The signature. Five years of work drawn the way the CMDB draws infrastructure: one
 // traversal through a quiet mesh, with the things he actually built as the labelled
 // nodes on it. It is the relationship model applied to the person who wrote it, which
@@ -56,7 +58,7 @@ const evidence = [
 
         <div class="mt-8 flex flex-wrap gap-3">
           <a
-            href="mailto:imehboobali@outlook.com"
+            href={mailto}
             class="px-6 py-3 bg-signal text-ink font-medium rounded-sm hover:bg-signal/90 transition-colors"
           >
             Email me

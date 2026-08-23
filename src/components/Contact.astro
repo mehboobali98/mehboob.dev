@@ -1,4 +1,6 @@
 ---
+import { contact, mailto } from '../site';
+
 // Five equally-weighted resume variants made the visitor do the sorting. Most people who
 // reach this section want one file, so one is offered outright and the tailored variants
 // sit behind a disclosure for the recruiter who is hiring for a specific shape of role.
@@ -24,10 +26,10 @@ const variants = [
       </h2>
 
       <a
-        href="mailto:imehboobali@outlook.com"
+        href={mailto}
         class="inline-block mt-8 font-display wonk italic text-2xl sm:text-3xl text-signal hover:underline break-all"
       >
-        imehboobali@outlook.com
+        {contact.email}
       </a>
     </div>
 
@@ -79,9 +81,9 @@ const variants = [
   <div class="shell px-5 sm:px-8 lg:px-20 py-9 flex flex-col sm:flex-row gap-4 sm:justify-between font-mono text-xs text-quiet">
   <p>Mehboob Ali, Lahore, Pakistan</p>
   <div class="flex gap-6">
-    <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">GitHub</a>
-    <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">LinkedIn</a>
-    <a href="mailto:imehboobali@outlook.com" class="tap hover:text-signal transition-colors">Email</a>
+    <a href={contact.github} target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">GitHub</a>
+    <a href={contact.linkedin} target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">LinkedIn</a>
+    <a href={mailto} class="tap hover:text-signal transition-colors">Email</a>
   </div>
   </div>
 </footer>

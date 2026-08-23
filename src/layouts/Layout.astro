@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { contact } from '../site';
 
 interface Props {
   title?: string;
@@ -27,7 +28,7 @@ const person = {
   '@type': 'Person',
   name: 'Mehboob Ali',
   jobTitle: 'Principal Software Engineer',
-  email: 'mailto:imehboobali@outlook.com',
+  email: `mailto:${contact.email}`,
   url: Astro.site?.origin,
   address: {
     '@type': 'PostalAddress',
@@ -42,10 +43,7 @@ const person = {
     'Developer tooling',
     'AI coding agents',
   ],
-  sameAs: [
-    'https://github.com/mehboobali98',
-    'https://www.linkedin.com/in/mehboobali98',
-  ],
+  sameAs: [contact.github, contact.linkedin],
 };
 
 const blogPosting = article && {

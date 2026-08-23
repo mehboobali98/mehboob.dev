@@ -1,5 +1,6 @@
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
+import { contact } from '../site';
 
 // https://llmstxt.org convention: a plain-Markdown summary of the site for models that
 // are given the URL directly. Generated from the same collection that builds /blog, so
@@ -23,7 +24,7 @@ export async function GET(context: APIContext) {
 > Automation programs at 7Vals, and builds tooling that both engineers and coding
 > agents use.
 
-Open to remote or relocation. Contact: imehboobali@outlook.com
+Open to remote or relocation. Contact: ${contact.email}
 
 ## Selected work
 

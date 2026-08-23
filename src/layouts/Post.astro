@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import Nav from '../components/Nav.astro';
 import type { CollectionEntry } from 'astro:content';
+import { mailto } from '../site';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -49,7 +50,7 @@ const formatted = date.toLocaleDateString('en-US', {
 
         <div class="mt-20 pt-8 border-t border-line flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-quiet">
           <a href="/blog" class="hover:text-signal transition-colors">&larr; All writing</a>
-          <a href="mailto:imehboobali@outlook.com" class="hover:text-signal transition-colors">
+          <a href={mailto} class="hover:text-signal transition-colors">
             Reply by email
           </a>
         </div>
