@@ -1,0 +1,117 @@
+---
+title: I used it internally for two years before publishing it
+description: >-
+  bitwise_attributes packs boolean flags into one integer column. Most of what makes
+  it a library rather than a snippet came from the gap between those two things.
+date: 2026-08-17
+tags: ['Ruby', 'Rails', 'Open Source']
+---
+
+`bitwise_attributes` packs boolean flags into a single integer column on an
+ActiveRecord model. One bit per flag, so adding a flag costs no migration and
+querying them is a bitwise operation in SQL.
+
+The pattern isn't novel. What's worth writing about is the two years I ran it as
+internal code before it became a gem, and what that gap turned out to contain.
+
+## What it looks like
+
+```ruby
+class User < ApplicationRecord
+  include BitwiseAttributes
+
+  bitwise_attribute :permissions, :read, :write, :admin
+end
+```
+
+Keys take bit positions in declaration order, which is a single `1 << index`. That
+gives you predicate methods, setters, bulk operations, and scopes:
+
+```ruby
+user.set_permissions(:read, :admin)
+User.with_all_permissions([:read, :write])
+User.without_permissions(:admin)
+```
+
+As internal code that was essentially the whole thing, and it worked fine for two
+years. Everything below is what got added between "works for us" and "someone else
+can install this".
+
+## The failure mode nobody hits until they do
+
+An integer column holds a fixed number of bits. A 32-bit `INT` gives you thirty
+usable ones. A `BIGINT` gives you sixty-two. Declare more flags than that and the top
+ones silently stop existing.
+
+Internally this never came up, because nobody declared thirty flags. It's also a
+genuinely nasty bug: no exception, no failed write, just a flag that reads back false
+forever. So the gem now checks at definition time. Past sixty-two it raises. Past
+thirty it warns to stderr and tells you to use a `BIGINT` column.
+
+The split matters. Raising on sixty-three is correct because the code cannot work.
+Raising on thirty-one would be wrong, because a `BIGINT` column makes it fine, and a
+library that refuses to run over a limit that isn't real is a library people patch
+around.
+
+## The rename
+
+The sharpest lesson in the whole thing is a scope I named wrong.
+
+The original was `with_exact_attr`. The name says exact. The SQL underneath performed
+a "has all of these bits" check, which happily matches rows with other bits set as
+well. Those are different questions, and I'd shipped a name that answered the wrong
+one.
+
+Internally that cost nothing, because the two people using it knew what it did. As a
+published API it's a trap: the caller reads the name, gets rows they didn't ask for,
+and has no reason to suspect the scope rather than their own query.
+
+So 0.2.0 renamed it to `with_all_attr` and added `with_exactly_attr` as the scope
+that really does compare the column to the bitmask. Three scopes now say what they
+do:
+
+```ruby
+User.with_permissions(:read)                    # any of these bits
+User.with_all_permissions([:read, :write])      # all of these bits, others allowed
+User.with_exactly_permissions([:read, :write])  # exactly this bitmask
+```
+
+Naming a method after what you meant rather than what it does survives contact with
+a small team. It doesn't survive being installed by a stranger.
+
+## The unglamorous half
+
+The rest of what publishing forced was defensive work that internal code gets to skip
+because its environment is known.
+
+Nil safety, because internally the column always existed with a default of zero. Now
+every read calls `.to_i` first, so an unsaved record or a `NULL` column doesn't raise
+`NoMethodError` from inside the gem.
+
+Column name quoting through `connection.quote_column_name` in all three scopes, since
+I no longer know which adapter this runs on.
+
+Scope lambdas capturing the model class at definition time instead of reaching for it
+at query time. Inheritance giving each subclass an independent copy of its parent's
+definitions, so redefining an attribute on a subclass doesn't quietly reach back up
+and change the parent. Argument validation for empty key lists and duplicate keys,
+which internally were things you just didn't do.
+
+None of that is interesting. All of it is the actual difference between a pattern and
+a package.
+
+## When to extract
+
+I don't think this would have been a better gem if I'd published it on day one. Two
+years of internal use is what produced the list above, and I couldn't have written
+that list from imagination.
+
+What the waiting period is for is finding out which parts of the design are load
+bearing and which were preferences. The overflow guard, the scope renames, and the
+nil handling all came from the same source: watching the thing get used in ways I
+hadn't planned, in a codebase where I could still fix the API without a deprecation
+cycle.
+
+The version to publish is the one you've stopped changing. Mine took two years to
+stop changing, and then changed once more in 0.2.0 because publishing it made me
+read it like a stranger.

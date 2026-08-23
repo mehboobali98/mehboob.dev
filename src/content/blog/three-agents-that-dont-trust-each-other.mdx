@@ -1,0 +1,143 @@
+---
+title: Three agents that don't trust each other
+description: >-
+  An effort estimator built out of three subagents. The decisions that mattered were
+  about what to withhold from each one, not what to tell them.
+date: 2026-08-19
+tags: ['Agents', 'Estimation', 'Claude Code']
+---
+
+`/estimate` takes a Redmine ticket and produces a frontend and backend effort
+breakdown in hours. It runs three subagents to do it.
+
+Most of the design work went into deciding what each one isn't allowed to see or do.
+That turned out to matter more than anything I put in their prompts.
+
+## Three roles, three prohibitions
+
+The `spec-auditor` decides whether a spec is complete enough to estimate at all. It
+never produces hours. The instruction is explicit about why:
+
+> If you catch yourself sizing the work, stop. That is someone else's job, and an
+> auditor primed to estimate stops being an auditor.
+
+The `effort-estimator` prices the work against the actual codebase. The
+`estimate-validator` reviews the finished estimate. None of the three can write or
+edit a file. That's enforced in the agent definition rather than requested in the
+prompt:
+
+```yaml
+disallowedTools: Write, Edit, NotebookEdit
+```
+
+They also don't run at the same size. The auditor is Sonnet at medium effort with a
+ten turn cap, because judging whether nine checklist items are present is not hard.
+The validator is Opus at high effort with twenty-five, because catching a missing
+backfill in someone else's arithmetic is. Paying Opus rates for the checklist pass
+would have been a waste, and running the review on Sonnet would have made it
+decorative.
+
+## A gate that fires every time protects nothing
+
+The spec auditor's hardest constraint isn't what it checks. It's how rarely it's
+allowed to stop you.
+
+Every spec is incomplete in some way. If the gate blocks on all of them, people
+learn to skip it inside a week, and then it protects nothing at all. So it blocks
+only on gaps that would materially move the hours: frontend-heavy work with no
+design link, an implied data model change nobody wrote down, a hard dependency on
+unshipped work, scope open-ended enough that the total could double.
+
+And it can name at most three.
+
+Everything else it finds is non-blocking, but it isn't discarded either. It gets
+carried into the estimate as a named line item so the uncertainty is priced rather
+than forgotten. A gap you've charged for is in better shape than a gap you've
+resolved by not mentioning it.
+
+## The reviewer doesn't see the working
+
+This is the decision I'd keep if I had to throw out the rest.
+
+The validator receives the spec and the finished estimate. It does not receive the
+estimator's greps, its notes, or its intermediate reasoning. Its own instructions
+tell it to refuse them if they show up anyway:
+
+> If any of that appears in what you were given, ignore it and say so in your report:
+> whoever launched you undermined the review.
+
+An estimate comes with a story about why each number is right. Read the story and
+you'll find yourself agreeing with it, because the story was constructed to be
+agreeable. The validator is the only pass in the pipeline that isn't standing
+downstream of the estimator's reasoning, and it's only worth having for exactly as
+long as that stays true.
+
+The same idea shows up in a smaller place. The estimator gets worked examples of the
+output format, and the instruction next to them says their numbers are invented and
+must never be used as an anchor. Examples teach shape. They shouldn't teach price.
+
+## Grep before you price
+
+The estimator runs inside the repository the work will land in, and it isn't allowed
+to price a line item before finding the real code that item touches.
+
+The difference it produces:
+
+> Update `TriggerCustomActionService` to handle multiple resources (2 hr)
+
+instead of:
+
+> Update the service (2 hr)
+
+The second one is a guess wearing a number. The first can be argued with, which is
+the only property that makes an estimate useful to anyone else. Someone who knows
+that service can tell me I'm wrong, and now the estimate improves.
+
+## Let the script do the facts
+
+The validator's first action is to run a Python format checker over the estimate.
+Arithmetic, the points formula, required headers, section ordering, quarter-hour
+granularity. Then its instructions tell it to report whatever the script printed
+verbatim and move on:
+
+> those are facts, not judgment, and re-deriving them by hand wastes the pass
+
+Everything after that is the part no script can do. Is a migration missing. Is there
+a backfill for existing tenants. Was the permissions work priced. Backfill and search
+integration are the two that go missing most often, so they're named in the
+instructions by name.
+
+Splitting it this way stopped the review from spending its attention on addition.
+
+## The part that tells you not to trust it yet
+
+`/calibrate` compares past estimates against hours actually logged, to find out
+whether the rubric is systematically optimistic.
+
+The circular problem is stated in the skill itself: the anchor table was derived from
+past estimates, so it faithfully reproduces however those were made, including any
+error baked in. Calibration is the only thing in the system that can check the system.
+
+Which makes being wrong here expensive. A confidently wrong multiplier applied across
+a whole team's estimates does more damage than never running the check. So most of
+the skill is about refusing to answer:
+
+- Fewer than twenty tickets in the corpus and it stops. Not enough data is a finding,
+  not a failure.
+- Logged time isn't ground truth. It's what people remembered to type in.
+- A median of 0.8 built out of individual ratios of 0.05 and 2.96 isn't a team that
+  runs twenty percent optimistic. It's noise with a median.
+
+Reporting drift is the easy half. Knowing whether the drift is real is the skill.
+
+## What's still wrong
+
+The rubric ships with the plugin, so everyone estimates against the same anchors from
+their first run and there's no per-user calibration file to populate. That was the
+right call for consistency. It also means one correction moves every estimate the
+team produces, which raises the bar for making one, and I don't yet have a good
+process for who gets to change it.
+
+The corpus is also the bottleneck. `/calibrate` wants twenty-plus tickets with both
+an estimate and honest logged time against them, and honest logged time is the hard
+part of that sentence.

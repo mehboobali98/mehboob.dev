@@ -4,15 +4,60 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  // Set on blog posts so the page also describes itself as an article. Left off
+  // everywhere else -- the Person block below is the site-wide identity.
+  article?: {
+    headline: string;
+    datePublished: string;
+    keywords?: string[];
+  };
 }
 
 const {
-  title = 'Mehboob Ali | Backend Software Engineer',
+  title = 'Mehboob Ali | Principal Software Engineer',
   description = 'Principal Software Engineer building backend systems, distributed workflows, and the tools that help teams ship them faster.',
+  article,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mehboob Ali',
+  jobTitle: 'Principal Software Engineer',
+  email: 'mailto:imehboobali@outlook.com',
+  url: Astro.site?.origin,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Lahore',
+    addressCountry: 'PK',
+  },
+  knowsAbout: [
+    'Ruby on Rails',
+    'Go',
+    'PostgreSQL',
+    'Backend architecture',
+    'Developer tooling',
+    'AI coding agents',
+  ],
+  sameAs: [
+    'https://github.com/mehboobali98',
+    'https://www.linkedin.com/in/mehboobali98',
+  ],
+};
+
+const blogPosting = article && {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: article.headline,
+  description,
+  datePublished: article.datePublished,
+  keywords: article.keywords,
+  mainEntityOfPage: canonical.toString(),
+  author: { '@type': 'Person', name: 'Mehboob Ali', url: Astro.site?.origin },
+};
 ---
 
 <!doctype html>
@@ -35,6 +80,9 @@ const ogImage = new URL('/og.png', Astro.site);
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    {blogPosting && <script type="application/ld+json" set:html={JSON.stringify(blogPosting)} />}
   </head>
   <body class="font-body antialiased">
     <slot />

@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  // The row appears under an <h1> on /blog and under a section <h2> on the homepage,
+  // so the title's level has to move with it to keep the heading order intact.
+  as?: 'h2' | 'h3';
+}
+
+const { post, as: Heading = 'h3' } = Astro.props;
+const { title, description, date, tags } = post.data;
+
+const formatted = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<a
+  href={`/blog/${post.id}`}
+  data-reveal
+  class="post-node group block py-8 border-t border-line hover:border-signal transition-colors"
+>
+  <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 font-mono text-xs text-quiet">
+    <time datetime={date.toISOString()}>{formatted}</time>
+    {tags.map((t) => <span>{t}</span>)}
+  </div>
+  <Heading
+    class="mt-3 font-display wonk font-semibold text-2xl sm:text-3xl text-paper group-hover:text-signal transition-colors"
+  >
+    {title}
+  </Heading>
+  <p class="mt-3 text-paper/75 leading-relaxed">{description}</p>
+</a>

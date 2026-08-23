@@ -1,0 +1,162 @@
+---
+title: Building on a DOM that isn't mine
+description: >-
+  A 300-line Chrome extension that adds a translate button to WhatsApp Web Status.
+  One commit fixed four bugs, and all four came from the same wrong assumption.
+date: 2026-08-16
+tags: ['JavaScript', 'Chrome Extensions']
+---
+
+WhatsApp has a long-press translate feature. It covers chats, groups and channels,
+and it does not cover Status. So I wrote a Chrome extension that puts a translate
+button on Status captions and sends the text to DeepL.
+
+It's about three hundred lines. The interesting part isn't the translating, which is
+one API call. It's that everything the extension touches belongs to somebody else and
+changes without telling me.
+
+## The assumption everything came from
+
+When you write a normal frontend, you own the DOM. You put an element somewhere, it
+stays there, and it looks how you told it to look.
+
+None of that holds here. WhatsApp Web owns the tree, mutates it constantly, re-renders
+whenever it likes, and reuses nodes rather than creating fresh ones. I wrote the first
+version as though I were building a small UI. The second version, one commit later,
+was written as though I were a guest.
+
+That commit is titled `fix: button positioning, observer churn, stale translations,
+silent errors`. Four bugs. Same root cause each time.
+
+## Positioning: stop measuring, start attaching
+
+The first version placed the button as a fixed-position overlay, measured against the
+caption's bounding box at the moment the caption appeared.
+
+Which is fine until the Status viewer finishes its open animation, or the window gets
+resized, or WhatsApp shifts the layout for a reason of its own. Then the button is
+sitting somewhere the caption no longer is.
+
+The fix removed the positioning code entirely:
+
+```js
+captionEl.insertAdjacentElement("afterend", btn);
+```
+
+An in-flow sibling tracks the caption through animations, resizes and layout shifts,
+because it is being laid out by the same engine that lays out the caption. There is no
+reposition handler because there is nothing to reposition.
+
+I like this fix more than the bug deserves. The first version had me reimplementing
+layout. The second one asks the browser to do it.
+
+## Styling: clone rather than match
+
+Related problem, same shape. The translated text has to look like WhatsApp's text,
+and WhatsApp's classes are generated and not mine to depend on.
+
+Rather than copy font size and colour into my own stylesheet, the extension shallow
+clones the caption element:
+
+```js
+const clone = captionEl.cloneNode(false);
+clone.textContent = translatedText;
+```
+
+`cloneNode(false)` takes the element's classes, attributes and text direction without
+taking its child text node. The translation inherits whatever WhatsApp is currently
+using, including right-to-left handling, which matters a lot for the languages this
+gets used on. Italics are added as the only visual difference, to mark it as a
+translation.
+
+If WhatsApp restyles captions tomorrow, the translation restyles with them.
+
+## Observer churn: the page never stops moving
+
+To notice a Status opening, the extension watches the document with a
+`MutationObserver` on `childList` and `subtree`.
+
+WhatsApp Web mutates that tree continuously, including while nothing is happening on
+screen. The first version ran a `querySelector` on every mutation record, which came
+to thousands of calls a minute against an idle page.
+
+The fix coalesces to one check per frame:
+
+```js
+let checkQueued = false;
+const observer = new MutationObserver(() => {
+  if (checkQueued) return;
+  checkQueued = true;
+  requestAnimationFrame(() => {
+    checkQueued = false;
+    checkForStatus();
+  });
+});
+```
+
+The observer still fires constantly. It just stops doing work more than once per
+frame, which is the most often anything visual could possibly need doing.
+
+## Stale translations: node identity lies
+
+This is the one I'd have taken longest to find on my own, and it's the clearest
+example of the whole problem.
+
+Status auto-advances on a timer. My check for "have I already handled this caption"
+compared the element to the one I'd stored. Same node, nothing to do.
+
+Except WhatsApp reuses that element for the next Status and swaps the text inside it.
+Same node, different content. The extension would sit there showing the previous
+status's translation over the current status's caption, which is a worse failure than
+not translating at all, because it looks like it worked.
+
+The check now compares three things:
+
+```js
+const unchanged =
+  captionEl === state.currentCaptionEl &&
+  text === state.currentText &&
+  state.buttonEl?.isConnected;
+```
+
+Identity, content, and whether my own button is still in the document. That last one
+exists because WhatsApp's re-renders will remove my button without removing the
+caption, and an extension that thinks it has a button when it doesn't will never draw
+another one.
+
+In a DOM you own, node identity is a reliable proxy for "the same thing." In a DOM you
+don't, it's a proxy for "the same memory."
+
+## Silent errors: the caller can't see the console
+
+The last of the four is smaller and less structural. A failed translation set the
+button to a generic failed state and logged the reason to the console.
+
+The two things most likely to go wrong are a dead API key and an exhausted monthly
+quota, and to anyone without DevTools open those are indistinguishable. Both look like
+the extension is broken.
+
+So the reason now goes on the button's `title`, where hovering surfaces it. Not
+elegant. It does mean the person who hit the problem is the person who gets told what
+it was.
+
+The network call itself lives in the background service worker rather than the content
+script, so WhatsApp Web's own Content Security Policy can't block it. That one I got
+right first time, mostly by having been bitten before.
+
+## Writing down the fragility
+
+The `data-testid` this whole thing hangs on is not a contract. It is an implementation
+detail of a product I have no relationship with, and it will change.
+
+Rather than pretend otherwise, the selector is declared in one object at the top of the
+file, with a comment recording when it was last confirmed against the live site and
+which caption types it was checked on. The README has a short runbook for the day it
+breaks: open DevTools, inspect the caption, update the one selector, reload.
+
+I can't make the extension survive WhatsApp shipping a redesign. I can make the
+repair a five minute job for whoever hits it first, including me in six months having
+forgotten all of this.
+
+That's the honest ceiling on a tool built inside someone else's product, and it's
+worth designing for on purpose rather than discovering later.

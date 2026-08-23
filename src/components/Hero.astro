@@ -1,34 +1,133 @@
-<section id="top" class="min-h-[92vh] flex flex-col justify-center px-6 sm:px-12 lg:px-20 pt-16 lg:pt-0">
-  <div class="max-w-3xl">
-    <p class="font-mono text-xs text-signal tracking-widest mb-6">PRINCIPAL SOFTWARE ENGINEER &middot; RUBY ON RAILS &middot; SYSTEMS</p>
+---
+// The signature. Five years of work drawn the way the CMDB draws infrastructure: one
+// traversal through a quiet mesh, with the things he actually built as the labelled
+// nodes on it. It is the relationship model applied to the person who wrote it, which
+// is the one element on this page that no other portfolio could lift and reuse.
+//
+// The nodes are also the page's table of contents. Each one is a real anchor.
+const work = [
+  { x: 118, y: 322, label: 'sync', note: '12-15h to <1h', href: '#sync' },
+  { x: 244, y: 208, label: 'CMDB', note: 'n-level traversal', href: '#cmdb' },
+  { x: 366, y: 274, label: 'rmine', note: 'Go, open source', href: '#open-source' },
+  { x: 452, y: 150, label: 'workflow', note: 'node canvas', href: '#workflow' },
+];
 
-    <h1 class="font-display font-black italic text-[2.6rem] sm:text-6xl lg:text-7xl leading-[1.05] text-paper">
-      I build backend systems, then build the tools to understand them.
-    </h1>
+const start = { x: 18, y: 392 };
+const pathD = [start, ...work].map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
 
-    <p class="mt-8 text-lg text-paper/80 leading-relaxed max-w-xl">
-      Five years at 7Vals turning Rails backends and IT-asset systems into things that don't fall over.
-      Lately I've been just as interested in the tooling side: Claude Code skills, an open-source Redmine
-      CLI, an agent that turns tickets into pull requests.
-    </p>
+// The rest of the graph. Everything else in five years that isn't one of the four.
+const mesh = [
+  [60, 250, 140, 180], [140, 180, 96, 96], [60, 250, 20, 170], [140, 180, 232, 118],
+  [232, 118, 300, 60], [300, 60, 404, 84], [186, 402, 268, 430], [268, 430, 360, 396],
+  [360, 396, 452, 424], [404, 84, 500, 52], [452, 424, 520, 356], [96, 96, 176, 40],
+  [232, 118, 244, 208], [404, 84, 366, 274], [186, 402, 118, 322], [520, 356, 452, 150],
+];
+const meshNodes = [
+  [60, 250], [140, 180], [96, 96], [20, 170], [232, 118], [300, 60], [404, 84],
+  [186, 402], [268, 430], [360, 396], [452, 424], [500, 52], [520, 356], [176, 40],
+];
 
-    <p class="mt-4 font-mono text-sm text-quiet">
-      Lahore, Pakistan. Open to remote or relocation.
-    </p>
+// Short labels on purpose: three of these have to sit on one line inside the type
+// column, and the long version of each is two screens down in the numbers band.
+const evidence = [
+  { n: '276', label: 'features shipped' },
+  { n: '22', label: 'Key Features' },
+  { n: '7mo', label: 'CMDB to prod' },
+];
+---
 
-    <div class="mt-10 flex flex-wrap gap-4">
-      <a
-        href="mailto:havoc6444@gmail.com"
-        class="px-6 py-3 bg-signal text-ink font-medium rounded-sm hover:bg-signal/90 transition-colors"
-      >
-        Email me
-      </a>
-      <a
-        href="#contact"
-        class="px-6 py-3 border border-line text-paper font-medium rounded-sm hover:border-signal hover:text-signal transition-colors"
-      >
-        Get my resume
-      </a>
+<section id="top" class="hero">
+  <div class="shell w-full px-[clamp(1.25rem,5vw,5rem)] py-16">
+    <div class="hero-content grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-14 xl:gap-20 items-center">
+      <div>
+        <p class="marker mb-7">Principal Software Engineer</p>
+
+        <h1 class="t-display-1 text-paper">
+          I build backend systems, then build the tools to understand them.
+        </h1>
+
+        <p class="mt-7 text-paper/80 leading-relaxed max-w-[34rem]" style="font-size: var(--type-body-lg)">
+          Five years at 7Vals on Rails backends and IT-asset systems. I led the CMDB build and I run the
+          Workflow Automation program now. The tooling side got interesting along the way: a Redmine CLI,
+          Claude Code skills, an agent that turns tickets into pull requests.
+        </p>
+
+        <p class="mt-4 t-meta">Lahore, Pakistan. Open to remote or relocation.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="mailto:imehboobali@outlook.com"
+            class="px-6 py-3 bg-signal text-ink font-medium rounded-sm hover:bg-signal/90 transition-colors"
+          >
+            Email me
+          </a>
+          <a
+            href="#contact"
+            class="px-6 py-3 border border-line-strong text-paper font-medium rounded-sm hover:border-signal hover:text-signal transition-colors"
+          >
+            Get my resume
+          </a>
+        </div>
+
+        <dl class="mt-9 flex flex-wrap gap-x-9 gap-y-4 border-t border-line pt-5 max-w-[34rem]">
+          {evidence.map((e) => (
+            <div>
+              <dd class="font-display wonk font-black text-[1.75rem] text-signal leading-none m-0">{e.n}</dd>
+              <dt class="mt-1.5 t-micro">{e.label}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <!-- The graph. Labels are real links, so this is navigation as well as image. -->
+      <div class="hidden lg:block" style="--path-len: 1600">
+        <svg viewBox="0 0 624 470" class="w-full h-auto" role="img" aria-labelledby="hero-graph-title">
+          <title id="hero-graph-title">
+            A graph of four things built over five years: a sync pipeline, a CMDB, the rmine
+            CLI, and a workflow automation engine, connected as one traversal.
+          </title>
+
+          <g stroke="var(--color-line)" stroke-width="1" stroke-opacity="0.75">
+            {mesh.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} />)}
+          </g>
+          <g fill="var(--color-line-strong)">
+            {meshNodes.map(([cx, cy]) => <circle cx={cx} cy={cy} r="2.5" />)}
+          </g>
+
+          <path
+            class="hero-path"
+            d={pathD}
+            fill="none"
+            stroke="var(--color-signal)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <circle cx={start.x} cy={start.y} r="3.5" fill="var(--color-signal)" />
+
+          {work.map((n, i) => (
+            <g class="hero-node" style={`animation-delay:${0.5 + i * 0.22}s`}>
+              <circle cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
+              <circle cx={n.x} cy={n.y} r="5.5" fill="var(--color-signal)" />
+              <text
+                x={n.x + 16}
+                y={n.y - 2}
+                font-family="var(--font-mono)"
+                font-size="15"
+                fill="var(--color-paper)"
+              >{n.label}</text>
+              <text
+                x={n.x + 16}
+                y={n.y + 15}
+                font-family="var(--font-mono)"
+                font-size="11"
+                fill="var(--color-quiet)"
+              >{n.note}</text>
+            </g>
+          ))}
+        </svg>
+      </div>
     </div>
   </div>
 </section>
