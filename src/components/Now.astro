@@ -1,29 +1,16 @@
 ---
-import WorkflowGraph from './WorkflowGraph.astro';
 ---
 
 <!-- The one section that breaks the page's rhythm on purpose: different ground, no
      amber eyebrow, display type at statement scale. Every other section is a catalog
-     of something; this one is a single sentence and should read like one. The graph
-     beside it is the shape of the thing the sentence names, drawn from EZO's public
-     documentation of the engine, not a decoration added to fill the column. -->
+     of something; this one is a single sentence and should read like one. The workflow
+     diagram that used to sit beside it now belongs to the case study about the thing
+     it draws. -->
 <section id="now" aria-label="Now" class="bg-surface border-y border-line">
-  <div class="band shell grid xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-14 xl:gap-16 items-center">
-    <p data-reveal class="t-display-2 text-paper">
-      Leading the CMDB and Workflow Automation programs at 7Vals, and figuring out how much of the engineering
-      workflow itself can be handed to an agent without making the output worse.
+  <div class="band shell">
+    <p data-reveal class="t-display-2 text-paper max-w-[46rem]">
+      Leading the CMDB and Workflow Automation programs at 7Vals, and figuring out how much of the
+      engineering workflow itself can be handed to an agent without making the output worse.
     </p>
-
-    <div data-reveal>
-      <WorkflowGraph />
-      <a
-        href="https://ezo.io/assetsonar/blog/automation-engine/"
-        target="_blank"
-        rel="noopener"
-        class="proof-link tap mt-3"
-      >
-        The engine, publicly documented &rarr;
-      </a>
-    </div>
   </div>
 </section>

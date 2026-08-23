@@ -1,4 +1,6 @@
 ---
+import Terminal from './Terminal.astro';
+
 const projects = [
   {
     name: 'rmine',
@@ -58,6 +60,22 @@ function timeAgo(date: Date | null) {
 
 const stats = await Promise.all(projects.map((p) => fetchRepoStats(p.repo)));
 
+// Verbatim from `rmine --help` on the current build of the CLI.
+const rmineHelp = [
+  'A command-line client for Redmine',
+  '',
+  { text: 'Available Commands:', dim: true },
+  '  issue       Work with Redmine issues',
+  '  project     Browse Redmine projects',
+  '  skill       Manage the rmine Claude Code skill',
+  '  time        Log and manage time entries',
+  "  whoami      Show the active profile's user",
+  '',
+  { text: 'Flags:', dim: true },
+  '  -o, --output string    table|json',
+  '      --profile string   profile to use',
+];
+
 const alsoBuilt = [
   'A closed-loop agent that plans, tiers, implements, and opens a PR (or escalates) for a Redmine ticket, using the Claude Code SDK. Still a prototype, dry-run tested so far.',
   'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history',
@@ -111,7 +129,26 @@ const alsoBuilt = [
     ))}
   </div>
 
-  <div class="mt-14">
+  <div class="mt-16 section-grid">
+    <div class="measure">
+      <p class="t-micro mb-4">Why rmine exists</p>
+      <p class="text-paper/80 leading-relaxed">
+        I wanted to know what five years of my own ticket history actually said. Nothing made
+        that easy, so I wrote something: a CLI in Go with a Claude Code skill built in, so an
+        agent can query tickets and time logs on its own instead of me pasting API responses
+        into a prompt.
+      </p>
+      <p class="mt-4 text-paper/80 leading-relaxed">
+        The rest of the team runs it day to day, and the numbers further up this page came
+        straight out of it. Not a demo. Just what the tool actually found.
+      </p>
+    </div>
+    <div>
+      <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
+    </div>
+  </div>
+
+  <div class="mt-16">
     <p class="t-micro mb-6">Also built (internal)</p>
     <ul class="grid md:grid-cols-3 gap-x-8 gap-y-6">
       {alsoBuilt.map((item) => (

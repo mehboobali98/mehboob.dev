@@ -1,11 +1,17 @@
 ---
 import CmdbGraph from './CmdbGraph.astro';
-import Terminal from './Terminal.astro';
+import WorkflowGraph from './WorkflowGraph.astro';
 
-// Copy is verbatim from the original. What changed is the composition: each study is
-// now its own band with the evidence at large scale on an alternating side, rather than
-// three identical prose blocks stacked in one column. The alternation is the point --
-// three sections with the same silhouette read as a template no matter what they say.
+// rmine used to hold the middle slot. It also owned the numbers section, an open-source
+// card, a node in the hero graph and a featured post, so one tool was carrying a third of
+// a page that is supposed to show five years of range. It keeps every one of those other
+// places; what it gives up is the case-study slot, which goes to the second product
+// program instead. The three studies are now backend performance, a product program, and
+// an architecture the person led a team through.
+//
+// What the workflow copy claims is bounded by what can be checked: EZO documents the
+// engine publicly, and the sentence about running the program is his own. Nothing here
+// asserts a timeline, a team size or a metric that isn't verifiable.
 const studies = [
   {
     id: 'sync',
@@ -20,15 +26,18 @@ const studies = [
     ],
   },
   {
-    id: 'rmine',
-    title: 'rmine',
-    post: '/blog/designing-a-cli-for-agents',
-    stack: ['Go', 'Claude Code SDK', 'Redmine API'],
-    visual: 'terminal',
-    proof: { label: 'github.com/mehboobali98/rmine', href: 'https://github.com/mehboobali98/rmine' },
+    id: 'workflow',
+    title: 'Automation that could branch',
+    stack: ['Ruby on Rails', 'Node canvas', 'ITSM'],
+    visual: 'workflow',
+    proof: {
+      label: 'Publicly documented by EZO',
+      href: 'https://ezo.io/assetsonar/blog/automation-engine/',
+    },
     body: [
-      "I wanted to know what five years of my own ticket history actually said. Nothing existing made that easy, so I wrote something: a Redmine CLI in Go, with a Claude Code skill built directly in, so an agent can query tickets and time logs on its own instead of me copy-pasting API responses into a prompt.",
-      "Open source now. The rest of the team runs it day to day, and the numbers section above this one came straight out of it. Not a demo. Just what the tool actually found.",
+      "Automation in AssetSonar used to be a trigger paired with a sub-trigger. Fine for a one-step rule. Past that it ran out of room: nothing chained, nothing branched, and when a rule misfired there was no way to see which part of it had.",
+      "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, and actions chain and branch on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read rather than guessed at.",
+      "This is the program I run day to day.",
     ],
   },
   {
@@ -46,22 +55,6 @@ const studies = [
       "Highest concentration of product-flagged Key Features of anything I shipped that year.",
     ],
   },
-];
-
-// Verbatim from `rmine --help` on the current build of the CLI.
-const rmineHelp = [
-  'A command-line client for Redmine',
-  '',
-  { text: 'Available Commands:', dim: true },
-  '  issue       Work with Redmine issues',
-  '  project     Browse Redmine projects',
-  '  skill       Manage the rmine Claude Code skill',
-  '  time        Log and manage time entries',
-  "  whoami      Show the active profile's user",
-  '',
-  { text: 'Flags:', dim: true },
-  '  -o, --output string    table|json',
-  '      --profile string   profile to use',
 ];
 ---
 
@@ -123,9 +116,7 @@ const rmineHelp = [
               </p>
             </dl>
           )}
-          {s.visual === 'terminal' && (
-            <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
-          )}
+          {s.visual === 'workflow' && <WorkflowGraph />}
           {s.visual === 'cmdb' && <CmdbGraph />}
         </div>
       </article>
