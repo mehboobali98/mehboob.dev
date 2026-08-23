@@ -28,7 +28,7 @@ const studies = [
   {
     id: 'workflow',
     title: 'Automation that could branch',
-    stack: ['Ruby on Rails', 'Node canvas', 'ITSM'],
+    stack: ['Ruby on Rails', 'React Flow', 'ITSM'],
     visual: 'workflow',
     proof: {
       label: 'Publicly documented by EZO',
@@ -37,9 +37,10 @@ const studies = [
     body: [
       "Automation in AssetSonar used to be a trigger paired with a sub-trigger. Fine for a one-step rule. Past that it ran out of room: nothing chained, nothing branched, and when a rule misfired there was no way to see which part of it had.",
       "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, actions chain, and each one branches on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read instead of guessed at.",
+      "I led technical delivery on the replacement. Five months, eight engineers, and a no-code canvas built on React Flow. The work split into HTTP and API execution, expression resolution, event triggers, branching and iteration, data transformation, integrations, and the monitoring that shows what a run actually did.",
       "What makes it composable is what happens after a request comes back. A web request node parses the response into a schema, and every key in that schema becomes a placeholder the next node can read. Arrays split into individual items. Paginated endpoints follow themselves to the end. Above all of that sit pre-built connectors for Entra, Teams, an HRIS, so the common cases never touch auth at all.",
-      "An offboarding that used to be four tools and a checklist is one workflow.",
-      "This is the program I run day to day.",
+      "An offboarding that used to be four tools and a checklist is one workflow. Customers use it heavily, and it turns out to be the thing that lands in client demos, which is not what I expected from a rules engine.",
+      "It's the program I still run.",
     ],
   },
   {
