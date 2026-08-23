@@ -15,12 +15,18 @@ rule, a content rule.
 
 ## Design system — treat as fixed, not a starting point
 
-- **Colors:** ink `#0F1319`, surface `#171C24`, line `#2A313D`, quiet text `#6B7688`,
-  paper (body text) `#F0EDE6`, signal (the ONE accent) `#E0A84E`. Don't add a second
-  accent color. Don't switch to purple/violet gradients or glassmorphism — that's the
-  single most recognizable "AI generated this in five minutes" tell right now, along
-  with frosted-glass cards and floating gradient blobs. This palette was chosen
-  specifically to not be that.
+- **Colors:** ink `#0F1319`, surface `#202834`, surface-2 `#2A3342`, line `#404A5A`,
+  line-strong `#556274`, quiet text `#8590A2`, paper (body text) `#F0EDE6`, signal (the
+  ONE accent) `#E0A84E`. Don't add a second accent color.
+  The first version of this palette had surface at 1.09:1 against ink and line at 1.42:1.
+  Both are below the contrast where an eye resolves an edge, so every card and divider on
+  the page was invisible and the whole thing read as flat text on black. The hues did not
+  change; the lightness steps did. **When you add a color, compute its ratio first.**
+  Structural edges need ~2:1 minimum, meaningful ones 3:1 (WCAG 1.4.11), and any text
+  colour has to clear 4.5:1 against *both* ink and surface, because `quiet` is used on both.
+  Don't switch to purple/violet gradients or glassmorphism. That's the single most
+  recognizable "AI generated this in five minutes" tell right now, along with frosted-glass
+  cards and floating gradient blobs. This palette was chosen specifically to not be that.
 - **Type:** Fraunces (display/headlines), IBM Plex Sans (body), IBM Plex Mono (labels,
   data, meta). Not Inter. Not Poppins. Those are the fonts every template defaults to;
   picking something with real character was a deliberate choice, keep it.

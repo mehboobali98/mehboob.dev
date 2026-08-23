@@ -11,19 +11,23 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 {posts.length > 0 && (
-  <section id="writing" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
-    <p class="font-mono text-xs text-signal tracking-widest mb-3">WRITING</p>
-    <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
-      The parts that needed more than three paragraphs.
-    </h2>
+  <section id="writing" class="bg-ink border-t border-line">
+    <div class="band shell">
+    <div class="measure">
+      <p class="marker mb-6">Writing</p>
+      <h2 class="t-display-2 text-paper">
+        The parts that needed more than three paragraphs.
+      </h2>
+    </div>
 
-    <div class="mt-14 max-w-3xl flex flex-col">
+    <div class="mt-12 max-w-[46rem] flex flex-col">
       {posts.map((post) => <PostRow post={post} />)}
       <div class="border-t border-line"></div>
     </div>
 
-    <a href="/blog" class="inline-block mt-10 font-mono text-xs text-signal hover:underline">
+    <a href="/blog" class="inline-block tap mt-10 font-mono text-xs text-signal hover:underline">
       All writing &rarr;
     </a>
+    </div>
   </section>
 )}

@@ -1,10 +1,14 @@
 ---
-// Five tailored variants, each shipped as PDF and DOCX. PDF is listed first because
-// it's the one that renders the same everywhere, including on a phone; the DOCX is
-// there for recruiters and ATS uploads that want an editable file.
+// Five equally-weighted resume variants made the visitor do the sorting. Most people who
+// reach this section want one file, so one is offered outright and the tailored variants
+// sit behind a disclosure for the recruiter who is hiring for a specific shape of role.
+// PDF stays first everywhere because it renders the same on every machine, including a
+// phone; the DOCX is there for ATS uploads that want an editable file.
 const base = '/resume/Mehboob_Ali_';
-const resumes = [
-  { label: 'Staff / Principal / Tech Lead', file: 'Staff_Principal_Tech_Lead_Resume' },
+
+const primary = { label: 'Staff / Principal / Tech Lead', file: 'Staff_Principal_Tech_Lead_Resume' };
+
+const variants = [
   { label: 'Backend / Platform', file: 'Backend_Platform_Resume' },
   { label: 'Applied AI / LLM', file: 'Applied_AI_LLM_Resume' },
   { label: 'Developer Productivity / AI Enablement', file: 'Developer_Productivity_AI_Enablement_Resume' },
@@ -12,40 +16,72 @@ const resumes = [
 ];
 ---
 
-<section id="contact" class="px-6 sm:px-12 lg:px-20 py-24 border-t border-line">
-  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-xl">
-    Open to remote or relocation. Email is the fastest way to reach me.
-  </h2>
+<section id="contact" class="bg-ink border-t border-line">
+  <div class="band shell section-grid">
+    <div class="measure">
+      <h2 class="t-display-2 text-paper">
+        Open to remote or relocation. Email is the fastest way to reach me.
+      </h2>
 
-  <a
-    href="mailto:imehboobali@outlook.com"
-    class="inline-block mt-8 font-display wonk italic text-3xl sm:text-4xl text-signal hover:underline"
-  >
-    imehboobali@outlook.com
-  </a>
+      <a
+        href="mailto:imehboobali@outlook.com"
+        class="inline-block mt-8 font-display wonk italic text-2xl sm:text-3xl text-signal hover:underline break-all"
+      >
+        imehboobali@outlook.com
+      </a>
+    </div>
 
-  <div class="mt-16 max-w-2xl">
-    <p class="font-mono text-xs text-quiet tracking-widest mb-2">RESUME: PICK WHICHEVER FITS THE ROLE</p>
-    <div class="flex flex-col">
-      {resumes.map((r) => (
-        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 border-t border-line">
-          <p class="text-paper">{r.label}</p>
-          <p class="flex gap-4 font-mono text-xs shrink-0">
-            <a href={`${base}${r.file}.pdf`} download class="text-signal hover:underline">PDF &darr;</a>
-            <a href={`${base}${r.file}.docx`} download class="text-quiet hover:text-signal transition-colors">DOCX</a>
-          </p>
+    <div class="xl:pt-3">
+      <p class="t-micro mb-4">Resume</p>
+
+      <div class="p-6 border border-line rounded-lg bg-surface">
+        <p class="font-mono text-[11px] text-quiet">{primary.label}</p>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <a
+            href={`${base}${primary.file}.pdf`}
+            download
+            class="px-5 py-2.5 bg-signal text-ink font-medium text-sm rounded-sm hover:bg-signal/90 transition-colors"
+          >
+            Download PDF
+          </a>
+          <a
+            href={`${base}${primary.file}.docx`}
+            download
+            class="tap font-mono text-xs text-quiet hover:text-signal transition-colors"
+          >
+            DOCX
+          </a>
         </div>
-      ))}
-      <div class="border-t border-line"></div>
+      </div>
+
+      <details class="mt-5">
+        <summary class="tap font-mono text-xs text-quiet hover:text-signal transition-colors cursor-pointer">
+          Four more, tailored to the role
+        </summary>
+        <div class="mt-2 flex flex-col">
+          {variants.map((r) => (
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3 border-t border-line">
+              <p class="text-sm text-paper/80">{r.label}</p>
+              <p class="flex gap-4 font-mono text-xs shrink-0">
+                <a href={`${base}${r.file}.pdf`} download class="tap text-signal hover:underline">PDF &darr;</a>
+                <a href={`${base}${r.file}.docx`} download class="tap text-quiet hover:text-signal transition-colors">DOCX</a>
+              </p>
+            </div>
+          ))}
+          <div class="border-t border-line"></div>
+        </div>
+      </details>
     </div>
   </div>
 </section>
 
-<footer class="px-6 sm:px-12 lg:px-20 py-10 border-t border-line flex flex-col sm:flex-row gap-4 sm:justify-between font-mono text-xs text-quiet">
+<footer class="bg-void border-t border-line">
+  <div class="shell px-5 sm:px-8 lg:px-20 py-9 flex flex-col sm:flex-row gap-4 sm:justify-between font-mono text-xs text-quiet">
   <p>Mehboob Ali, Lahore, Pakistan</p>
   <div class="flex gap-6">
-    <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">GitHub</a>
-    <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="hover:text-signal transition-colors">LinkedIn</a>
-    <a href="mailto:imehboobali@outlook.com" class="hover:text-signal transition-colors">Email</a>
+    <a href="https://github.com/mehboobali98" target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">GitHub</a>
+    <a href="https://www.linkedin.com/in/mehboobali98" target="_blank" rel="noopener" class="tap hover:text-signal transition-colors">LinkedIn</a>
+    <a href="mailto:imehboobali@outlook.com" class="tap hover:text-signal transition-colors">Email</a>
+  </div>
   </div>
 </footer>

@@ -24,16 +24,16 @@ const formatted = date.toLocaleDateString('en-US', {
   article={{ headline: title, datePublished: date.toISOString(), keywords: tags }}
 >
   <Nav />
-  <main class="lg:ml-[300px]">
-    <article class="px-6 sm:px-12 lg:px-20 py-20 lg:py-28">
+  <main>
+    <article class="band shell">
       <!-- 68ch keeps the measure in the comfortable range for body copy. The header
            shares the same column so the title doesn't outrun the text under it. -->
-      <div class="max-w-[68ch]">
+      <div class="max-w-[68ch] mx-auto">
         <a href="/blog" class="font-mono text-xs text-quiet hover:text-signal transition-colors">
           &larr; All writing
         </a>
 
-        <h1 class="mt-8 font-display wonk font-semibold text-[2.1rem] sm:text-5xl leading-[1.05] tracking-[-0.02em] text-paper">
+        <h1 class="mt-8 t-display-2 text-paper">
           {title}
         </h1>
 

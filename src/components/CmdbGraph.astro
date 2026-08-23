@@ -1,0 +1,107 @@
+---
+// The case study says "everything that touches this server, three hops out". This draws
+// exactly that query and nothing else. It is the node-graph motif used literally rather
+// than decoratively, which is the reason the motif was picked in the first place: the
+// quiet mesh is the rest of the CMDB, the amber path is one traversal through it.
+//
+// Node names are shaped like real CI records but name nothing real. No customer data,
+// no employer data. The point being made is the shape of the traversal, not the contents.
+const hops = [
+  { x: 40, y: 152, label: 'srv-01', tier: 'ROOT' },
+  { x: 150, y: 96, label: 'db-cluster', tier: 'HOP 1' },
+  { x: 268, y: 66, label: 'payments-api', tier: 'HOP 2', flip: true },
+  { x: 386, y: 110, label: 'INC-4821', tier: 'HOP 3' },
+];
+
+// The rest of the graph: real relationship types, not on the highlighted path.
+const others = [
+  { x: 150, y: 208, label: 'rack-b4' },
+  { x: 262, y: 176, label: 'm.ali' },
+  { x: 268, y: 244, label: 'lhr-dc1' },
+  { x: 386, y: 206, label: 'CHG-118' },
+];
+
+const quietEdges = [
+  [40, 152, 150, 208],
+  [150, 208, 268, 244],
+  [150, 96, 262, 176],
+  [262, 176, 386, 206],
+  [268, 244, 386, 206],
+  [150, 208, 262, 176],
+];
+
+const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' ');
+---
+
+<figure class="not-prose">
+  <svg
+    viewBox="0 0 430 292"
+    class="w-full h-auto"
+    role="img"
+    aria-labelledby="cmdb-title cmdb-desc"
+  >
+    <title id="cmdb-title">A three-hop CMDB relationship traversal</title>
+    <desc id="cmdb-desc">
+      Starting from a server, the graph traverses to a database cluster, then to the
+      payments API that depends on it, then to an open incident against that service.
+      Other related records (a rack, an assigned user, a datacentre, a change request)
+      sit off the highlighted path.
+    </desc>
+
+    <g stroke="var(--color-line)" stroke-width="1">
+      {quietEdges.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} />)}
+    </g>
+
+    <path
+      d={pathD}
+      fill="none"
+      stroke="var(--color-signal)"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    {others.map((n) => (
+      <>
+        <circle cx={n.x} cy={n.y} r="4" fill="var(--color-ink)" stroke="var(--color-line-strong)" stroke-width="1" />
+        <text
+          x={n.x}
+          y={n.y + 18}
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="11"
+          fill="var(--color-quiet)"
+        >{n.label}</text>
+      </>
+    ))}
+
+    {hops.map((n) => (
+      <>
+        <circle cx={n.x} cy={n.y} r="6" fill="var(--color-signal)" />
+        <text
+          x={n.x}
+          y={n.flip ? n.y + 22 : n.y - 14}
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="9.5"
+          letter-spacing="0.08em"
+          fill="var(--color-quiet)"
+        >{n.tier}</text>
+        <text
+          x={n.x}
+          y={n.flip ? n.y - 14 : n.y + 20}
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="12"
+          fill="var(--color-paper)"
+        >{n.label}</text>
+      </>
+    ))}
+  </svg>
+
+  <figcaption class="mt-4 max-w-[34rem] text-[0.8125rem] leading-relaxed text-quiet">
+    One traversal: server, to the cluster it runs, to the service that depends on it, to
+    the incident open against that service. Three hops, one query. Before this, each of
+    those links was a separate lookup.
+  </figcaption>
+</figure>

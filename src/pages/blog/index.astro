@@ -14,17 +14,18 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   description="Notes on backend systems, performance work, and the tooling around shipping software."
 >
   <Nav />
-  <main class="lg:ml-[300px]">
-    <section class="px-6 sm:px-12 lg:px-20 py-20 lg:py-28">
-      <p class="font-mono text-xs text-signal tracking-widest mb-3">WRITING</p>
-      <h1 class="font-display wonk font-semibold text-3xl sm:text-5xl text-paper max-w-2xl leading-[1.05]">
+  <main>
+    <section class="band shell">
+      <div class="max-w-[68ch] mx-auto">
+      <p class="marker mb-6">Writing</p>
+      <h1 class="t-display-2 text-paper">
         The long version of things that didn't fit in a case study.
       </h1>
 
       {posts.length === 0 ? (
         <p class="mt-10 text-paper/70 max-w-xl leading-relaxed">Nothing published yet.</p>
       ) : (
-        <div class="mt-16 max-w-3xl flex flex-col">
+        <div class="mt-14 flex flex-col">
           {posts.map((post) => <PostRow post={post} as="h2" />)}
           <div class="border-t border-line"></div>
         </div>
@@ -33,6 +34,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
       <p class="mt-14 font-mono text-xs text-quiet">
         <a href="/rss.xml" class="hover:text-signal transition-colors">RSS &rarr;</a>
       </p>
+      </div>
     </section>
   </main>
 </Layout>

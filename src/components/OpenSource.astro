@@ -40,6 +40,12 @@ async function fetchRepoStats(repo: string) {
   }
 }
 
+// A star count in low single digits reads as weaker than no star count at all, and it
+// isn't the claim worth making about these repos anyway: one of them is running inside a
+// team every day, which the description says and a number can't. Recency still earns its
+// place, because "pushed today" is the thing that proves "maintained" in the heading.
+const STAR_THRESHOLD = 25;
+
 function timeAgo(date: Date | null) {
   if (!date) return null;
   const days = Math.floor((Date.now() - date.getTime()) / 86400000);
@@ -59,38 +65,45 @@ const alsoBuilt = [
 ];
 ---
 
-<section id="open-source" class="px-6 sm:px-12 lg:px-20 py-28 border-t border-line">
-  <p class="font-mono text-xs text-signal tracking-widest mb-3">OPEN SOURCE</p>
-  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
-    Public, verifiable, and maintained.
-  </h2>
+<section id="open-source" class="bg-ink border-t border-line">
+  <div class="band shell">
+  <div class="measure">
+    <p class="marker mb-6">Open source</p>
+    <h2 class="t-display-2 text-paper">
+      Public, verifiable, and maintained.
+    </h2>
+  </div>
 
-  <div class="mt-14 grid sm:grid-cols-2 gap-6">
+  <div class="mt-12 grid sm:grid-cols-2 gap-5">
     {projects.map((p, i) => (
       <div
         data-reveal
         class="group flex flex-col p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
       >
-        <div class="flex items-baseline justify-between">
-          <h3 class="font-display font-semibold text-2xl text-paper">{p.name}</h3>
+        <!-- Wraps rather than overflowing: at the narrow end of the two-up grid,
+             "bitwise_attributes" plus its language tag is wider than the card. -->
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h3 class="t-display-3 text-paper min-w-0">{p.name}</h3>
           <span class="font-mono text-[11px] text-quiet">{p.tag}</span>
         </div>
-        <p class="mt-4 text-paper/75 leading-relaxed text-sm">{p.desc}</p>
-        <div class="mt-6 flex items-center justify-between gap-4">
+        <p class="mt-4 text-paper/80 leading-relaxed text-sm">{p.desc}</p>
+        <div class="mt-auto pt-6 flex items-center justify-between gap-4">
           <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
-            <a href={p.href} target="_blank" rel="noopener" class="text-signal hover:underline">
+            <a href={p.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
               {p.cta} &rarr;
             </a>
             {p.post && (
-              <a href={p.post} class="text-quiet hover:text-signal transition-colors">
+              <a href={p.post} class="tap text-quiet hover:text-signal transition-colors">
                 Read the post &rarr;
               </a>
             )}
           </div>
           {stats[i] && (
             <p class="font-mono text-[11px] text-quiet flex items-center gap-3 shrink-0">
-              {stats[i]!.stars !== null && <span>&#9733; {stats[i]!.stars}</span>}
-              {stats[i]!.pushedAt && <span>{timeAgo(stats[i]!.pushedAt)}</span>}
+              {stats[i]!.stars !== null && stats[i]!.stars! >= STAR_THRESHOLD && (
+                <span>&#9733; {stats[i]!.stars}</span>
+              )}
+              {stats[i]!.pushedAt && <span>pushed {timeAgo(stats[i]!.pushedAt)}</span>}
             </p>
           )}
         </div>
@@ -98,14 +111,15 @@ const alsoBuilt = [
     ))}
   </div>
 
-  <div class="mt-14 max-w-2xl">
-    <p class="font-mono text-xs text-quiet tracking-widest mb-4">ALSO BUILT (INTERNAL)</p>
-    <ul class="flex flex-col gap-3">
+  <div class="mt-14">
+    <p class="t-micro mb-6">Also built (internal)</p>
+    <ul class="grid md:grid-cols-3 gap-x-8 gap-y-6">
       {alsoBuilt.map((item) => (
-        <li class="text-sm text-paper/70 leading-relaxed pl-5 relative before:content-['\2014'] before:absolute before:left-0 before:text-quiet">
+        <li class="text-sm text-paper/70 leading-relaxed pt-4 border-t border-line">
           {item}
         </li>
       ))}
     </ul>
+  </div>
   </div>
 </section>

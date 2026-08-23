@@ -14,15 +14,67 @@
 
 @theme {
   /* Color -- dark ink-navy system, warm off-white text, single amber signal color.
-     Deliberately not the near-black+neon-accent default, and not cream+terracotta. */
+     Deliberately not the near-black+neon-accent default, and not cream+terracotta.
+
+     The hues are the original ones. The lightness steps are not: the first version set
+     surface at 1.09:1 against ink and line at 1.42:1, which is below the threshold where
+     an eye resolves an edge at all. Every card, divider and pill was being drawn and then
+     not seen, so the page rendered as undifferentiated text on black. These values are
+     measured, not guessed -- ratios against ink are in the comment on each line. */
   --color-ink: #0F1319;
-  --color-surface: #171C24;
-  --color-surface-2: #1D242E;
-  --color-line: #2A313D;
-  --color-quiet: #6B7688;
+  --color-surface: #202834;      /* 1.25:1 -- a card reads as a card */
+  --color-surface-2: #2A3342;    /* 1.46:1 -- raised/hover ground */
+  --color-line: #404A5A;         /* 2.08:1 -- default borders, pills, table rules */
+  --color-line-strong: #556274;  /* 3.00:1 -- meets WCAG 1.4.11 for meaningful edges */
+  --color-quiet: #8590A2;        /* 5.77:1 on ink, 4.60:1 on surface -- AA on both */
   --color-paper: #F0EDE6;
   --color-signal: #E0A84E;
   --color-signal-dim: #E0A84E33;
+
+  /* Depth. The palette had three usable values between the background and the text,
+     which is why every "surface" and "band" read as the same flat black. void sits
+     below ink for full-bleed moments; ember is the same amber at a lower value, for
+     fills where the full signal colour would shout. Neither is a second accent: one
+     is a darker ground, the other is the accent's own shade. */
+  --color-void: #07090C;
+  --color-ember: #8C5F1E;
+
+  /* One measure token, so body copy can't drift back to 83 characters a line. */
+  --measure: 34rem;
+
+  /* -------------------------------------------------------------------------
+     Spacing scale
+
+     The page was running 28 distinct spacing values (4, 6, 8, 10, 11, 12, 14, 16,
+     18, 20, 23, 24, 28, 32, 40, 56, 64, 80, 112, 128, 144) and four different
+     section paddings with nothing deciding which got which. That is what "spacing
+     issues" looks like from the outside: no two gaps agree, so the eye never finds
+     a rhythm. Seven steps, roughly 1.6x apart. Everything structural picks from
+     these and nothing invents its own.
+     ------------------------------------------------------------------------- */
+  --space-1: 0.5rem;    /* 8   within a line */
+  --space-2: 1rem;      /* 16  between related lines */
+  --space-3: 1.75rem;   /* 28  between blocks in a group */
+  --space-4: 3rem;      /* 48  between groups */
+  --space-5: 5rem;      /* 80  heading to its content */
+  --space-6: 8rem;      /* 128 standard band padding */
+  --space-7: 13rem;     /* 208 the deliberately airy bands only */
+
+  /* -------------------------------------------------------------------------
+     Type scale
+
+     13 sizes became 7. Fraunces carries three display steps and nothing else, Plex
+     Sans owns body, Plex Mono owns labels and data. The jump from display-1 to
+     display-2 is deliberately violent: scale contrast is most of what separates a
+     composed page from a typed one.
+     ------------------------------------------------------------------------- */
+  --type-display-1: clamp(2.5rem, 4.6vw, 4rem);
+  --type-display-2: clamp(2.25rem, 4.2vw, 3.5rem);
+  --type-display-3: 1.75rem;
+  --type-body-lg: 1.125rem;
+  --type-body: 1rem;
+  --type-meta: 0.8125rem;
+  --type-micro: 0.6875rem;
 
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -402,4 +454,370 @@ body {
   height: 1px;
   background: var(--color-signal);
   opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Section grid
+
+   Every section used to be one 672px column inside a 1140px main. That left a
+   quarter of the viewport empty at 1440 and nearly 700px empty at 1728, and it
+   pushed body copy to 83 characters a line (95 in places) when the readable
+   range tops out around 75. Two tracks fix both at once: prose capped at the
+   measure token, and a rail beside it. The rail is not a decorative second
+   column -- it's where the diagrams, metrics and terminal output live, and it
+   exists because the page had nothing on it to look at.
+   --------------------------------------------------------------------------- */
+.section-grid {
+  display: grid;
+  gap: 3.5rem 4rem;
+}
+
+/* Grid children default to min-width:auto, which means a track refuses to shrink below
+   its widest unbreakable content. One long line inside the terminal block was widening
+   the whole column past the viewport and giving the page a horizontal scrollbar on a
+   phone. The overflow belongs to the <pre>, not to the layout. */
+.section-grid > * {
+  min-width: 0;
+}
+
+/* 1280, not 1024: at lg the 300px sidebar leaves 564px of content, and the measure plus
+   the gutter alone wants 608 of it. Splitting into two columns there pushed the layout
+   past the viewport. */
+@media (min-width: 1280px) {
+  .section-grid {
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* Anything holding sentences wears this. It's the one guard against the measure
+   drifting back out to 83 characters the next time a section gets edited. */
+.measure {
+  max-width: var(--measure);
+}
+
+/* --measure is sized for 16px body copy. Meta-sized prose in the same box runs to 83
+   characters, so it gets its own cap rather than inheriting one meant for larger type. */
+.measure-sm {
+  max-width: 26rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Terminal block
+
+   Real output from a real binary, marked up as a <figure> with a <pre>, not a
+   screenshot: it stays selectable, searchable, and legible at any zoom, and it
+   costs no image weight. No fake window chrome or traffic-light dots -- those
+   are template decoration and the frame here is only doing the job of saying
+   "this is a terminal".
+   --------------------------------------------------------------------------- */
+.terminal {
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.terminal figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-quiet);
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.terminal pre {
+  margin: 0;
+  padding: 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-paper) 78%, transparent);
+}
+
+/* The prompt line. The $ is generated so it can never be copied into a paste. */
+.terminal .cmd {
+  color: var(--color-paper);
+}
+
+.terminal .cmd::before {
+  content: "$ ";
+  color: var(--color-signal);
+}
+
+.terminal .dim {
+  color: var(--color-quiet);
+}
+
+/* ---------------------------------------------------------------------------
+   Metric
+
+   A number pulled out at display size. The site had exactly one tier of
+   emphasis between the 80px hero and 16px body, which is to say none, so
+   nothing caught the eye anywhere in 6700px of scroll. Same treatment as the
+   before/after pair already used inside posts, lifted out so the homepage and
+   the blog share it instead of each growing their own.
+   --------------------------------------------------------------------------- */
+.metric {
+  border-top: 1px solid var(--color-line-strong);
+  padding-top: 0.9rem;
+}
+
+.metric dt,
+.metric .metric-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-quiet);
+  margin-bottom: 0.4rem;
+}
+
+.metric dd,
+.metric .metric-value {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--color-signal);
+  margin: 0;
+}
+
+.metric .metric-note {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-quiet);
+  margin-top: 0.5rem;
+  /* The rail gets wide on a large monitor; a caption should not follow it out to 96
+     characters a line just because the space is there. */
+  max-width: 30rem;
+}
+
+/* Two metrics side by side, for a before/after. */
+.metric-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Proof link
+
+   A link out to public, third-party documentation of a thing claimed on this
+   page. Built from the same node-and-connector parts as .edge-link, because
+   that's what it is: an edge from a claim to its corroboration.
+   --------------------------------------------------------------------------- */
+.proof-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-quiet);
+  transition: color 0.2s ease;
+  padding: 0.5rem 0;
+}
+
+.proof-link::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 9999px;
+  border: 1px solid var(--color-line-strong);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.proof-link:hover,
+.proof-link:focus-visible {
+  color: var(--color-signal);
+}
+
+.proof-link:hover::before,
+.proof-link:focus-visible::before {
+  border-color: var(--color-signal);
+  background: var(--color-signal);
+}
+
+/* ---------------------------------------------------------------------------
+   Touch targets
+
+   31 of 50 interactive elements rendered under 24px tall, most of them 11-12px
+   mono. The type sizes are right for the design; the hit areas were not. This
+   pads the box without touching the type.
+   --------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Bands and shell
+
+   The page no longer has a fixed sidebar, so every section is a full-width band
+   that owns its own ground colour, and the content inside it is centred in a
+   shell. This is what lets a band go edge to edge while the reading column stays
+   where the eye expects it. Padding comes from the scale, never from a one-off:
+   .band is the default, .band--air is for the two moments that are meant to feel
+   empty, .band--dense is for the ones that are meant to feel packed.
+   --------------------------------------------------------------------------- */
+.shell {
+  width: 100%;
+  max-width: 84rem;
+  margin-inline: auto;
+}
+
+.band {
+  padding-block: var(--space-6);
+  padding-inline: clamp(1.25rem, 5vw, 5rem);
+}
+
+.band--air {
+  padding-block: var(--space-7);
+}
+
+.band--dense {
+  padding-block: var(--space-5);
+}
+
+/* ---------------------------------------------------------------------------
+   Section marker
+
+   The eyebrow sits on a node. Not decoration: it is the same vocabulary as the
+   hero graph and the CMDB traversal, so the page reads as one continuous graph
+   rather than six unrelated sections that happen to share a colour.
+   --------------------------------------------------------------------------- */
+.marker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-signal);
+}
+
+.marker::before {
+  content: "";
+  width: 0.4375rem;
+  height: 0.4375rem;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--color-signal);
+}
+
+.marker::after {
+  content: "";
+  height: 1px;
+  flex: 1 1 auto;
+  max-width: 4rem;
+  background: linear-gradient(to right, var(--color-signal), transparent);
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Type roles
+
+   Applied as classes so the scale is enforced in one place. Nothing on the page
+   sets a display size inline any more.
+   --------------------------------------------------------------------------- */
+.t-display-1 {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-size: var(--type-display-1);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+.t-display-2 {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-size: var(--type-display-2);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+.t-display-3 {
+  font-family: var(--font-display);
+  font-variation-settings: "WONK" 1;
+  font-size: var(--type-display-3);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+  color: var(--color-quiet);
+}
+
+.t-micro {
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-quiet);
+}
+
+/* ---------------------------------------------------------------------------
+   Hero graph
+
+   The signature. The career is drawn as a traversal: one highlighted path
+   through a quiet mesh, with the milestones as labelled nodes on it. It is the
+   CMDB relationship model applied to the person who built it, which is the one
+   thing on this page no other portfolio could reuse.
+   --------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  background: var(--color-void);
+  min-height: calc(100svh - 3.5rem);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-graph {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* The path draws itself once on load. One orchestrated moment, not a page full
+   of individually animated elements. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-path {
+    animation: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+  }
+
+  .hero-node {
+    animation: pop 0.5s ease both;
+  }
+}
+
+/* The hidden state lives in the keyframe, never on the element. An element that is
+   invisible until an animation rescues it is one dropped frame away from a blank hero. */
+@keyframes draw {
+  from { stroke-dasharray: var(--path-len); stroke-dashoffset: var(--path-len); }
+  to { stroke-dasharray: var(--path-len); stroke-dashoffset: 0; }
+}
+
+@keyframes pop {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

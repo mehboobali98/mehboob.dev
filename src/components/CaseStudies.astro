@@ -1,10 +1,18 @@
 ---
+import CmdbGraph from './CmdbGraph.astro';
+import Terminal from './Terminal.astro';
+
+// Copy is verbatim from the original. What changed is the composition: each study is
+// now its own band with the evidence at large scale on an alternating side, rather than
+// three identical prose blocks stacked in one column. The alternation is the point --
+// three sections with the same silhouette read as a template no matter what they say.
 const studies = [
   {
     id: 'sync',
     title: 'The sync job that took half a day',
     post: '/blog/the-sync-job-that-took-half-a-day',
     stack: ['Ruby on Rails', 'Sidekiq', 'PostgreSQL'],
+    visual: 'runtime',
     body: [
       "AssetSonar's device sync was taking 12 to 15 hours to run. New hardware wouldn't show up for most of a working day, and customers noticed.",
       "The cause was the ordinary, expensive kind: N+1 queries and no batching, on a table that had been accumulating devices for years. I rebuilt the pipeline around batched writes and cut the redundant lookups.",
@@ -16,6 +24,8 @@ const studies = [
     title: 'rmine',
     post: '/blog/designing-a-cli-for-agents',
     stack: ['Go', 'Claude Code SDK', 'Redmine API'],
+    visual: 'terminal',
+    proof: { label: 'github.com/mehboobali98/rmine', href: 'https://github.com/mehboobali98/rmine' },
     body: [
       "I wanted to know what five years of my own ticket history actually said. Nothing existing made that easy, so I wrote something: a Redmine CLI in Go, with a Claude Code skill built directly in, so an agent can query tickets and time logs on its own instead of me copy-pasting API responses into a prompt.",
       "Open source now. The rest of the team runs it day to day, and the numbers section above this one came straight out of it. Not a demo. Just what the tool actually found.",
@@ -25,6 +35,11 @@ const studies = [
     id: 'cmdb',
     title: 'A CMDB that actually models relationships',
     stack: ['Ruby on Rails', 'PostgreSQL', 'Graph modeling'],
+    visual: 'cmdb',
+    proof: {
+      label: 'Publicly documented by EZO',
+      href: 'https://ezo.io/assetsonar/blog/import-cmdb-relationships-55b7baeda4d1/',
+    },
     body: [
       "Most CMDBs are static. An asset points to a user, maybe a location, and that's about it. Anything past that takes a support ticket.",
       "We wanted something that could answer a real question: everything that touches this server, three hops out. I led the design and the build, a data model supporting n-level relationship traversal plus the ITSM-integrated UI on top of it. Seven months, architecture to production, leading a five-person team through it.",
@@ -32,34 +47,88 @@ const studies = [
     ],
   },
 ];
+
+// Verbatim from `rmine --help` on the current build of the CLI.
+const rmineHelp = [
+  'A command-line client for Redmine',
+  '',
+  { text: 'Available Commands:', dim: true },
+  '  issue       Work with Redmine issues',
+  '  project     Browse Redmine projects',
+  '  skill       Manage the rmine Claude Code skill',
+  '  time        Log and manage time entries',
+  "  whoami      Show the active profile's user",
+  '',
+  { text: 'Flags:', dim: true },
+  '  -o, --output string    table|json',
+  '      --profile string   profile to use',
+];
 ---
 
-<section id="work" class="px-6 sm:px-12 lg:px-20 py-36 border-t border-line">
-  <p class="font-mono text-xs text-signal tracking-widest mb-3">SELECTED WORK</p>
-  <h2 class="font-display wonk font-semibold text-3xl sm:text-4xl text-paper max-w-2xl">
-    Three things I'd actually want to talk about in an interview.
-  </h2>
-
-  <div class="mt-16 flex flex-col gap-20">
-    {studies.map((s) => (
-      <article id={s.id} data-reveal class="max-w-2xl">
-        <h3 class="font-display wonk font-semibold text-2xl sm:text-3xl text-paper">{s.title}</h3>
-        <div class="flex flex-wrap gap-2 mt-4">
-          {s.stack.map((t) => (
-            <span class="font-mono text-[11px] px-2.5 py-1 border border-line rounded-full text-quiet">{t}</span>
-          ))}
-        </div>
-        <div class="mt-6 flex flex-col gap-4">
-          {s.body.map((p) => (
-            <p class="text-paper/80 leading-relaxed">{p}</p>
-          ))}
-        </div>
-        {s.post && (
-          <a href={s.post} class="edge-link inline-block mt-6 font-mono text-xs text-signal hover:underline">
-            Read the long version &rarr;
-          </a>
-        )}
-      </article>
-    ))}
+<section id="work" class="bg-ink border-t border-line">
+  <div class="band band--dense shell">
+    <p class="marker mb-6">Selected work</p>
+    <h2 class="t-display-2 text-paper max-w-[28ch]">
+      Three things I'd actually want to talk about in an interview.
+    </h2>
   </div>
+
+  {studies.map((s, i) => (
+    <div
+      id={s.id}
+      data-reveal
+      class:list={['border-t border-line', i % 2 === 1 ? 'bg-surface' : 'bg-ink']}
+    >
+      <article class="band shell grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class:list={['measure min-w-0', i % 2 === 1 && 'lg:order-2 lg:justify-self-end']}>
+          <h3 class="t-display-3 text-paper">{s.title}</h3>
+          <div class="flex flex-wrap gap-2 mt-4">
+            {s.stack.map((t) => (
+              <span class="font-mono text-[11px] px-2.5 py-1 border border-line rounded-full text-quiet">{t}</span>
+            ))}
+          </div>
+          <div class="mt-7 flex flex-col gap-4">
+            {s.body.map((p) => (
+              <p class="text-paper/80 leading-relaxed">{p}</p>
+            ))}
+          </div>
+          <div class="mt-7 flex flex-col items-start gap-1">
+            {s.post && (
+              <a href={s.post} class="edge-link tap font-mono text-xs text-signal hover:underline">
+                Read the long version &rarr;
+              </a>
+            )}
+            {s.proof && (
+              <a href={s.proof.href} target="_blank" rel="noopener" class="proof-link tap">
+                {s.proof.label} &rarr;
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div class:list={['min-w-0', i % 2 === 1 && 'lg:order-1']}>
+          {s.visual === 'runtime' && (
+            <dl class="metric metric-pair">
+              <div>
+                <dt>Before</dt>
+                <dd class="text-[2.5rem] lg:text-[3.25rem]">12&ndash;15 hours</dd>
+              </div>
+              <div>
+                <dt>After</dt>
+                <dd class="text-[2.5rem] lg:text-[3.25rem]">Under 1 hour</dd>
+              </div>
+              <p class="metric-note w-full">
+                Same job, same data volume. The batching pattern it produced is still what
+                every MDM integration since has been built on.
+              </p>
+            </dl>
+          )}
+          {s.visual === 'terminal' && (
+            <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
+          )}
+          {s.visual === 'cmdb' && <CmdbGraph />}
+        </div>
+      </article>
+    </div>
+  ))}
 </section>

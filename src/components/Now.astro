@@ -1,9 +1,29 @@
+---
+import WorkflowGraph from './WorkflowGraph.astro';
+---
+
 <!-- The one section that breaks the page's rhythm on purpose: different ground, no
      amber eyebrow, display type at statement scale. Every other section is a catalog
-     of something; this one is a single sentence and should read like one. -->
-<section id="now" aria-label="Now" class="bg-surface px-6 sm:px-12 lg:px-20 py-40">
-  <p data-reveal class="font-display wonk text-3xl sm:text-4xl lg:text-5xl text-paper max-w-4xl leading-[1.15]">
-    Leading the CMDB and Workflow Automation programs at 7Vals, and figuring out how much of the engineering
-    workflow itself can be handed to an agent without making the output worse.
-  </p>
+     of something; this one is a single sentence and should read like one. The graph
+     beside it is the shape of the thing the sentence names, drawn from EZO's public
+     documentation of the engine, not a decoration added to fill the column. -->
+<section id="now" aria-label="Now" class="bg-surface border-y border-line">
+  <div class="band shell grid xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-14 xl:gap-16 items-center">
+    <p data-reveal class="t-display-2 text-paper">
+      Leading the CMDB and Workflow Automation programs at 7Vals, and figuring out how much of the engineering
+      workflow itself can be handed to an agent without making the output worse.
+    </p>
+
+    <div data-reveal>
+      <WorkflowGraph />
+      <a
+        href="https://ezo.io/assetsonar/blog/automation-engine/"
+        target="_blank"
+        rel="noopener"
+        class="proof-link tap mt-3"
+      >
+        The engine, publicly documented &rarr;
+      </a>
+    </div>
+  </div>
 </section>
