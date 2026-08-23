@@ -36,7 +36,9 @@ const studies = [
     },
     body: [
       "Automation in AssetSonar used to be a trigger paired with a sub-trigger. Fine for a one-step rule. Past that it ran out of room: nothing chained, nothing branched, and when a rule misfired there was no way to see which part of it had.",
-      "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, and actions chain and branch on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read rather than guessed at.",
+      "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, actions chain, and each one branches on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read instead of guessed at.",
+      "What makes it composable is what happens after a request comes back. A web request node parses the response into a schema, and every key in that schema becomes a placeholder the next node can read. Arrays split into individual items. Paginated endpoints follow themselves to the end. Above all of that sit pre-built connectors for Entra, Teams, an HRIS, so the common cases never touch auth at all.",
+      "An offboarding that used to be four tools and a checklist is one workflow.",
       "This is the program I run day to day.",
     ],
   },
@@ -47,7 +49,7 @@ const studies = [
     visual: 'cmdb',
     proof: {
       label: 'Publicly documented by EZO',
-      href: 'https://ezo.io/assetsonar/blog/import-cmdb-relationships-55b7baeda4d1/',
+      href: 'https://ezo.io/assetsonar/blog/visualize-cmdb-relationships-assetsonar-it-graph/',
     },
     body: [
       "Most CMDBs are static. An asset points to a user, maybe a location, and that's about it. Anything past that takes a support ticket.",

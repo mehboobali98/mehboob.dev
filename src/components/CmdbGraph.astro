@@ -1,51 +1,52 @@
 ---
-// The case study says "everything that touches this server, three hops out". This draws
-// exactly that query and nothing else. It is the node-graph motif used literally rather
-// than decoratively, which is the reason the motif was picked in the first place: the
-// quiet mesh is the rest of the CMDB, the amber path is one traversal through it.
+// Faithful to the shipped feature rather than to a generic idea of a graph. The CI types,
+// the level structure and the traversal below all come from EZO's public documentation of
+// the IT Graph: configuration items render as cards on a canvas, relationship lines carry
+// a type and a direction, Level 1 shows direct connections, and each card expands to the
+// next level. Supported CI types are Assets, Members, Software, Software Licenses,
+// Purchase Orders, Contracts, Locations, Vendors and Tickets.
 //
-// Node names are shaped like real CI records but name nothing real. No customer data,
-// no employer data. The point being made is the shape of the traversal, not the contents.
+// The highlighted traversal answers a question the product exists to answer: which vendor
+// contract covers the software installed on this server. Record names are shaped like real
+// ones and name nothing real.
 const hops = [
-  { x: 40, y: 152, label: 'srv-01', tier: 'ROOT' },
-  { x: 150, y: 96, label: 'db-cluster', tier: 'HOP 1' },
-  { x: 268, y: 66, label: 'payments-api', tier: 'HOP 2', flip: true },
-  { x: 386, y: 110, label: 'INC-4821', tier: 'HOP 3' },
+  { x: 44, y: 148, label: 'srv-014', tier: 'ASSET' },
+  { x: 168, y: 176, label: 'SQL Server', tier: 'LEVEL 1' },
+  { x: 300, y: 202, label: 'LIC-2291', tier: 'LEVEL 2' },
+  { x: 424, y: 236, label: 'Microsoft', tier: 'LEVEL 3' },
 ];
 
-// The rest of the graph: real relationship types, not on the highlighted path.
+// Related records off the highlighted path, each a real CI type.
 const others = [
-  { x: 150, y: 208, label: 'rack-b4' },
-  { x: 262, y: 176, label: 'm.ali' },
-  { x: 268, y: 244, label: 'lhr-dc1' },
-  { x: 386, y: 206, label: 'CHG-118' },
+  { x: 158, y: 66, label: 'm.ali', type: 'member' },
+  { x: 292, y: 44, label: 'INC-4821', type: 'ticket' },
+  { x: 132, y: 258, label: 'HQ-Lahore', type: 'location' },
+  { x: 408, y: 118, label: 'CTR-77', type: 'contract' },
 ];
 
 const quietEdges = [
-  [40, 152, 150, 208],
-  [150, 208, 268, 244],
-  [150, 96, 262, 176],
-  [262, 176, 386, 206],
-  [268, 244, 386, 206],
-  [150, 208, 262, 176],
+  [44, 148, 158, 66],
+  [158, 66, 292, 44],
+  [44, 148, 132, 258],
+  [300, 202, 408, 118],
+  [168, 176, 132, 258],
 ];
 
 const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' ');
 ---
 
-<figure class="not-prose">
+<figure>
   <svg
-    viewBox="0 0 430 292"
+    viewBox="0 0 512 300"
     class="w-full h-auto"
     role="img"
     aria-labelledby="cmdb-title cmdb-desc"
   >
-    <title id="cmdb-title">A three-hop CMDB relationship traversal</title>
+    <title id="cmdb-title">A three-level CMDB relationship traversal</title>
     <desc id="cmdb-desc">
-      Starting from a server, the graph traverses to a database cluster, then to the
-      payments API that depends on it, then to an open incident against that service.
-      Other related records (a rack, an assigned user, a datacentre, a change request)
-      sit off the highlighted path.
+      Starting from a server, the graph traverses to the software installed on it, then to
+      that software's licence, then to the vendor behind the licence. A member, a ticket, a
+      location and a contract sit off the highlighted path as related records.
     </desc>
 
     <g stroke="var(--color-line)" stroke-width="1">
@@ -66,7 +67,16 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
         <circle cx={n.x} cy={n.y} r="4" fill="var(--color-ink)" stroke="var(--color-line-strong)" stroke-width="1" />
         <text
           x={n.x}
-          y={n.y + 18}
+          y={n.y - 12}
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="9"
+          letter-spacing="0.06em"
+          fill="var(--color-quiet)"
+        >{n.type}</text>
+        <text
+          x={n.x}
+          y={n.y + 19}
           text-anchor="middle"
           font-family="var(--font-mono)"
           font-size="11"
@@ -80,16 +90,16 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
         <circle cx={n.x} cy={n.y} r="6" fill="var(--color-signal)" />
         <text
           x={n.x}
-          y={n.flip ? n.y + 22 : n.y - 14}
+          y={n.y - 15}
           text-anchor="middle"
           font-family="var(--font-mono)"
-          font-size="9.5"
+          font-size="9"
           letter-spacing="0.08em"
           fill="var(--color-quiet)"
         >{n.tier}</text>
         <text
           x={n.x}
-          y={n.flip ? n.y - 14 : n.y + 20}
+          y={n.y + 21}
           text-anchor="middle"
           font-family="var(--font-mono)"
           font-size="12"
@@ -99,9 +109,9 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
     ))}
   </svg>
 
-  <figcaption class="mt-4 max-w-[34rem] text-[0.8125rem] leading-relaxed text-quiet">
-    One traversal: server, to the cluster it runs, to the service that depends on it, to
-    the incident open against that service. Three hops, one query. Before this, each of
-    those links was a separate lookup.
+  <figcaption class="mt-5 max-w-[34rem] text-[0.8125rem] leading-relaxed text-quiet">
+    Level 1 is what the graph shows by default. Each card expands to the next level, so this
+    path answers which vendor contract covers the software on one server. Before it, every
+    one of those links was a separate lookup. Drawn from the shipped feature, not a screenshot.
   </figcaption>
 </figure>

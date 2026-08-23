@@ -1,25 +1,28 @@
 ---
 // The Workflow Automation Engine is publicly a node canvas: you connect triggers to
 // conditions to actions. So the site's node motif isn't a metaphor here, it's the shape of
-// the product being described. Drawn from the public documentation, linked beside it.
+// the product being described. The connector node is the one worth drawing: it's a web
+// request node with the auth and the action list already built, which is what turns a
+// rules engine into something that can drive Entra or Teams. Drawn from EZO's public
+// documentation, which is linked beside it.
 const nodes = [
-  { x: 22, y: 60, w: 104, label: 'Trigger', sub: 'asset.updated', kind: 'signal' },
-  { x: 166, y: 60, w: 104, label: 'Condition', sub: 'status = idle', kind: 'quiet' },
-  { x: 310, y: 22, w: 104, label: 'Action', sub: 'notify owner', kind: 'quiet' },
-  { x: 310, y: 98, w: 104, label: 'Action', sub: 'open ticket', kind: 'signal' },
+  { x: 8, y: 62, w: 136, label: 'Trigger', sub: 'member.offboarded', kind: 'signal' },
+  { x: 176, y: 62, w: 124, label: 'Condition', sub: 'status = inactive', kind: 'quiet' },
+  { x: 332, y: 20, w: 132, label: 'Connector', sub: 'Entra: update user', kind: 'signal' },
+  { x: 332, y: 104, w: 132, label: 'Action', sub: 'open ticket', kind: 'quiet' },
 ];
 ---
 
 <figure>
-  <svg viewBox="0 0 432 152" class="w-full h-auto" role="img" aria-labelledby="wf-title">
+  <svg viewBox="0 0 476 160" class="w-full h-auto" role="img" aria-labelledby="wf-title">
     <title id="wf-title">
       A workflow automation graph: a trigger feeds a condition, which branches into two actions.
     </title>
 
     <g stroke="var(--color-line-strong)" stroke-width="1" fill="none">
-      <path d="M126,84 L166,84" />
-      <path d="M270,84 C290,84 290,46 310,46" />
-      <path d="M270,84 C290,84 290,122 310,122" />
+      <path d="M144,86 L176,86" />
+      <path d="M300,86 C318,86 318,44 332,44" />
+      <path d="M300,86 C318,86 318,128 332,128" />
     </g>
 
     {nodes.map((n) => (
