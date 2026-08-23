@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push to a PR makes the first run irrelevant, so stop it rather than paying
+# for both.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Reads .nvmrc, so the version lives in one place and CI can't drift from local.
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          # OpenSource.astro calls the GitHub API at build time for each repo's star count
+          # and last-pushed date. Unauthenticated that's 60 requests an hour per IP, shared
+          # across every Actions runner, so it rate-limits often. The component falls back
+          # cleanly, but the fallback silently drops the "pushed today" line that the
+          # section's own heading is claiming. The token makes the limit 1000/hr and costs
+          # nothing to pass.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check the build actually produced pages
+        run: |
+          test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
+          pages=$(find dist -name '*.html' | wc -l | tr -d ' ')
+          echo "built $pages pages"
+          [ "$pages" -ge 7 ] || { echo "expected at least 7 pages, got $pages"; exit 1; }
+          grep -q 'https://mehboob.dev' dist/index.html || { echo "canonical domain missing"; exit 1; }

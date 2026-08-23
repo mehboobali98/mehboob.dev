@@ -27,8 +27,18 @@ const projects = [
 // the build (e.g. repeated local builds in a short window).
 async function fetchRepoStats(repo: string) {
   try {
+    // Unauthenticated the GitHub API allows 60 requests an hour per IP, which CI runners
+    // and build hosts share, so this rate-limits far more often than it does locally. The
+    // catch below handles that, but the fallback quietly drops the "pushed today" line
+    // that this section's own heading is claiming. A token raises the limit to 1000/hr;
+    // when there isn't one the behaviour is exactly what it was before.
+    const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
     const res = await fetch(`https://api.github.com/repos/${repo}`, {
-      headers: { 'User-Agent': 'mehboobali-portfolio-build', Accept: 'application/vnd.github+json' },
+      headers: {
+        'User-Agent': 'mehboobali-portfolio-build',
+        Accept: 'application/vnd.github+json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
     });
     if (!res.ok) return null;
     const data = await res.json();
