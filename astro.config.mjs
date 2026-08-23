@@ -6,9 +6,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Absolute URL for canonical + OG tags. Change this in one place if the domain
-  // lands somewhere other than mehboobali.dev.
-  site: 'https://mehboobali.dev',
+  // Absolute URL for canonical + OG tags, and the single place the domain is written.
+  // Everything downstream reads from here: canonicals, og:url, og:image, the JSON-LD
+  // Person and BlogPosting, the RSS item links and llms.txt.
+  site: 'https://mehboob.dev',
   integrations: [mdx()],
   markdown: {
     // 'css-variables' hands token colors over to CSS instead of baking in a theme's
