@@ -14,9 +14,11 @@ interface Props {
 const { caption, command, output } = Astro.props;
 ---
 
+<!-- tabindex on the pre: it scrolls sideways on narrow screens, and Shiki only adds that
+     automatically to code blocks in posts. The figcaption already names it. -->
 <figure class="terminal">
   <figcaption>{caption}</figcaption>
-  <pre><code><span class="cmd">{command}</span>
+  <pre tabindex="0"><code><span class="cmd">{command}</span>
 {output.map((line) => {
   const text = typeof line === 'string' ? line : line.text;
   const dim = typeof line === 'string' ? false : line.dim;

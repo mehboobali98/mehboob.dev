@@ -83,6 +83,7 @@ const blogPosting = article && {
     {blogPosting && <script type="application/ld+json" set:html={JSON.stringify(blogPosting)} />}
   </head>
   <body class="font-body antialiased">
+    <a href="#main" class="skip-link">Skip to content</a>
     <slot />
     <script>
       // Progressive enhancement: elements start fully visible. Only if JS runs AND the

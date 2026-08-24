@@ -2,22 +2,27 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Numbers from '../components/Numbers.astro';
 import CaseStudies from '../components/CaseStudies.astro';
+import Trajectory from '../components/Trajectory.astro';
 import OpenSource from '../components/OpenSource.astro';
 import Writing from '../components/Writing.astro';
+import Numbers from '../components/Numbers.astro';
 import Now from '../components/Now.astro';
 import Contact from '../components/Contact.astro';
+
+// Work first, volume last: Numbers used to open the page and push the case studies below
+// a first scroll.
 ---
 
 <Layout>
   <Nav />
-  <main>
+  <main id="main" tabindex="-1">
     <Hero />
-    <Numbers />
     <CaseStudies />
+    <Trajectory />
     <OpenSource />
     <Writing />
+    <Numbers />
     <Now />
     <Contact />
   </main>

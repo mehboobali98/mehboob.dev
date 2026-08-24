@@ -113,6 +113,36 @@ body {
   outline-offset: 3px;
 }
 
+/* Parked above the viewport, not display:none -- a hidden element can't be focused.
+   z-50 clears the sticky header, and the focus ring goes paper because the site-wide
+   amber one would be invisible on this element's own amber ground. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 50;
+  transform: translateY(calc(-100% - 1.5rem));
+  padding: 0.7rem 1.1rem;
+  border-radius: 3px;
+  background: var(--color-signal);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--type-meta);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.skip-link:focus-visible {
+  outline-color: var(--color-paper);
+}
+
+/* tabindex="-1" makes main focusable for the skip link; it shouldn't ring the page. */
+main:focus {
+  outline: none;
+}
+
 /* Scroll reveal: only takes effect once JS confirms motion is welcome (see reveal.js
    inline in Layout.astro). Content is fully visible by default -- nothing depends on
    JS running for the page to be readable. */
@@ -422,6 +452,41 @@ body {
     border-color: var(--color-signal);
     background: var(--color-signal);
   }
+
+  /* Same geometry as .post-node, but these rows aren't links, so no hover state. The
+     filled node is the current role. */
+  .role-node {
+    position: relative;
+    padding-left: 2.25rem;
+  }
+
+  .role-node::before {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line);
+  }
+
+  .role-node::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    /* Aligns to the title's first line, not the top of the row. */
+    top: 2.35rem;
+    width: 0.8125rem;
+    height: 0.8125rem;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+
+  .role-node.is-current::after {
+    border-color: var(--color-signal);
+    background: var(--color-signal);
+  }
 }
 
 /* An edge leaving a case study toward its long-form write-up. Same two parts as the
@@ -590,7 +655,8 @@ body {
   font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--color-quiet);
-  margin-top: 0.5rem;
+  /* Matches the .metric-pair gap it used to inherit as a flex item. */
+  margin-top: 2.5rem;
   /* The rail gets wide on a large monitor; a caption should not follow it out to 96
      characters a line just because the space is there. */
   max-width: 30rem;

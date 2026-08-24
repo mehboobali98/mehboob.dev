@@ -1,0 +1,81 @@
+---
+// Dates, titles and scope are copied from the resume, not restated from memory.
+const roles = [
+  {
+    title: 'Software Engineer',
+    dates: 'Aug 2021 – Jan 2023',
+    scope: 'Backend engineering.',
+    proof: 'Re-architected the device sync from 12–15 hours to under one hour, and built the audit-trail engine from scratch.',
+  },
+  {
+    title: 'Software Engineer (L2)',
+    dates: 'Jan 2023 – Jul 2024',
+    scope: 'Feature ownership.',
+    proof: 'Service Catalog, peripheral device discovery, MDM lifecycle automation, AWS Marketplace. This is where I stopped implementing specs and started writing them.',
+  },
+  {
+    title: 'Senior Software Engineer',
+    dates: 'Jul 2024 – Jul 2026',
+    scope: 'Technical lead.',
+    proof: 'Eight engineers on Workflow Automation, five on CMDB / IT Graph, two on AWS cloud integration. Splitting the work up, deciding who owned what, and reviewing how it got built.',
+  },
+  {
+    title: 'Principal Software Engineer',
+    dates: 'Jul 2026 – now',
+    scope: 'Architecture and tooling.',
+    proof: "Reviewing designs I didn't write, getting pulled into production problems, and building the tooling below. Still writing code.",
+    current: true,
+  },
+];
+
+// Moved here from the bottom of the open-source section. Internal adoption is
+// career-scope evidence, so it belongs with the progression it explains.
+const leverage = [
+  'Repository-level Cursor rules and Claude Code skills for our Rails/React codebase, merged into the main repo and adopted across engineering.',
+  'rmine, plus reusable skills for spec analysis and effort estimation. The team runs it day to day; the numbers on this page came out of it.',
+  'Local CI guardrails and Slack-based N+1 detection, so a performance regression is caught before review instead of after deploy.',
+  'Airbrake triage: working out who owns a production error and routing it there, so recurring failures stop sitting unclaimed.',
+  'A closed-loop agent that plans, tiers, implements, and opens a PR (or escalates) for a Redmine ticket, using the Claude Code SDK. Still a prototype, dry-run tested so far.',
+  'SOC 2 remediation and WCAG Level A accessibility work across the Rails codebase, at the level of code fixes and the follow-through to close them out.',
+  'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history. In use by the AssetSonar CSM team.',
+];
+---
+
+<section id="trajectory" class="bg-ink border-t border-line">
+  <div class="band shell">
+    <div class="measure">
+      <p class="marker mb-6">Trajectory</p>
+      <h2 class="t-display-2 text-paper">
+        Four titles in five years, and what stayed behind after each one.
+      </h2>
+    </div>
+
+    <!-- Same path-and-node vocabulary as the writing index and the hero graph. The path
+         is dropped below 640px rather than squeezed into a 20px gutter. -->
+    <ol class="mt-12 max-w-[46rem] flex flex-col">
+      {roles.map((r) => (
+        <li class:list={['role-node py-7 border-t border-line', r.current && 'is-current']}>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+            <p class="t-display-3 text-paper">{r.title}</p>
+            <p class="font-mono text-xs text-quiet shrink-0">{r.dates}</p>
+          </div>
+          <p class="mt-2 t-micro">{r.scope}</p>
+          <p class="mt-3 text-paper/75 leading-relaxed">{r.proof}</p>
+        </li>
+      ))}
+    </ol>
+    <!-- Outside the list: an ol may only contain li. -->
+    <div class="max-w-[46rem] border-t border-line"></div>
+
+    <div class="mt-16">
+      <h3 class="t-micro mb-6">Tooling and practice that stuck</h3>
+      <ul class="grid md:grid-cols-2 gap-x-10 gap-y-7">
+        {leverage.map((item) => (
+          <li class="text-sm text-paper/70 leading-relaxed pt-4 border-t border-line">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

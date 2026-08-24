@@ -14,7 +14,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   description="Notes on backend systems, performance work, and the tooling around shipping software."
 >
   <Nav />
-  <main>
+  <main id="main" tabindex="-1">
     <section class="band shell">
       <div class="max-w-[68ch] mx-auto">
       <p class="marker mb-6">Writing</p>
