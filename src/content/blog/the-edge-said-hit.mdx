@@ -1,0 +1,137 @@
+---
+title: The edge said HIT. The browser asked anyway.
+description: >-
+  Cloudflare was caching this site's assets and reporting it on every response.
+  The browser was still revalidating all six of them on every page view, because
+  of a default header I had never read.
+date: 2026-08-24
+tags: ['Cloudflare', 'Performance']
+---
+
+I was auditing this site's own performance and everything looked fine. Lighthouse
+was returning 98 on mobile and 100 on desktop. No layout shift, no blocking
+JavaScript, eight requests for the whole homepage. So I nearly stopped there.
+
+Then I read the response headers instead of the score.
+
+```
+cf-cache-status: HIT
+cache-control: public, max-age=0, must-revalidate
+```
+
+Both of those are about caching and they are saying opposite things.
+
+## Two caches, and I was reading the wrong one
+
+`cf-cache-status: HIT` means Cloudflare's edge had the file and served it without
+going anywhere else. That is a real cache and it was genuinely working. It is
+also the line I had been treating as the answer.
+
+`Cache-Control` is a different cache entirely. It is the instruction to the
+**browser**, and `max-age=0, must-revalidate` tells the browser it may store the
+file but must ask before every single use.
+
+So the edge cache was doing its job and the browser cache had been told, in
+writing, not to do its. A returning visitor was making a conditional request for
+the stylesheet and all five font files, getting six `304 Not Modified` responses
+back, and rendering the page from bytes it already had.
+
+Six round trips returning nothing. On a phone on a slow connection, that is the
+part of the load you actually feel, and it never showed up in a Lighthouse run
+because Lighthouse profiles a cold visit.
+
+## The default is the default for a good reason
+
+That header is not a misconfiguration. It is what Cloudflare Workers static
+assets sends when you have not said otherwise, and it is
+[documented as the default](https://developers.cloudflare.com/workers/static-assets/headers/).
+
+It is also the correct choice for the general case. Cloudflare has no idea what
+you are serving. If `/logo.png` can be replaced tomorrow with different bytes
+under the same name, then caching it for a year is how you strand people on a
+stale file with no way to tell them. Revalidating every time is the safe default
+for a path whose contents can change.
+
+My files are not that.
+
+## Content-hashed names are the whole argument
+
+Astro emits assets like this:
+
+```
+/_astro/Nav.DF0zyjsx.css
+/_astro/fraunces-latin-wonk-normal.sgo-ioRB.woff2
+```
+
+That middle segment is a hash of the file's contents. Change one character of
+CSS and the filename changes with it. The old URL is not updated, it is
+abandoned, and the HTML that references it is rebuilt to point somewhere new.
+
+Which means a file at one of those URLs can never go stale. Not "is unlikely to".
+Cannot. Staleness requires the bytes behind a name to change, and here they
+can't.
+
+So the reason Cloudflare's default is right in general is exactly the reason it
+is wrong here, and it took one file to say so:
+
+```
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+```
+
+<dl data-runtime-shift aria-label="Browser cache directive on content-hashed assets, before and after">
+  <div>
+    <dt>Before</dt>
+    <dd>Revalidate, always</dd>
+  </div>
+  <div>
+    <dt>After</dt>
+    <dd>One year, immutable</dd>
+  </div>
+</dl>
+
+`immutable` is the part worth adding deliberately. Without it, a browser will
+still revalidate on an explicit reload even while the file is fresh. With it, it
+won't, because you have promised the bytes will never change under that name —
+a promise the hash already makes for you.
+
+## What I deliberately left alone
+
+The rule is scoped to `/_astro/*` and nothing else, and that scoping is most of
+the thinking.
+
+The resume PDFs live at stable paths like
+`/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf`. The whole point of a
+stable path is that I can replace the file behind it and every link that already
+exists keeps working. Same for the Open Graph image. Those are precisely the
+files that must keep revalidating, and putting a year of `immutable` on them
+would mean someone who downloaded my resume in August gets served the August
+copy in December, from their own disk, with no way to know.
+
+The header file is small enough to be worth reading in full before you write it:
+100 rules maximum, 2000 characters a line, and it is never served as an asset
+itself. Custom headers override the defaults rather than merging with them, so
+whatever you write for a path is the whole answer for that path.
+
+## Checking takes one command
+
+```
+curl -sI https://yoursite.com/path/to/hashed-asset.css | grep -i cache-control
+```
+
+If you deploy static assets to Cloudflare and have never run that, I would guess
+you get `max-age=0, must-revalidate` and a `cf-cache-status: HIT` sitting three
+lines above it, looking like reassurance.
+
+The thing I actually got wrong here wasn't the header. It was reading a green
+summary and treating it as the measurement. `cf-cache-status: HIT` was true, and
+it answered a question I hadn't asked.
+
+I did the same thing again an hour later, in the opposite direction. Search
+Console reported `Couldn't fetch` on a sitemap I could fetch myself in 200
+milliseconds, and I started pulling apart bot rules and firewall settings before
+noticing the "Last read" column was simply empty. Nothing had failed. Nothing had
+happened yet. The status was describing an absence and I had read it as a fault.
+
+Both times the dashboard was telling the truth about something adjacent to what I
+wanted to know.
