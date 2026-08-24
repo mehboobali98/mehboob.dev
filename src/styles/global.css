@@ -246,6 +246,10 @@ main:focus {
   border: 1px solid var(--color-line);
   border-radius: 3px;
   padding: 0.1em 0.35em;
+  /* A block of code scrolls inside its own <pre>. Inline code has no such box, so a
+     long unbreakable token -- a hashed asset name, a file path -- pushes the whole
+     page sideways instead. Nothing shorter than 54 characters had hit it before. */
+  overflow-wrap: break-word;
 }
 
 .prose pre {
