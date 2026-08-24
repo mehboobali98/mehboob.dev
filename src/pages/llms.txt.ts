@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
 
   const postLines = posts.map((p) => {
     const date = p.data.date.toISOString().slice(0, 10);
-    return `- [${p.data.title}](${site}/blog/${p.id}) (${date}): ${p.data.description.trim().replace(/\s+/g, ' ')}`;
+    return `- [${p.data.title}](${site}/blog/${p.id}/) (${date}): ${p.data.description.trim().replace(/\s+/g, ' ')}`;
   });
 
   const body = `# Mehboob Ali
