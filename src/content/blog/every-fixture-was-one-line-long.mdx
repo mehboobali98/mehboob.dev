@@ -1,0 +1,135 @@
+---
+title: Every fixture was one line long
+description: >-
+  A review found that the one feature my job-search tool exists for was destroying
+  its own output. The test suite stayed green through all of it, because every
+  fixture in it shared the assumption the bug was made of.
+date: 2026-08-25
+tags: ['Testing', 'Agents']
+draft: false
+---
+
+I have a tool that reads a job application form, drafts answers out of a profile of
+verified evidence, and hands them back for me to paste in. It does not populate
+fields and it does not submit. The text is the entire product: a block I copy into
+someone else's form.
+
+Before pointing anyone at [the repository](https://github.com/mehboobali98/job-search-agent)
+I ran a review over it. The test suite was green. Thirty-one tests.
+
+The review found that the feature was destroying its own output.
+
+## One function, doing the right thing in most places
+
+```js
+export function normalizeText(value) {
+  return String(value ?? "").trim().replace(/\s+/g, " ");
+}
+```
+
+That is correct for most of what goes through it. Field labels scraped off a page
+arrive carrying whatever indentation the markup had. Company names come back with
+trailing whitespace. Collapsing runs of space to a single space is exactly right for
+those.
+
+`\s` matches `\n`.
+
+## The four call sites where it isn't
+
+A thin wrapper puts that function in front of every optional string in the form
+schema:
+
+```js
+function optionalText(value) {
+  const text = normalizeText(value);
+  return text || null;
+}
+```
+
+Four of those strings are the long-form ones: the drafted answer to a textarea, the
+drafted cover letter, and the reviewed version of each after a second agent has
+checked it against the evidence. They are the only fields in the schema a person
+reads end to end. They are the reason the project exists.
+
+Running a cover letter through the real validator:
+
+```
+cover letter newlines  in: 5 -> out: 0
+
+Dear Hiring Team, I led the CMDB relationship-graph work. Best, Mehboob
+```
+
+Salutation, body, signoff, one line. That is what got written into the packet,
+rendered into the "Ready to paste" section of the generated markdown, and handed
+back to me as finished work.
+
+## The tests were the same shape as the bug
+
+Every cover letter in the suite looks like this:
+
+```js
+final_text: "Evidence-backed required cover letter.",
+```
+
+One sentence. There is not a paragraph break in any fixture in any of the tests
+covering this feature.
+
+The suite is not lazy, either. It checks that an optional cover letter cannot be
+drafted at all, that a demographic field can never reach `Ready`, that a required
+file upload is rejected without a document path. It exercises the schema hard. It
+just never once handed the validator a string that had the property the bug was
+about.
+
+Green did not mean the code was right. It meant the code and the fixtures agreed,
+and they agreed because I wrote both of them while believing the same thing about
+what text is.
+
+## The check that agreed with it too
+
+Fields that declare a character limit get validated against it:
+
+```js
+if (field.character_limit && [...proposedResponse].length > field.character_limit) {
+```
+
+`proposedResponse` has already been collapsed by the time it is measured. Every
+paragraph break in the original is two characters the limit never counts.
+
+That check is not wrong, exactly. It measures the string that will actually be
+stored, and the stored string really is shorter. It is correct about the output and
+silent about the input, which is the same failure as the tests, one layer further
+down. No part of the system was positioned to notice, because every part had been
+told the same thing.
+
+## The fix had to leave one thing alone
+
+`normalizeText` kept doing what it does. Identifiers, labels, URLs and company names
+all want collapsing. It was also quietly buying something else: a `###` heading
+rendered from a scraped field label cannot contain a newline and forge a section of
+the document. Application pages are untrusted input here, and that guarantee was
+worth keeping.
+
+So the repair was not to that function. It was a second one, for the fields that
+hold prose: normalize the line endings, trim each line, collapse three or more
+newlines to two, leave the paragraph breaks alone. The labels keep their guarantee
+and the answers keep their shape.
+
+## The fixture is the fix
+
+The suite is at forty-six tests now, up from thirty-one. The one that matters most
+is a single line of setup:
+
+```js
+const letter = "Dear Hiring Team,\n\nI build reliable backend systems.\n\nBest,\nCandidate";
+```
+
+A regression test with a one-line cover letter in it passes against the broken code.
+That was the entire problem. The test has to contain a paragraph break or it is the
+same test I already had.
+
+The same review turned up a worse bug with no text in it at all. Re-running the
+"mark as applied" action on an application that had since moved to a recruiter
+screen reset it to Applied, because a guard that should have been `&&` was `||`. The
+documentation sitting directly under that line promised it preserved later manual
+edits when repeated. It never had. Nothing tested it, for the same reason nothing
+tested a paragraph.
