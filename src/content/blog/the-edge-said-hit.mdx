@@ -19,26 +19,30 @@ cf-cache-status: HIT
 cache-control: public, max-age=0, must-revalidate
 ```
 
-Both of those are about caching and they are saying opposite things.
+Both of those are about caching, and they describe different parts of the request
+path. I had only been reading one of them.
 
-## Two caches, and I was reading the wrong one
+## Two layers, and I was reading the wrong one
 
-`cf-cache-status: HIT` means Cloudflare's edge had the file and served it without
-going anywhere else. That is a real cache and it was genuinely working. It is
-also the line I had been treating as the answer.
+`cf-cache-status: HIT` is a report. It says Cloudflare's edge had the file and
+served it without going anywhere else. That part was working, and it was the line
+I had been treating as the answer.
 
-`Cache-Control` is a different cache entirely. It is the instruction to the
-**browser**, and `max-age=0, must-revalidate` tells the browser it may store the
-file but must ask before every single use.
+`Cache-Control` is not a report. It is a directive, and it applies to the caches
+downstream of the edge, the browser's among them. `max-age=0, must-revalidate`
+tells those caches they may store the response but have to validate it before
+reusing it.
 
-So the edge cache was doing its job and the browser cache had been told, in
-writing, not to do its. A returning visitor was making a conditional request for
-the stylesheet and all five font files, getting six `304 Not Modified` responses
-back, and rendering the page from bytes it already had.
+So the edge was serving from cache and saying so, while the response it served
+told my browser to check back every time. A returning visitor was making a
+conditional request for the stylesheet and all five font files: six requests, six
+`304 Not Modified` responses, no asset bodies transferred. The page then rendered
+from bytes the browser already had.
 
-Six round trips returning nothing. On a phone on a slow connection, that is the
-part of the load you actually feel, and it never showed up in a Lighthouse run
-because Lighthouse profiles a cold visit.
+Nothing was re-downloaded, so this was never a bandwidth problem. Six validation
+requests still add latency for a returning visitor though, more so on a
+higher-RTT connection. It didn't show up in my Lighthouse run because the default
+navigation audit clears storage and measures a cold load.
 
 ## The default is the default for a good reason
 
@@ -54,7 +58,7 @@ for a path whose contents can change.
 
 My files are not that.
 
-## Content-hashed names are the whole argument
+## Fingerprinted names are the whole argument
 
 Astro emits assets like this:
 
@@ -63,23 +67,24 @@ Astro emits assets like this:
 /_astro/fraunces-latin-wonk-normal.sgo-ioRB.woff2
 ```
 
-That middle segment is a hash of the file's contents. Change one character of
-CSS and the filename changes with it. The old URL is not updated, it is
-abandoned, and the HTML that references it is rebuilt to point somewhere new.
+Astro fingerprints its build output, so that middle segment changes when the
+built asset changes. Edit the CSS and the next build emits a different filename,
+and the HTML that references it is rebuilt to point at the new one.
 
-Which means a file at one of those URLs can never go stale. Not "is unlikely to".
-Cannot. Staleness requires the bytes behind a name to change, and here they
-can't.
+The old URL is not updated in place. It goes on identifying the old build output,
+and the changed asset arrives at a new address. So a long lifetime on
+`/_astro/*` is not a bet that the file won't change. Whatever is at that URL is
+not the thing that gets replaced.
 
-So the reason Cloudflare's default is right in general is exactly the reason it
-is wrong here, and it took one file to say so:
+The default is right for the general case and wrong for this one, and saying so
+took one file:
 
 ```
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 ```
 
-<dl data-runtime-shift aria-label="Browser cache directive on content-hashed assets, before and after">
+<dl data-runtime-shift aria-label="Browser cache directive on fingerprinted assets, before and after">
   <div>
     <dt>Before</dt>
     <dd>Revalidate, always</dd>
@@ -90,10 +95,11 @@ is wrong here, and it took one file to say so:
   </div>
 </dl>
 
-`immutable` is the part worth adding deliberately. Without it, a browser will
-still revalidate on an explicit reload even while the file is fresh. With it, it
-won't, because you have promised the bytes will never change under that name —
-a promise the hash already makes for you.
+`immutable` is worth adding deliberately. `max-age` on its own says the response
+stays fresh for a year. `immutable` says something narrower: while it is fresh,
+there is nothing to be gained by validating it, because the response at this URL
+is not going to change. For a fingerprinted asset that is already true. This just
+states it instead of leaving the browser to work it out.
 
 ## What I deliberately left alone
 
@@ -110,28 +116,28 @@ copy in December, from their own disk, with no way to know.
 
 The header file is small enough to be worth reading in full before you write it:
 100 rules maximum, 2000 characters a line, and it is never served as an asset
-itself. Custom headers override the defaults rather than merging with them, so
-whatever you write for a path is the whole answer for that path.
+itself. Where you redefine a header, your value replaces the platform default for
+that header. Anything you don't name is left alone, so setting `Cache-Control`
+here doesn't disturb the rest of the response.
 
 ## Checking takes one command
 
 ```
-curl -sI https://yoursite.com/path/to/hashed-asset.css | grep -i cache-control
+curl -sI https://yoursite.com/_astro/<fingerprinted-asset>.css | grep -i cache-control
 ```
 
 If you deploy static assets to Cloudflare and have never run that, I would guess
 you get `max-age=0, must-revalidate` and a `cf-cache-status: HIT` sitting three
 lines above it, looking like reassurance.
 
-The thing I actually got wrong here wasn't the header. It was reading a green
-summary and treating it as the measurement. `cf-cache-status: HIT` was true, and
-it answered a question I hadn't asked.
+What I got wrong wasn't the header. It was reading a status line as the
+measurement. `cf-cache-status: HIT` was true; it answered a question I hadn't
+asked.
 
-I did the same thing again an hour later, in the opposite direction. Search
-Console reported `Couldn't fetch` on a sitemap I could fetch myself in 200
-milliseconds, and I started pulling apart bot rules and firewall settings before
-noticing the "Last read" column was simply empty. Nothing had failed. Nothing had
-happened yet. The status was describing an absence and I had read it as a fault.
+An hour later I did it in the opposite direction. Search Console reported
+`Couldn't fetch` on a sitemap I could fetch myself in 200ms, and went looking at
+bot rules before noticing the "Last read" column was empty. Nothing had
+failed. Nothing had happened yet.
 
-Both times the dashboard was telling the truth about something adjacent to what I
-wanted to know.
+Both times the dashboard was correct about something adjacent to what I wanted to
+know.
