@@ -32,7 +32,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
       )}
 
       <p class="mt-14 font-mono text-xs text-quiet">
-        <a href="/rss.xml" class="hover:text-signal transition-colors">RSS &rarr;</a>
+        <a href="/rss.xml" data-astro-reload class="hover:text-signal transition-colors">RSS &rarr;</a>
       </p>
       </div>
     </section>

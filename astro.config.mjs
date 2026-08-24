@@ -11,6 +11,10 @@ export default defineConfig({
   // Everything downstream reads from here: canonicals, og:url, og:image, the JSON-LD
   // Person and BlogPosting, the RSS item links and llms.txt.
   site: 'https://mehboob.dev',
+  // Cloudflare answers a slash-less path with a 307 to the directory URL. Every internal
+  // link that omitted the slash was paying an extra round trip; 'always' makes the dev
+  // server reject the shape that the edge redirects, so it can't come back.
+  trailingSlash: 'always',
   // Enumerates every built page, so a new post is listed because it exists rather than
   // because someone remembered. /404 is excluded from the index.
   integrations: [

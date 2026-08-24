@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import { contact } from '../site';
 
@@ -59,7 +60,7 @@ const blogPosting = article && {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,6 +69,7 @@ const blogPosting = article && {
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0F1319" />
     <link rel="canonical" href={canonical} />
+    <ClientRouter fallback="swap" />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -87,26 +89,52 @@ const blogPosting = article && {
     <a href="#main" class="skip-link">Skip to content</a>
     <slot />
     <script>
+      import type { TransitionBeforeSwapEvent } from 'astro:transitions/client';
+
       // Progressive enhancement: elements start fully visible. Only if JS runs AND the
       // visitor hasn't asked for reduced motion do we hide-then-reveal them on scroll.
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) {
-        const targets = document.querySelectorAll('[data-reveal]');
-        targets.forEach((el) => el.classList.add('reveal-pending'));
+      let observer: IntersectionObserver | undefined;
 
-        const observer = new IntersectionObserver(
+      function armReveal() {
+        observer?.disconnect();
+        if (prefersReducedMotion) return;
+
+        observer = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
               if (entry.isIntersecting) {
                 entry.target.classList.remove('reveal-pending');
-                observer.unobserve(entry.target);
+                observer?.unobserve(entry.target);
               }
             }
           },
           { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
         );
-        targets.forEach((el) => observer.observe(el));
+
+        for (const el of document.querySelectorAll('[data-reveal]')) {
+          // Anything already on screen stays visible. Hiding it just to fade it back in a
+          // frame later is a flash on arrival, which is the thing a soft navigation is
+          // supposed to remove.
+          if (el.getBoundingClientRect().top < window.innerHeight) continue;
+          el.classList.add('reveal-pending');
+          observer.observe(el);
+        }
       }
+
+      // Astro scrolls to a cross-page anchor by assigning location.href once the new
+      // document is in place, and `scroll-behavior: smooth` turns that into a second of
+      // the whole homepage sliding past. The swap wipes attributes off <html>, so the
+      // override has to go on the incoming document to survive it.
+      document.addEventListener('astro:before-swap', (e) => {
+        (e as TransitionBeforeSwapEvent).newDocument.documentElement.style.scrollBehavior = 'auto';
+      });
+
+      // Fires on first load and again after every client-side navigation.
+      document.addEventListener('astro:page-load', () => {
+        document.documentElement.style.removeProperty('scroll-behavior');
+        armReveal();
+      });
     </script>
   </body>
 </html>
