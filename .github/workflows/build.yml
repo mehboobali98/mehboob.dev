@@ -43,3 +43,10 @@ jobs:
           echo "built $pages pages"
           [ "$pages" -ge 8 ] || { echo "expected at least 8 pages, got $pages"; exit 1; }
           grep -q 'https://mehboob.dev' dist/index.html || { echo "canonical domain missing"; exit 1; }
+
+          test -f dist/sitemap-index.xml || { echo "sitemap-index.xml missing (robots.txt points at it)"; exit 1; }
+          urls=$(grep -o '<loc>' dist/sitemap-0.xml | wc -l | tr -d ' ')
+          echo "sitemap lists $urls urls"
+          [ "$urls" -ge 7 ] || { echo "expected at least 7 sitemap urls, got $urls"; exit 1; }
+
+          test -f dist/_headers || { echo "dist/_headers missing (asset caching + security headers)"; exit 1; }

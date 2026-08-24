@@ -35,6 +35,8 @@ const meshNodes = [
 // than scaled down: reusing the desktop coordinates would put 15px labels at about 8px.
 const mobileNodes = work.map((n, i) => ({
   label: n.label,
+  // Not drawn at this size; used only for the link's accessible name.
+  note: n.note,
   href: n.href,
   x: 30 + i * 88,
   y: [78, 40, 62, 30][i],
@@ -42,8 +44,7 @@ const mobileNodes = work.map((n, i) => ({
 const mobilePath = mobileNodes.map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
 
 const evidence = [
-  { n: '276', label: 'features shipped' },
-  { n: '22', label: 'Key Features' },
+  { n: '8', label: 'engineers, as tech lead' },
   { n: '7mo', label: 'CMDB to prod' },
 ];
 ---
@@ -91,9 +92,10 @@ const evidence = [
         </dl>
       </div>
 
-      <!-- The graph. Labels are real links, so this is navigation as well as image. -->
+      <!-- No role="img": it hides the element's children from assistive tech, which would
+           leave these four links focusable but unnamed. -->
       <div class="hidden lg:block" style="--path-len: 1600">
-        <svg viewBox="0 0 624 470" class="w-full h-auto" role="img" aria-labelledby="hero-graph-title">
+        <svg viewBox="0 0 624 470" class="w-full h-auto" aria-labelledby="hero-graph-title">
           <title id="hero-graph-title">
             A graph of four things built over five years: a sync pipeline, a CMDB, the rmine
             CLI, and a workflow automation engine, connected as one traversal.
@@ -119,7 +121,12 @@ const evidence = [
           <circle cx={start.x} cy={start.y} r="3.5" fill="var(--color-signal)" />
 
           {work.map((n, i) => (
-            <a href={n.href} class="hero-node" style={`animation-delay:${0.5 + i * 0.22}s`}>
+            <a
+              href={n.href}
+              class="hero-node"
+              aria-label={`${n.label}: ${n.note}`}
+              style={`animation-delay:${0.5 + i * 0.22}s`}
+            >
               <circle cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
               <circle cx={n.x} cy={n.y} r="5.5" fill="var(--color-signal)" />
               <text
@@ -158,7 +165,7 @@ const evidence = [
 <section aria-label="What I've built" class="lg:hidden bg-void border-t border-line">
   <div class="px-[clamp(1.25rem,5vw,5rem)] py-10">
     <p class="t-micro mb-5">Five years, four things</p>
-    <svg viewBox="0 0 350 132" class="w-full h-auto" role="img" aria-labelledby="hero-graph-m">
+    <svg viewBox="0 0 350 132" class="w-full h-auto" aria-labelledby="hero-graph-m">
       <title id="hero-graph-m">
         A sync pipeline, a CMDB, the rmine CLI and a workflow engine, connected as one path.
       </title>
@@ -171,7 +178,7 @@ const evidence = [
         stroke-linejoin="round"
       />
       {mobileNodes.map((n) => (
-        <a href={n.href}>
+        <a href={n.href} aria-label={`${n.label}: ${n.note}`}>
           {/* A generous transparent hit area: the visible node is 10px across, which is
               nowhere near a thumb. */}
           <circle cx={n.x} cy={n.y} r="24" fill="transparent" />

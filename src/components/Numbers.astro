@@ -15,9 +15,10 @@ const stats = [
     desc: 'The short version: I started out implementing specs at 7Vals. Somewhere in there I started writing them instead.',
   },
   {
+    // "tickets", not "features shipped": 28% of these never reached production.
     n: '276',
-    label: 'features shipped',
-    desc: '72% of them live in production; the rest killed, deprioritized, or still in flight.',
+    label: 'feature tickets',
+    desc: '72% of them shipped to production. The rest were killed, deprioritized, or are still in flight.',
     proportion: 72,
   },
   {
@@ -38,14 +39,16 @@ const stats = [
 ];
 ---
 
-<section id="numbers" class="bg-ink">
+<section id="numbers" class="bg-ink border-t border-line">
   <div class="band band--dense shell">
     <p class="marker mb-6">By the numbers</p>
     <h2 class="t-display-2 text-paper max-w-[20ch]">
       I built a tool to analyze my own delivery history. This is what it found.
     </h2>
     <p class="mt-6 text-paper/75 leading-relaxed measure">
-      <a href="#open-source" class="text-signal hover:underline">rmine</a>, a CLI I wrote, pulled
+      <!-- Underlined always: amber sits at 1.05:1 against the surrounding text, so hover
+           alone left colour as the only cue. -->
+      <a href="#open-source" class="text-signal underline underline-offset-2">rmine</a>, a CLI I wrote, pulled
       five years of my own tickets and time logs and scored them.
     </p>
   </div>
@@ -54,8 +57,10 @@ const stats = [
        whole width and their own ground rather than sitting politely in a column. -->
   <div class="bg-surface border-y border-line">
     <dl class="shell grid grid-cols-2 lg:grid-cols-5 gap-px bg-line">
+      <!-- Five stats in two columns leaves an empty sixth cell, which shows the bg-line
+           behind the gaps as a blank panel. Spanning the last one fills the row. -->
       {stats.map((s) => (
-        <div class="bg-surface px-6 sm:px-8 py-10 lg:py-14">
+        <div class="bg-surface px-6 sm:px-8 py-10 lg:py-14 last:col-span-2 lg:last:col-span-1">
           <dt class="sr-only">{s.label}</dt>
           <dd class="m-0">
             <p class="font-display wonk font-black text-signal leading-none text-[3.25rem] lg:text-[4rem]">
@@ -82,7 +87,7 @@ const stats = [
   <!-- The shape behind the totals, and the method that produced them. -->
   <div class="band band--dense shell section-grid">
     <div>
-      <p class="t-micro mb-5">Features per year</p>
+      <p class="t-micro mb-5">Feature tickets per year</p>
       <DeliveryChart />
     </div>
     <div class="measure-sm">

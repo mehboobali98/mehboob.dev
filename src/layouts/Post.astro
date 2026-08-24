@@ -25,7 +25,7 @@ const formatted = date.toLocaleDateString('en-US', {
   article={{ headline: title, datePublished: date.toISOString(), keywords: tags }}
 >
   <Nav />
-  <main>
+  <main id="main" tabindex="-1">
     <article class="band shell">
       <!-- 68ch keeps the measure in the comfortable range for body copy. The header
            shares the same column so the title doesn't outrun the text under it. -->

@@ -86,12 +86,8 @@ const rmineHelp = [
   '      --profile string   profile to use',
 ];
 
-const alsoBuilt = [
-  'A closed-loop agent that plans, tiers, implements, and opens a PR (or escalates) for a Redmine ticket, using the Claude Code SDK. Still a prototype, dry-run tested so far.',
-  'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history. In use by the AssetSonar CSM team.',
-  'Cursor rules and Claude Code skills for our Rails/React codebase, merged into the main repo and used by the whole engineering team',
-  'SOC 2 remediation and WCAG Level A accessibility work across the Rails codebase, at the level of code fixes and the follow-through to close them out',
-];
+// The "Inside the company" list moved to Trajectory: internal adoption is career-scope
+// evidence, not open source.
 ---
 
 <section id="open-source" class="bg-ink border-t border-line">
@@ -107,12 +103,13 @@ const alsoBuilt = [
     {projects.map((p, i) => (
       <div
         data-reveal
-        class="group flex flex-col p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+        class="group flex flex-col min-w-0 p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
       >
         <!-- Wraps rather than overflowing: at the narrow end of the two-up grid,
-             "bitwise_attributes" plus its language tag is wider than the card. -->
+             "bitwise_attributes" plus its language tag is wider than the card. min-w-0 on
+             the card and break-words here are what keep it inside 320px. -->
         <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h3 class="t-display-3 text-paper min-w-0">{p.name}</h3>
+          <h3 class="t-display-3 text-paper min-w-0 break-words">{p.name}</h3>
           <span class="font-mono text-[11px] text-quiet">{p.tag}</span>
         </div>
         <p class="mt-4 text-paper/80 leading-relaxed text-sm">{p.desc}</p>
@@ -150,24 +147,13 @@ const alsoBuilt = [
         into a prompt.
       </p>
       <p class="mt-4 text-paper/80 leading-relaxed">
-        The rest of the team runs it day to day, and the numbers further up this page came
+        The rest of the team runs it day to day, and the delivery numbers on this page came
         straight out of it. Not a demo. Just what the tool actually found.
       </p>
     </div>
     <div>
       <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
     </div>
-  </div>
-
-  <div class="mt-16">
-    <p class="t-micro mb-6">Inside the company</p>
-    <ul class="grid md:grid-cols-2 gap-x-10 gap-y-7">
-      {alsoBuilt.map((item) => (
-        <li class="text-sm text-paper/70 leading-relaxed pt-4 border-t border-line">
-          {item}
-        </li>
-      ))}
-    </ul>
   </div>
   </div>
 </section>

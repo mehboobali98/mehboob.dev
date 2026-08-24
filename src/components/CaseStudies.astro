@@ -39,7 +39,7 @@ const studies = [
       "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, actions chain, and each one branches on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read instead of guessed at.",
       "I led technical delivery on the replacement. Five months, eight engineers, and a no-code canvas built on React Flow. The work split into HTTP and API execution, expression resolution, event triggers, branching and iteration, data transformation, integrations, and the monitoring that shows what a run actually did.",
       "What makes it composable is what happens after a request comes back. A web request node parses the response into a schema, and every key in that schema becomes a placeholder the next node can read. Arrays split into individual items. Paginated endpoints follow themselves to the end. Above all of that sit pre-built connectors for Entra, Teams, an HRIS, so the common cases never touch auth at all.",
-      "An offboarding that used to be four tools and a checklist is one workflow. Customers use it heavily, and it turns out to be the thing that lands in client demos, which is not what I expected from a rules engine.",
+      "An offboarding that used to be four tools and a checklist is one workflow. It runs in customer production accounts, and the numbers aren't mine to publish. It also turns out to be the thing that lands in client demos, which is not what I expected from a rules engine.",
       "It's the program I still run.",
     ],
   },
@@ -55,7 +55,7 @@ const studies = [
     body: [
       "Most CMDBs are static. An asset points to a user, maybe a location, and that's about it. Anything past that takes a support ticket.",
       "We wanted something that could answer a real question: everything that touches this server, three hops out. I led the design and the build, a data model supporting n-level relationship traversal plus the ITSM-integrated UI on top of it. Seven months, architecture to production, leading a five-person team through it.",
-      "Highest concentration of product-flagged Key Features of anything I shipped that year.",
+      "More of it was flagged by product as launch work than anything else I shipped that year.",
     ],
   },
 ];
@@ -67,6 +67,9 @@ const studies = [
     <h2 class="t-display-2 text-paper max-w-[28ch]">
       Three things I'd actually want to talk about in an interview.
     </h2>
+    <p class="mt-6 t-meta measure">
+      These projects are part of AssetSonar, EZO's IT asset management product, built by 7Vals.
+    </p>
   </div>
 
   {studies.map((s, i) => (
@@ -103,21 +106,26 @@ const studies = [
         </div>
 
         <div class:list={['min-w-0', i % 2 === 1 && 'lg:order-1']}>
+          <!-- The caption sits outside the dl: a definition list may only contain
+               term/description groups. -->
           {s.visual === 'runtime' && (
-            <dl class="metric metric-pair">
-              <div>
-                <dt>Before</dt>
-                <dd class="text-[2.5rem] lg:text-[3.25rem]">12&ndash;15 hours</dd>
-              </div>
-              <div>
-                <dt>After</dt>
-                <dd class="text-[2.5rem] lg:text-[3.25rem]">Under 1 hour</dd>
-              </div>
-              <p class="metric-note w-full">
-                Same job, same data volume. The batching pattern it produced is still what
-                every MDM integration since has been built on.
+            <div class="metric">
+              <dl class="metric-pair">
+                <div>
+                  <dt>Before</dt>
+                  <dd class="text-[2.5rem] lg:text-[3.25rem]">12&ndash;15 hours</dd>
+                </div>
+                <div>
+                  <dt>After</dt>
+                  <dd class="text-[2.5rem] lg:text-[3.25rem]">Under 1 hour</dd>
+                </div>
+              </dl>
+              <p class="metric-note">
+                Same job, same data volume: millions of software records across thousands of
+                devices. The batching pattern it produced is still what every MDM integration
+                since has been built on.
               </p>
-            </dl>
+            </div>
           )}
           {s.visual === 'workflow' && <WorkflowGraph />}
           {s.visual === 'cmdb' && <CmdbGraph />}
