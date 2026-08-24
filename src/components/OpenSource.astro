@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import Terminal from './Terminal.astro';
 
 const projects = [
@@ -19,6 +20,18 @@ const projects = [
     href: 'https://github.com/mehboobali98/bitwise_attributes',
     cta: 'View on GitHub',
     post: '/blog/two-years-before-i-published-it',
+  },
+  // No adoption line on this one. The other two earned theirs (a team runs rmine daily,
+  // the gem was internal for two years) and this is a tool with one user, so the claim
+  // it can honestly make is about the design constraint instead.
+  {
+    name: 'job-search-agent',
+    tag: 'Node.js',
+    repo: 'mehboobali98/job-search-agent',
+    desc: "Job discovery for Codex. The finder and judge agents can't write; one deterministic script owns every tracker change, and it never submits an application.",
+    href: 'https://github.com/mehboobali98/job-search-agent',
+    cta: 'View on GitHub',
+    post: '/blog/every-fixture-was-one-line-long',
   },
 ];
 
@@ -88,6 +101,13 @@ const rmineHelp = [
 
 // The "Inside the company" list moved to Trajectory: internal adoption is career-scope
 // evidence, not open source.
+
+// A draft post has no route, so a card linking one would send people to a 404. Every
+// other surface on the site filters on `!data.draft` before linking a post; this does
+// the same, which is what lets a project card ship before its write-up is published.
+const publishedPosts = new Set(
+  (await getCollection('blog', ({ data }) => !data.draft)).map((post) => `/blog/${post.id}`),
+);
 ---
 
 <section id="open-source" class="bg-ink border-t border-line">
@@ -118,7 +138,7 @@ const rmineHelp = [
             <a href={p.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
               {p.cta} &rarr;
             </a>
-            {p.post && (
+            {p.post && publishedPosts.has(p.post) && (
               <a href={p.post} class="tap text-quiet hover:text-signal transition-colors">
                 Read the post &rarr;
               </a>
