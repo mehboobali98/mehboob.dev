@@ -163,3 +163,11 @@ both formats have to keep matching names. They're served as static downloads, no
   with a min-distance constraint, connect nearest neighbors for the mesh.
 - Fonts are self-hosted via `@fontsource/*` packages specifically to avoid a Google Fonts CDN call at
   runtime — keep that pattern if you add more weights or families.
+
+## License
+
+Code is MIT, see `LICENSE`. The Astro setup, the components, the build config and the CSS are
+all fair game.
+
+The writing is not. Blog posts, case-study copy, the bio, and everything under `public/resume/`
+are © 2026 Mehboob Ali, all rights reserved.
