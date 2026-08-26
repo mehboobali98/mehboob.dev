@@ -1,0 +1,108 @@
+---
+// The three items here used to be one-liners in Trajectory's "tooling and practice"
+// list, where seven things of very different weight all got the same 90 characters.
+// These three earned more room for the same reason the case studies did: each one is
+// checkable in the repo, and the specifics are the whole argument. The other four stay
+// in the list.
+//
+// Everything below was read out of the ezofficeinventory working tree rather than
+// restated from the resume. Nothing here links out, because none of it is public, so
+// the counts and file names are doing the work a proof link usually does. That is also
+// why they have to stay exact: "12 rules and 3 skills" is checkable by anyone who can
+// see the repo, and "a suite of coding-agent tooling" is not.
+//
+// Deliberately not cards. OpenSource sits directly below this and is already a card
+// grid; two card sections in a row read as one long grid with a heading stuck in it.
+// The role-node treatment ties it back to Trajectory above instead, which is the
+// section it is the payoff for.
+---
+
+<section id="leverage" class="bg-ink border-t border-line">
+  <div class="band shell">
+    <div class="measure">
+      <p class="marker mb-6">Internal tooling</p>
+      <h2 class="t-display-2 text-paper">Tooling nobody had to opt into.</h2>
+      <p class="mt-6 text-paper/75 leading-relaxed">
+        Three things that ship with the work repo. None of them needed a rollout email.
+      </p>
+    </div>
+
+    <ol class="mt-12 max-w-[46rem] flex flex-col">
+      <li data-reveal class="role-node py-7 border-t border-line">
+        <h3 class="t-display-3 text-paper">Rules and skills that arrive with the branch</h3>
+        <p class="mt-2 font-mono text-xs text-quiet">12 rules &middot; 3 skills &middot; merged June 2026</p>
+        <div class="mt-4 flex flex-col gap-4 text-paper/75 leading-relaxed">
+          <p>
+            Cursor rules covering the Rails and React sides of the codebase, plus three skills that
+            know the house conventions. <code>react-new-module</code> scaffolds a module the way this
+            codebase builds them: screens, containers, hooks, Redux slices, API calls, parsers, routes,
+            i18n. <code>custom-role-permissions</code> walks the YAML entry, the
+            <code>allow_ez_*</code> method, the CanCan rule and the backfill rake task, which is four
+            files in three directories if you are doing it from memory.
+          </p>
+          <p>
+            They went in through an ordinary pull request. Every branch cut since has carried them, so
+            there is nothing to install and nothing to keep in sync.
+          </p>
+        </div>
+      </li>
+
+      <li data-reveal class="role-node py-7 border-t border-line">
+        <h3 class="t-display-3 text-paper">Three hooks nobody installs</h3>
+        <p class="mt-2 font-mono text-xs text-quiet">pre-commit &middot; pre-push &middot; prepare-commit-message</p>
+        <div class="mt-4 flex flex-col gap-4 text-paper/75 leading-relaxed">
+          <p>
+            The setup script for each of the four products calls the hook installer, so they land the
+            first time an engineer runs it and quietly update themselves on every run after that.
+          </p>
+          <p>
+            The pre-commit hook blocks what gets committed by accident: a leftover
+            <code>binding.pry</code>, a conflict marker, a stray <code>console.log</code>, a
+            <code>Gemfile</code> staged without its lockfile. It reads only newly added lines, so a
+            debug statement that was already there does not block you from touching the file. The
+            pre-push hook refuses Ruby syntax errors outright. The third reads the ticket number out
+            of the branch name and appends it to the commit message, which is the kind of thing
+            everyone agrees to do and then forgets by Thursday.
+          </p>
+        </div>
+      </li>
+
+      <li data-reveal class="role-node py-7 border-t border-line">
+        <h3 class="t-display-3 text-paper">An N+1 alert with a line number</h3>
+        <p class="mt-2 font-mono text-xs text-quiet">Bullet &middot; UniformNotifier patch &middot; staging</p>
+        <div class="mt-4 flex flex-col gap-4 text-paper/75 leading-relaxed">
+          <p>Bullet already finds the N+1 queries. Getting anyone to read the log was the hard part.</p>
+          <p>
+            This prepends a module into <code>UniformNotifier::Slack</code> and rewrites what gets
+            posted. The message carries who triggered it, which of the four products it came from, the
+            request URL, Bullet's own suggested fix, and the top five stack frames. Then a link
+            straight to the offending file and line on GitHub.
+          </p>
+          <p>
+            It runs on staging only, which is the whole point. The regression surfaces on a shared
+            environment rather than in production, and the person who caused it hears about it in a
+            channel instead of a log file nobody opens.
+          </p>
+        </div>
+      </li>
+    </ol>
+    <!-- Outside the list: an ol may only contain li. -->
+    <div class="max-w-[46rem] border-t border-line"></div>
+  </div>
+</section>
+
+<style>
+  /* The .prose code rule only applies inside a post body. Same treatment, scoped here,
+     because these three paragraphs are the only place on the homepage that names
+     identifiers. Kept at 0.875em so it sits on the body baseline rather than shrinking
+     the line it sits in. */
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    overflow-wrap: break-word;
+  }
+</style>

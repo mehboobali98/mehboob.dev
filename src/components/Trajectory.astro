@@ -30,14 +30,22 @@ const roles = [
 
 // Moved here from the bottom of the open-source section. Internal adoption is
 // career-scope evidence, so it belongs with the progression it explains.
+//
+// Three items left this list for the Leverage section below: the Cursor rules and
+// skills, the git hooks, and the Slack N+1 alerting. Seven one-liners of identical
+// length gave a repo-wide convention change and a triage habit the same weight, and
+// the three with the most behind them were the ones the format flattened hardest.
+//
+// The hooks and the N+1 alerting used to be a single bullet reading "Local CI
+// guardrails and Slack-based N+1 detection". They are two unrelated pieces of work
+// built a year apart, and the hooks do not detect N+1s at all -- they catch debugger
+// statements, lockfile drift and syntax errors. One bullet was claiming both.
 const leverage = [
-  'Repository-level Cursor rules and Claude Code skills for our Rails/React codebase, merged into the main repo and adopted across engineering.',
   'rmine, plus reusable skills for spec analysis and effort estimation. The team runs it day to day; the numbers on this page came out of it.',
-  'Local CI guardrails and Slack-based N+1 detection, so a performance regression is caught before review instead of after deploy.',
   'Airbrake triage: working out who owns a production error and routing it there, so recurring failures stop sitting unclaimed.',
   'A closed-loop agent that plans, tiers, implements, and opens a PR (or escalates) for a Redmine ticket, using the Claude Code SDK. Still a prototype, dry-run tested so far.',
   'SOC 2 remediation and WCAG Level A accessibility work across the Rails codebase, at the level of code fixes and the follow-through to close them out.',
-  'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history. In use by the AssetSonar CSM team.',
+  'A RAG-based Slack assistant that answers Customer Success questions from company blogs and Slack history. In use by the AssetSonar CSM team, though a developer is still the fallback when it does not know an answer.',
 ];
 ---
 
