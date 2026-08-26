@@ -15,26 +15,53 @@ interface Props {
   };
 }
 
+// Named, because the Person block needs it too and the two must not drift apart. It is
+// also deliberately not the same value as `description` below: that one is per-page and
+// a blog post overrides it, which would leave the site-wide identity block describing
+// whatever the last post happened to be about.
+const siteDescription =
+  'Principal Software Engineer building backend systems, distributed workflows, and the tools that help teams ship them faster.';
+
 const {
   title = 'Mehboob Ali | Principal Software Engineer',
-  description = 'Principal Software Engineer building backend systems, distributed workflows, and the tools that help teams ship them faster.',
+  description = siteDescription,
   article,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 
+// Every field here has to be checkable somewhere else, because that is the whole point
+// of an entity block: it tells a search engine which Mehboob Ali this is by naming the
+// other things he is attached to. The employer, the degree and the dates are the ones
+// on the resume in /public/resume, not a second version written from memory.
+//
+// alternateName carries the handle rather than a nickname. Someone who has seen the Go
+// CLI or a PR and only remembers "mehboobali98" is a real search, and without this
+// nothing on the site ties that string to the name.
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Mehboob Ali',
+  alternateName: 'mehboobali98',
   jobTitle: 'Principal Software Engineer',
+  description: siteDescription,
   email: `mailto:${contact.email}`,
   url: Astro.site?.origin,
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Lahore',
     addressCountry: 'PK',
+  },
+  worksFor: {
+    '@type': 'Organization',
+    name: '7Vals',
+    url: 'https://www.7vals.com/',
+  },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'National University of Computer and Emerging Sciences (FAST-NUCES)',
+    url: 'https://www.nu.edu.pk/',
   },
   knowsAbout: [
     'Ruby on Rails',
