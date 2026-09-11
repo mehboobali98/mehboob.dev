@@ -1,0 +1,335 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import CmdbGraph from '../../components/CmdbGraph.astro';
+import WorkflowGraph from '../../components/WorkflowGraph.astro';
+import { caseStudies, type CaseStudy } from '../../data/caseStudies';
+
+export function getStaticPaths() {
+  return caseStudies.map((study) => ({ params: { slug: study.slug }, props: { study } }));
+}
+
+const { study } = Astro.props as { study: CaseStudy };
+const index = caseStudies.findIndex((item) => item.slug === study.slug);
+const previous = index > 0 ? caseStudies[index - 1] : undefined;
+const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined;
+const accountability = [
+  { label: 'My part', body: study.accountability.mine },
+  { label: "The team's part", body: study.accountability.team },
+  { label: 'Hardest trade-off', body: study.accountability.tradeoff },
+  { label: "What I'd do earlier", body: study.accountability.hindsight },
+];
+---
+
+<Layout title={`${study.title} | Mehboob Ali`} description={study.description}>
+  <Nav />
+  <main id="main" tabindex="-1">
+    <article>
+      <header class="band shell">
+        <a href="/#work" class="tap font-mono text-xs text-quiet hover:text-signal transition-colors">
+          &larr; Selected work
+        </a>
+        <p class="marker mt-12 mb-6">{study.eyebrow}</p>
+        <h1 class="t-display-1 text-paper max-w-[19ch]">{study.title}</h1>
+        <p class="mt-7 text-paper/80 leading-relaxed max-w-[42rem]" style="font-size: var(--type-body-lg)">
+          {study.description}
+        </p>
+        <div class="mt-7 flex flex-wrap gap-2">
+          {study.stack.map((item) => <span class="case-pill">{item}</span>)}
+        </div>
+      </header>
+
+      <section aria-label="Project evidence" class="border-y border-line bg-surface">
+        <dl class="shell evidence-grid">
+          {study.facts.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section class="band shell">
+        <div class="case-visual">
+          {study.visual === 'runtime' && (
+            <div>
+              <div class="runtime-case" aria-label="Runtime improved from 12 to 15 hours to under one hour">
+                <div>
+                  <p>Before</p>
+                  <strong>12–15 hours</strong>
+                </div>
+                <span aria-hidden="true">&rarr;</span>
+                <div>
+                  <p>After</p>
+                  <strong>Under 1 hour</strong>
+                </div>
+              </div>
+              <p class="artifact-caption">Reconstructed from the measured production runtime. No customer data shown.</p>
+            </div>
+          )}
+          {study.visual === 'workflow' && (
+            <div>
+              <WorkflowGraph />
+              <p class="artifact-caption">Reconstructed from EZO’s public Automation Engine documentation.</p>
+            </div>
+          )}
+          {study.visual === 'cmdb' && <CmdbGraph />}
+        </div>
+
+        <section class="mt-10" aria-labelledby="accountability-heading">
+          <h2 id="accountability-heading" class="sr-only">Ownership and reflection</h2>
+          <div class="accountability-grid">
+            {accountability.map((item) => (
+              <div>
+                <p class="t-micro">{item.label}</p>
+                <p class="mt-3 text-sm leading-relaxed text-paper/75">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div class="case-copy mt-16 lg:mt-24">
+          <section>
+            <p class="t-micro">01 · Constraint</p>
+            <h2>What was breaking</h2>
+            <p>{study.challenge}</p>
+          </section>
+          <section>
+            <p class="t-micro">02 · Decisions</p>
+            <h2>How I approached it</h2>
+            <p>{study.approach}</p>
+          </section>
+          <section>
+            <p class="t-micro">03 · Consequence</p>
+            <h2>What changed</h2>
+            <p>{study.result}</p>
+          </section>
+        </div>
+
+        {(study.proof || study.post) && (
+          <div class="mt-16 pt-8 border-t border-line flex flex-wrap gap-x-8 gap-y-2">
+            {study.proof && (
+              <a href={study.proof.href} target="_blank" rel="noopener" class="proof-link tap">
+                {study.proof.label} &rarr;
+              </a>
+            )}
+            {study.post && (
+              <a href={study.post} class="proof-link tap">Read the engineering note &rarr;</a>
+            )}
+          </div>
+        )}
+      </section>
+
+      <nav aria-label="Other case studies" class="border-t border-line bg-void">
+        <div class="shell case-pagination">
+          {previous ? (
+            <a href={`/work/${previous.slug}/`}>
+              <span>Previous case study</span>
+              <strong>&larr; {previous.title}</strong>
+            </a>
+          ) : <span></span>}
+          {next && (
+            <a href={`/work/${next.slug}/`} class="text-right">
+              <span>Next case study</span>
+              <strong>{next.title} &rarr;</strong>
+            </a>
+          )}
+        </div>
+      </nav>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .case-pill {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    color: var(--color-quiet);
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+  }
+
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .evidence-grid > div {
+    min-width: 0;
+    padding: 1.5rem clamp(1.25rem, 5vw, 3rem);
+    border-right: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .evidence-grid dt,
+  .runtime-case p {
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+  }
+
+  .evidence-grid dd {
+    margin: 0.55rem 0 0;
+    color: var(--color-paper);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  .case-visual {
+    padding: clamp(1.5rem, 5vw, 5rem);
+    border: 1px solid var(--color-line);
+    border-radius: 0.625rem;
+    background: var(--color-surface);
+  }
+
+  .artifact-caption {
+    margin-top: 1.25rem;
+    max-width: 34rem;
+    color: var(--color-quiet);
+    font-size: var(--type-meta);
+    line-height: 1.6;
+  }
+
+  .accountability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: var(--color-line);
+  }
+
+  .accountability-grid > div {
+    min-width: 0;
+    padding: 1.5rem;
+    background: var(--color-ink);
+  }
+
+  .runtime-case {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .runtime-case strong {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-variation-settings: "WONK" 1;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    line-height: 0.95;
+    color: var(--color-signal);
+  }
+
+  .runtime-case > span {
+    color: var(--color-line-strong);
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+  }
+
+  .case-copy {
+    display: grid;
+    gap: 4rem;
+    max-width: 70rem;
+  }
+
+  .case-copy section {
+    display: grid;
+    gap: 1rem 4rem;
+  }
+
+  .case-copy h2 {
+    font-family: var(--font-display);
+    font-variation-settings: "WONK" 1;
+    font-weight: 600;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    color: var(--color-paper);
+  }
+
+  .case-copy p:last-child {
+    max-width: 38rem;
+    color: color-mix(in srgb, var(--color-paper) 80%, transparent);
+    line-height: 1.75;
+  }
+
+  .case-pagination {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .case-pagination a {
+    padding: 2.5rem clamp(1.25rem, 5vw, 5rem);
+    transition: background-color 0.2s ease;
+  }
+
+  .case-pagination a:hover {
+    background: var(--color-surface);
+  }
+
+  .case-pagination span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+  }
+
+  .case-pagination strong {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.25;
+    color: var(--color-paper);
+  }
+
+  @media (min-width: 900px) {
+    .evidence-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .evidence-grid > div {
+      border-bottom: 0;
+    }
+
+    .case-copy section {
+      grid-template-columns: 9rem 16rem minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .runtime-case {
+      grid-template-columns: 1fr;
+    }
+
+    .runtime-case > span {
+      transform: rotate(90deg);
+      width: max-content;
+    }
+
+    .case-pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .accountability-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .case-pagination > span:empty {
+      display: none;
+    }
+
+    .case-pagination a + a {
+      border-top: 1px solid var(--color-line);
+    }
+  }
+</style>

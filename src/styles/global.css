@@ -74,7 +74,7 @@
   --type-body-lg: 1.125rem;
   --type-body: 1rem;
   --type-meta: 0.8125rem;
-  --type-micro: 0.6875rem;
+  --type-micro: 0.75rem;
 
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -84,6 +84,10 @@
 html {
   scroll-behavior: smooth;
   background: var(--color-ink);
+}
+
+main [id] {
+  scroll-margin-top: 4.75rem;
 }
 
 body {
@@ -148,10 +152,10 @@ main:focus {
    JS running for the page to be readable. */
 [data-reveal].reveal-pending {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(12px);
 }
 [data-reveal] {
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.42s ease, transform 0.42s ease;
 }
 
 /* Selected point on the numbers graph. Ring only, no transform -- the node already
@@ -294,7 +298,7 @@ main:focus {
 
 .prose figure[data-processing-model] figcaption {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -384,7 +388,7 @@ main:focus {
 
 .prose dl[data-runtime-shift] dt {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -589,7 +593,7 @@ main:focus {
 
 .terminal figcaption {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -621,6 +625,11 @@ main:focus {
   color: var(--color-quiet);
 }
 
+.terminal .terminal-line {
+  display: block;
+  min-height: 1lh;
+}
+
 /* ---------------------------------------------------------------------------
    Metric
 
@@ -638,7 +647,7 @@ main:focus {
 .metric dt,
 .metric .metric-label {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -744,16 +753,21 @@ main:focus {
 }
 
 .band {
-  padding-block: var(--space-6);
+  padding-block: clamp(5rem, 10vw, var(--space-6));
   padding-inline: clamp(1.25rem, 5vw, 5rem);
 }
 
 .band--air {
-  padding-block: var(--space-7);
+  padding-block: clamp(7rem, 15vw, var(--space-7));
 }
 
 .band--dense {
-  padding-block: var(--space-5);
+  padding-block: clamp(3.5rem, 6.25vw, var(--space-5));
+}
+
+/* Homepage previews are an index into the detailed pages, not another copy of them. */
+.band--compact {
+  padding-block: clamp(2.75rem, 4vw, 3.5rem);
 }
 
 /* ---------------------------------------------------------------------------
@@ -866,6 +880,24 @@ main:focus {
 .hero-content {
   position: relative;
   z-index: 1;
+}
+
+.hero-node circle,
+.hero-node text {
+  transition: transform 0.2s ease, fill 0.2s ease, fill-opacity 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hero-node:hover circle:first-of-type,
+.hero-node:focus-visible circle:first-of-type {
+  transform: scale(1.35);
+  fill-opacity: 0.22;
+}
+
+.hero-node:hover text,
+.hero-node:focus-visible text {
+  fill: var(--color-signal);
 }
 
 /* The path draws itself once on load. One orchestrated moment, not a page full

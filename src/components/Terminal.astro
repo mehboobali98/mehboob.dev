@@ -12,16 +12,28 @@ interface Props {
 }
 
 const { caption, command, output } = Astro.props;
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+const terminalHtml = [
+  `<span class="cmd terminal-line">${escapeHtml(command)}</span>`,
+  ...output.map((line) => {
+    const text = typeof line === 'string' ? line : line.text;
+    const dim = typeof line !== 'string' && line.dim;
+    return `<span class="terminal-line${dim ? ' dim' : ''}">${text ? escapeHtml(text) : '&nbsp;'}</span>`;
+  }),
+].join('');
 ---
 
 <!-- tabindex on the pre: it scrolls sideways on narrow screens, and Shiki only adds that
      automatically to code blocks in posts. The figcaption already names it. -->
 <figure class="terminal">
   <figcaption>{caption}</figcaption>
-  <pre tabindex="0"><code><span class="cmd">{command}</span>
-{output.map((line) => {
-  const text = typeof line === 'string' ? line : line.text;
-  const dim = typeof line === 'string' ? false : line.dim;
-  return <><span class={dim ? 'dim' : undefined}>{text}</span>{'\n'}</>;
-})}</code></pre>
+  <pre tabindex="0" set:html={terminalHtml}></pre>
 </figure>

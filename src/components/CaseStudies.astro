@@ -1,144 +1,210 @@
 ---
 import CmdbGraph from './CmdbGraph.astro';
 import WorkflowGraph from './WorkflowGraph.astro';
+import { caseStudies } from '../data/caseStudies';
 
-// rmine used to hold the middle slot. It also owned the numbers section, an open-source
-// card, a node in the hero graph and a featured post, so one tool was carrying a third of
-// a page that is supposed to show five years of range. It keeps every one of those other
-// places; what it gives up is the case-study slot, which goes to the second product
-// program instead. The three studies are now backend performance, a product program, and
-// an architecture the person led a team through.
-//
-// What the workflow copy claims is bounded by what can be checked: EZO documents the
-// engine publicly, and the sentence about running the program is his own. Nothing here
-// asserts a timeline, a team size or a metric that isn't verifiable.
-const studies = [
-  {
-    id: 'sync',
-    title: 'The sync job that took half a day',
-    post: '/blog/the-sync-job-that-took-half-a-day',
-    stack: ['Ruby on Rails', 'Delayed Job', 'PostgreSQL'],
-    visual: 'runtime',
-    body: [
-      "AssetSonar's device sync was taking 12 to 15 hours to run. New hardware wouldn't show up for most of a working day, and customers noticed.",
-      "The cause was the ordinary, expensive kind: N+1 queries and no batching, on a table that had been accumulating devices for years. I rebuilt the pipeline around batched writes and cut the redundant lookups.",
-      "Under an hour now. The batching pattern stuck around a lot longer than the original fix did. Every MDM integration added since has been built on top of it.",
-    ],
-  },
-  {
-    id: 'workflow',
-    title: 'Automation that could branch',
-    stack: ['Ruby on Rails', 'React Flow', 'ITSM'],
-    visual: 'workflow',
-    proof: {
-      label: 'Publicly documented by EZO',
-      href: 'https://ezo.io/assetsonar/blog/automation-engine/',
-    },
-    body: [
-      "Automation in AssetSonar used to be a trigger paired with a sub-trigger. Fine for a one-step rule. Past that it ran out of room: nothing chained, nothing branched, and when a rule misfired there was no way to see which part of it had.",
-      "It's a node canvas now. Triggers fire on an event or on a schedule, conditions filter with AND/OR, actions chain, and each one branches on success or failure. Every run writes a step-by-step log, so a rule that does the wrong thing can be read instead of guessed at.",
-      "I led technical delivery on the replacement. Five months, eight engineers, and a no-code canvas built on React Flow. The work split into HTTP and API execution, expression resolution, event triggers, branching and iteration, data transformation, integrations, and the monitoring that shows what a run actually did.",
-      "What makes it composable is what happens after a request comes back. A web request node parses the response into a schema, and every key in that schema becomes a placeholder the next node can read. Arrays split into individual items. Paginated endpoints follow themselves to the end. Above all of that sit pre-built connectors for Entra, Teams, an HRIS, so the common cases never touch auth at all.",
-      "An offboarding that used to be four tools and a checklist is one workflow. It runs in customer production accounts, and the numbers aren't mine to publish. It also turns out to be the thing that lands in client demos, which is not what I expected from a rules engine.",
-      "It's the program I still run.",
-    ],
-  },
-  {
-    id: 'cmdb',
-    title: 'A CMDB that actually models relationships',
-    stack: ['Ruby on Rails', 'PostgreSQL', 'Graph modeling'],
-    visual: 'cmdb',
-    proof: {
-      label: 'Publicly documented by EZO',
-      href: 'https://ezo.io/assetsonar/blog/visualize-cmdb-relationships-assetsonar-it-graph/',
-    },
-    body: [
-      "Most CMDBs are static. An asset points to a user, maybe a location, and that's about it. Anything past that takes a support ticket.",
-      "We wanted something that could answer a real question: everything that touches this server, three hops out. I led the design and the build, a data model supporting n-level relationship traversal plus the ITSM-integrated UI on top of it. Seven months, architecture to production, leading a five-person team through it.",
-      "More of it was flagged by product as launch work than anything else I shipped that year.",
-    ],
-  },
-];
+const [sync, workflow, cmdb] = caseStudies;
+const workflowPreviewFacts = workflow.facts.filter((fact) => ['Team', 'Duration'].includes(fact.label));
+const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includes(fact.label));
 ---
 
 <section id="work" class="bg-ink border-t border-line">
-  <div class="band band--dense shell">
+  <div class="band band--compact shell">
     <p class="marker mb-6">Selected work</p>
-    <h2 class="t-display-2 text-paper max-w-[28ch]">
-      Three things I'd actually want to talk about in an interview.
-    </h2>
-    <!-- The product name links out. Two EZO blog posts were the only externally
-         checkable thing on the page, and both are one layer in; the product itself is
-         the five-second version of the same proof. Underlined always, for the same
-         reason as the rmine link in the numbers section: amber against this text is
-         1.05:1, so colour alone is not a cue. -->
+    <h2 class="t-display-2 text-paper max-w-[22ch]">Three projects I know inside out.</h2>
     <p class="mt-6 t-meta measure">
-      <!-- The opening tag stays on the same line as the text before it: a newline there
-           is compiled away, and the sentence renders as "part ofAssetSonar". -->
-      These projects are part of <a href="https://ezo.io/assetsonar/" target="_blank" rel="noopener" class="text-signal underline underline-offset-2">AssetSonar</a>, EZO's IT asset
-      management product, built by 7Vals.
+      All three are part of
+      <a href="https://ezo.io/assetsonar/" target="_blank" rel="noopener" class="text-signal underline underline-offset-2">AssetSonar</a>,
+      the IT asset management product I work on at 7Vals.
     </p>
   </div>
 
-  {studies.map((s, i) => (
-    <div
-      id={s.id}
-      data-reveal
-      class:list={['border-t border-line', i % 2 === 1 ? 'bg-surface' : 'bg-ink']}
-    >
-      <article class="band shell grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <div class:list={['measure min-w-0', i % 2 === 1 && 'lg:order-2 lg:justify-self-end']}>
-          <h3 class="t-display-3 text-paper">{s.title}</h3>
-          <div class="flex flex-wrap gap-2 mt-4">
-            {s.stack.map((t) => (
-              <span class="font-mono text-[11px] px-2.5 py-1 border border-line rounded-full text-quiet">{t}</span>
-            ))}
-          </div>
-          <div class="mt-7 flex flex-col gap-4">
-            {s.body.map((p) => (
-              <p class="text-paper/80 leading-relaxed">{p}</p>
-            ))}
-          </div>
-          <div class="mt-7 flex flex-col items-start gap-1">
-            {s.post && (
-              <a href={s.post} class="edge-link tap font-mono text-xs text-signal hover:underline">
-                Read the long version &rarr;
-              </a>
-            )}
-            {s.proof && (
-              <a href={s.proof.href} target="_blank" rel="noopener" class="proof-link tap">
-                {s.proof.label} &rarr;
-              </a>
-            )}
-          </div>
+  <article id={sync.id} data-reveal class="border-t border-line bg-ink">
+    <div class="band band--compact shell grid xl:grid-cols-[minmax(0,0.82fr)_minmax(30rem,1.18fr)] gap-10 xl:gap-20 items-center">
+      <div class="measure min-w-0">
+        <p class="t-micro">01 · {sync.eyebrow}</p>
+        <h3 class="mt-4 t-display-3 text-paper">{sync.title}</h3>
+        <p class="mt-5 text-paper/80 leading-relaxed">{sync.description}</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {sync.stack.map((item) => <span class="tech-pill">{item}</span>)}
         </div>
+        <a href={`/work/${sync.slug}/`} class="edge-link tap mt-6 font-mono text-xs text-signal hover:underline">
+          Open the case study &rarr;
+        </a>
+      </div>
 
-        <div class:list={['min-w-0', i % 2 === 1 && 'lg:order-1']}>
-          <!-- The caption sits outside the dl: a definition list may only contain
-               term/description groups. -->
-          {s.visual === 'runtime' && (
-            <div class="metric">
-              <dl class="metric-pair">
-                <div>
-                  <dt>Before</dt>
-                  <dd class="text-[2.5rem] lg:text-[3.25rem]">12&ndash;15 hours</dd>
-                </div>
-                <div>
-                  <dt>After</dt>
-                  <dd class="text-[2.5rem] lg:text-[3.25rem]">Under 1 hour</dd>
-                </div>
-              </dl>
-              <p class="metric-note">
-                Same job, same data volume: millions of software records across thousands of
-                devices. The batching pattern it produced is still what every MDM integration
-                since has been built on.
-              </p>
-            </div>
-          )}
-          {s.visual === 'workflow' && <WorkflowGraph />}
-          {s.visual === 'cmdb' && <CmdbGraph />}
+      <dl class="runtime-panel" aria-label="Runtime improvement">
+        <div>
+          <dt>Before</dt>
+          <dd>12–15<span>hours</span></dd>
         </div>
-      </article>
+        <div class="runtime-arrow" aria-hidden="true">&rarr;</div>
+        <div>
+          <dt>After</dt>
+          <dd>Under 1<span>hour</span></dd>
+        </div>
+      </dl>
     </div>
-  ))}
+  </article>
+
+  <article id={workflow.id} data-reveal class="border-t border-line bg-surface">
+    <div class="band band--compact shell">
+      <div class="grid xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-10 xl:gap-20 items-end">
+        <div class="measure">
+          <p class="t-micro">02 · {workflow.eyebrow}</p>
+          <h3 class="mt-4 t-display-3 text-paper">{workflow.title}</h3>
+          <p class="mt-5 text-paper/80 leading-relaxed">{workflow.description}</p>
+        </div>
+        <dl class="evidence-row">
+          {workflowPreviewFacts.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div class="workflow-panel mt-10">
+        <WorkflowGraph />
+      </div>
+
+      <div class="mt-7 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap gap-2">
+          {workflow.stack.map((item) => <span class="tech-pill">{item}</span>)}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          {workflow.proof && (
+            <a href={workflow.proof.href} target="_blank" rel="noopener" class="proof-link tap">
+              {workflow.proof.label} &rarr;
+            </a>
+          )}
+          <a href={`/work/${workflow.slug}/`} class="edge-link tap font-mono text-xs text-signal hover:underline">
+            Open the case study &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article id={cmdb.id} data-reveal class="border-t border-line bg-ink">
+    <div class="band band--compact shell grid xl:grid-cols-[minmax(32rem,1.15fr)_minmax(0,0.85fr)] gap-10 xl:gap-20 items-center">
+      <div class="cmdb-panel min-w-0 order-2 xl:order-1">
+        <CmdbGraph />
+      </div>
+      <div class="measure min-w-0 order-1 xl:order-2">
+        <p class="t-micro">03 · {cmdb.eyebrow}</p>
+        <h3 class="mt-4 t-display-3 text-paper">{cmdb.title}</h3>
+        <p class="mt-5 text-paper/80 leading-relaxed">{cmdb.description}</p>
+        <dl class="evidence-row mt-7">
+          {cmdbPreviewFacts.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+          {cmdb.proof && (
+            <a href={cmdb.proof.href} target="_blank" rel="noopener" class="proof-link tap">
+              {cmdb.proof.label} &rarr;
+            </a>
+          )}
+          <a href={`/work/${cmdb.slug}/`} class="edge-link tap font-mono text-xs text-signal hover:underline">
+            Open the case study &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
 </section>
+
+<style>
+  .runtime-panel {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: clamp(1.5rem, 5vw, 4rem);
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: var(--color-surface);
+  }
+
+  .runtime-panel dt,
+  .evidence-row dt {
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+  }
+
+  .runtime-panel dd {
+    margin: 0.55rem 0 0;
+    font-family: var(--font-display);
+    font-variation-settings: "WONK" 1;
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    line-height: 0.95;
+    color: var(--color-signal);
+  }
+
+  .runtime-panel dd span {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+  }
+
+  .runtime-arrow {
+    color: var(--color-line-strong);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+  }
+
+  .workflow-panel,
+  .cmdb-panel {
+    padding: clamp(1.25rem, 4vw, 3.5rem);
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: var(--color-void);
+  }
+
+  .evidence-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    border-radius: 0.4rem;
+    overflow: hidden;
+  }
+
+  .evidence-row > div {
+    min-width: 0;
+    padding: 1rem;
+    background: var(--color-ink);
+  }
+
+  .evidence-row dd {
+    margin: 0.45rem 0 0;
+    color: var(--color-paper);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  .tech-pill {
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    color: var(--color-quiet);
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+  }
+
+</style>

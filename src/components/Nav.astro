@@ -1,41 +1,196 @@
 ---
-// A thin top rail, not a column. The fixed left sidebar this replaces is the single
-// most-cloned engineer-portfolio layout there is, and it was eating 300px of every
-// viewport to hold six links. Root-relative hrefs, not bare fragments: a bare '#work'
-// resolves against whatever page you're on, so it silently does nothing from a post.
-// In page order.
 const links = [
-  { href: '/#work', label: 'Work' },
-  { href: '/#trajectory', label: 'Trajectory' },
-  { href: '/#open-source', label: 'Open Source' },
-  { href: '/#writing', label: 'Writing' },
-  { href: '/#numbers', label: 'Numbers' },
+  { href: '/#work', label: 'Work', section: 'work', watches: ['work'] },
+  { href: '/#numbers', label: 'About', section: 'about', watches: ['numbers', 'trajectory'] },
+  { href: '/#open-source', label: 'Open Source', section: 'open-source', watches: ['open-source'] },
+  { href: '/#writing', label: 'Writing', section: 'writing', watches: ['writing'] },
 ];
+
+const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf';
 ---
 
-<header class="sticky top-0 z-40 bg-void/85 backdrop-blur-md border-b border-line">
+<header data-site-header class="site-header sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-line">
   <div class="shell flex items-center justify-between gap-6 px-5 sm:px-8 lg:px-20 py-3.5">
     <a href="/#top" class="tap font-display font-semibold text-paper text-[0.9375rem] tracking-tight shrink-0">
       Mehboob Ali
     </a>
 
-    <nav class="hidden md:flex items-center gap-7">
-      {links.map((l) => (
-        <a href={l.href} class="tap t-micro hover:text-paper transition-colors">{l.label}</a>
+    <nav aria-label="Portfolio sections" class="hidden lg:flex items-center gap-7">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          data-section-link={link.section}
+          data-watch-sections={link.watches.join(',')}
+          class="section-link tap t-micro hover:text-paper transition-colors"
+        >
+          {link.label}
+        </a>
       ))}
       <a
-        href="/#contact"
-        class="t-micro text-signal border border-line-strong hover:border-signal rounded-sm px-3 py-1.5 transition-colors"
+        href={primaryResume}
+        download
+        class="section-link t-micro text-signal border border-line-strong hover:border-signal rounded-sm px-3 py-1.5 transition-colors"
       >
-        Contact
+        Resume
       </a>
     </nav>
 
-    <!-- Below md the rail keeps only the two things a visitor actually needs from a
-         sticky bar. The full set is a scroll away, not hidden behind a menu. -->
-    <nav class="flex md:hidden items-center gap-5">
-      <a href="/#work" class="tap t-micro hover:text-paper transition-colors">Work</a>
-      <a href="/#contact" class="t-micro text-signal border border-line-strong rounded-sm px-2.5 py-1.5">Contact</a>
-    </nav>
+    <div class="flex lg:hidden items-center gap-3">
+      <details data-mobile-index class="mobile-index relative">
+        <summary class="tap list-none cursor-pointer t-micro text-quiet border border-line rounded-sm px-3 py-1.5 hover:border-line-strong hover:text-paper transition-colors">
+          Index · <span data-current-label>Top</span>
+        </summary>
+        <nav aria-label="Portfolio index" class="index-panel absolute right-0 top-[calc(100%+0.75rem)] w-64 border border-line rounded-md bg-surface shadow-2xl p-2">
+          {links.map((link, index) => (
+            <a
+              href={link.href}
+              data-section-link={link.section}
+              data-watch-sections={link.watches.join(',')}
+              class="section-link flex items-center justify-between gap-5 px-3 py-3 font-mono text-xs text-quiet rounded-sm hover:bg-surface-2 hover:text-paper transition-colors"
+            >
+              <span>{link.label}</span>
+              <span aria-hidden="true" class="text-[10px]">{String(index + 1).padStart(2, '0')}</span>
+            </a>
+          ))}
+        </nav>
+      </details>
+      <a href={primaryResume} download class="t-micro text-signal border border-line-strong rounded-sm px-2.5 py-1.5">
+        Resume
+      </a>
+    </div>
   </div>
+
+  <div class="page-progress" aria-hidden="true"><span data-progress-bar></span></div>
 </header>
+
+<script>
+  function setupPortfolioNavigation() {
+    const header = document.querySelector<HTMLElement>('[data-site-header]');
+    if (!header || header.dataset.ready === 'true') return;
+    header.dataset.ready = 'true';
+
+    const links = Array.from(header.querySelectorAll<HTMLAnchorElement>('[data-section-link]'));
+    const currentLabel = header.querySelector<HTMLElement>('[data-current-label]');
+    const progress = header.querySelector<HTMLElement>('[data-progress-bar]');
+    const mobileIndex = header.querySelector<HTMLDetailsElement>('[data-mobile-index]');
+    const homeSections = links.flatMap((link) =>
+      (link.dataset.watchSections || '')
+        .split(',')
+        .filter(Boolean)
+        .map((sectionId) => ({ link, section: document.getElementById(sectionId) }))
+        .filter((item) => item.section)
+    );
+    const contactSection = document.getElementById('contact');
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      if (progress) progress.style.transform = `scaleX(${Math.min(1, window.scrollY / maxScroll)})`;
+
+      let active = '';
+      let labelOverride = '';
+      if (location.pathname.startsWith('/blog')) active = 'writing';
+      if (location.pathname.startsWith('/work')) active = 'work';
+
+      if (homeSections.length > 0) {
+        const readingLine = window.innerHeight * 0.34;
+        for (const item of homeSections) {
+          if (item.section && item.section.getBoundingClientRect().top <= readingLine) {
+            active = item.link.dataset.sectionLink || '';
+          }
+        }
+
+        if (contactSection && contactSection.getBoundingClientRect().top <= readingLine) {
+          active = '';
+          labelOverride = 'Contact';
+        }
+      }
+
+      for (const link of links) {
+        const selected = link.dataset.sectionLink === active;
+        link.classList.toggle('is-active', selected);
+        if (selected) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      }
+
+      if (currentLabel) {
+        const selected = links.find((link) => link.dataset.sectionLink === active);
+        currentLabel.textContent = labelOverride || selected?.textContent?.trim() || 'Top';
+      }
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    for (const link of links) link.addEventListener('click', () => mobileIndex?.removeAttribute('open'));
+    update();
+
+    document.addEventListener('astro:before-swap', () => {
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      if (frame) cancelAnimationFrame(frame);
+    }, { once: true });
+  }
+
+  document.addEventListener('astro:page-load', setupPortfolioNavigation);
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+  }
+
+  .section-link {
+    position: relative;
+  }
+
+  .section-link.is-active {
+    color: var(--color-paper);
+  }
+
+  .section-link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.45rem;
+    height: 1px;
+    background: var(--color-signal);
+  }
+
+  .index-panel .section-link.is-active {
+    color: var(--color-signal);
+    background: var(--color-surface-2);
+  }
+
+  .index-panel .section-link.is-active::after {
+    display: none;
+  }
+
+  .mobile-index summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .page-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .page-progress span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--color-signal);
+    transition: transform 80ms linear;
+  }
+</style>

@@ -2,11 +2,21 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
-import PostRow from '../../components/PostRow.astro';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
+const featured = posts[0];
+const archive = posts.slice(1);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}
 ---
 
 <Layout
@@ -16,25 +26,122 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <Nav />
   <main id="main" tabindex="-1">
     <section class="band shell">
-      <div class="max-w-[68ch] mx-auto">
-      <p class="marker mb-6">Writing</p>
-      <h1 class="t-display-2 text-paper">
-        The long version of things that didn't fit in a case study.
-      </h1>
-
-      {posts.length === 0 ? (
-        <p class="mt-10 text-paper/70 max-w-xl leading-relaxed">Nothing published yet.</p>
-      ) : (
-        <div class="mt-14 flex flex-col">
-          {posts.map((post) => <PostRow post={post} as="h2" />)}
-          <div class="border-t border-line"></div>
-        </div>
-      )}
-
-      <p class="mt-14 font-mono text-xs text-quiet">
-        <a href="/rss.xml" data-astro-reload class="hover:text-signal transition-colors">RSS &rarr;</a>
-      </p>
+      <div class="measure">
+        <p class="marker mb-6">Writing</p>
+        <h1 class="t-display-2 text-paper">Notes from building and debugging.</h1>
+        <p class="mt-6 text-paper/70 leading-relaxed">
+          Debugging stories, design constraints, and the tooling decisions that were too useful
+          to leave inside a pull request.
+        </p>
       </div>
+
+      {featured ? (
+        <>
+          <a href={`/blog/${featured.id}/`} class="featured-essay group mt-14">
+            <div class="featured-index" aria-hidden="true">01</div>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-quiet">
+                <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
+                {featured.data.tags.map((tag) => <span>{tag}</span>)}
+              </div>
+              <h2 class="mt-5 font-display wonk font-semibold text-3xl sm:text-5xl leading-[1.08] text-paper group-hover:text-signal transition-colors max-w-[18ch]">
+                {featured.data.title}
+              </h2>
+              <p class="mt-5 max-w-[42rem] text-paper/75 leading-relaxed">{featured.data.description}</p>
+              <p class="mt-7 font-mono text-xs text-signal">Read the essay &rarr;</p>
+            </div>
+          </a>
+
+          {archive.length > 0 && (
+            <div class="mt-20">
+              <div class="flex items-center justify-between gap-6 pb-5 border-b border-line">
+                <p class="t-micro">Archive</p>
+                <p class="font-mono text-xs text-quiet">{archive.length} more notes</p>
+              </div>
+              <div class="archive-grid">
+                {archive.map((post, index) => (
+                  <a href={`/blog/${post.id}/`} data-reveal class="archive-card group">
+                    <p class="font-mono text-xs text-quiet">
+                      {String(index + 2).padStart(2, '0')} · {formatDate(post.data.date)}
+                    </p>
+                    <h2 class="mt-4 font-display wonk font-semibold text-2xl leading-tight text-paper group-hover:text-signal transition-colors">
+                      {post.data.title}
+                    </h2>
+                    <p class="mt-4 text-sm text-paper/65 leading-relaxed">{post.data.description}</p>
+                    <div class="mt-auto pt-6 flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <p class="mt-12 font-mono text-xs text-quiet">
+            <a href="/rss.xml" data-astro-reload class="tap hover:text-signal transition-colors">RSS &rarr;</a>
+          </p>
+        </>
+      ) : (
+        <p class="mt-10 text-paper/70 max-w-xl leading-relaxed">Nothing published yet.</p>
+      )}
     </section>
   </main>
 </Layout>
+
+<style>
+  .featured-essay {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    padding: clamp(1.5rem, 5vw, 4rem);
+    border: 1px solid var(--color-line);
+    border-radius: 0.625rem;
+    background: var(--color-surface);
+    transition: border-color 0.2s ease;
+  }
+
+  .featured-essay:hover {
+    border-color: var(--color-signal);
+  }
+
+  .featured-index {
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    color: var(--color-signal);
+  }
+
+  .archive-grid {
+    display: grid;
+  }
+
+  .archive-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .tag {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    color: var(--color-quiet);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+  }
+
+  @media (min-width: 820px) {
+    .archive-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .featured-essay {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>

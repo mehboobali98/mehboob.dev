@@ -5,15 +5,10 @@ import DeliveryChart from './DeliveryChart.astro';
 // the least interesting figure in the set. They are all plain text now and the section
 // needs no JavaScript at all.
 //
-// The graph is not plotted against an axis, because there is no per-year breakdown
-// behind these five numbers to plot honestly. Faking a trend line out of five unrelated
-// quantities would be inventing data. It reads as what it is: five points on a path.
+// Keep the three figures that add information on the homepage. Promotion count already
+// appears in the hero, while "five years" is context rather than evidence. The detailed
+// case pages carry the rest.
 const stats = [
-  {
-    n: '5',
-    label: 'years',
-    desc: 'The short version: I started out implementing specs at 7Vals. Somewhere in there I started writing them instead.',
-  },
   {
     // "tickets", not "features shipped": 28% of these never reached production.
     n: '276',
@@ -23,44 +18,41 @@ const stats = [
   },
   {
     n: '22',
-    label: 'Key Features',
+    label: 'key features',
     desc: 'Product-flagged, go-to-market work. Not the routine maintenance stuff.',
   },
   {
-    n: '3',
-    label: 'promotions',
-    desc: 'Software Engineer to Principal. Four titles, five years.',
-  },
-  {
     n: '7',
-    label: 'months',
-    desc: 'Zero to production on the CMDB module. Newest number on this list.',
+    label: 'months to production',
+    desc: 'The CMDB module, from architecture to a production release.',
   },
 ];
 ---
 
 <section id="numbers" class="bg-ink border-t border-line">
-  <div class="band band--dense shell">
+  <div class="band band--compact shell">
     <p class="marker mb-6">By the numbers</p>
-    <h2 class="t-display-2 text-paper max-w-[20ch]">
-      I built a tool to analyze my own delivery history. This is what it found.
+    <h2 class="t-display-2 text-paper max-w-[22ch]">
+      I checked five years of tickets. Here’s what I found.
     </h2>
     <p class="mt-6 text-paper/75 leading-relaxed measure">
       <!-- Underlined always: amber sits at 1.05:1 against the surrounding text, so hover
            alone left colour as the only cue. -->
-      <a href="#open-source" class="text-signal underline underline-offset-2">rmine</a>, a CLI I wrote, pulled
-      five years of my own tickets and time logs and scored them.
+      <a href="#open-source" class="text-signal underline underline-offset-2">rmine</a>, a CLI I wrote,
+      pulled the history and did the counting.
     </p>
   </div>
 
   <!-- Full-bleed. The numbers are the loudest thing in this section, so they get the
        whole width and their own ground rather than sitting politely in a column. -->
   <div class="bg-surface border-y border-line">
-    <dl class="shell grid grid-cols-2 lg:grid-cols-5 gap-px bg-line">
-      <!-- Five stats in two columns leaves an empty sixth cell, which shows the bg-line
-           behind the gaps as a blank panel. Spanning the last one fills the row. -->
-      {stats.map((s) => (
-        <div class="bg-surface px-6 sm:px-8 py-10 lg:py-14 last:col-span-2 lg:last:col-span-1">
+    <dl class="shell grid grid-cols-2 lg:grid-cols-3 gap-px bg-line">
+      <!-- The lead metric spans the full phone width. At lg all three form one row. -->
+      {stats.map((s, index) => (
+        <div class:list={[
+          'bg-surface px-6 sm:px-8 py-9 lg:py-10',
+          index === 0 && 'col-span-2 lg:col-span-1',
+        ]}>
           <dt class="sr-only">{s.label}</dt>
           <dd class="m-0">
             <p class="font-display wonk font-black text-signal leading-none text-[3.25rem] lg:text-[4rem]">
@@ -75,7 +67,13 @@ const stats = [
                 <p class="mt-2 t-micro">{s.proportion}% in production</p>
               </div>
             )}
-            <p class="mt-4 text-paper/60 leading-relaxed" style="font-size: var(--type-meta)">
+            <p
+              class:list={[
+                'mt-4 text-paper/60 leading-relaxed',
+                index !== 0 && 'hidden sm:block',
+              ]}
+              style="font-size: var(--type-meta)"
+            >
               {s.desc}
             </p>
           </dd>
@@ -85,29 +83,33 @@ const stats = [
   </div>
 
   <!-- The shape behind the totals, and the method that produced them. -->
-  <div class="band band--dense shell section-grid">
+  <div class="band band--compact shell section-grid">
     <div>
       <p class="t-micro mb-5">Feature tickets per year</p>
       <DeliveryChart />
     </div>
-    <div class="measure-sm">
-      <p class="t-micro mb-3">Method</p>
-      <p class="text-paper/70 leading-relaxed" style="font-size: var(--type-meta)">
-        Closed issues assigned to me across five years, exported
-        with <code class="font-mono text-[0.9em] text-paper/85">-o json</code>, then
-        grouped by tracker and by the product's own feature flag. The tool is open source;
-        the Redmine instance behind these numbers is my employer's, so you can read the
-        method but you can't run it. Where a number is a range or an estimate, it's
-        written as one.
-      </p>
-      <a
-        href="https://github.com/mehboobali98/rmine"
-        target="_blank"
-        rel="noopener"
-        class="proof-link tap mt-2"
-      >
-        Read the source on GitHub
-      </a>
-    </div>
+    <details class="measure-sm border-y border-line py-1">
+      <summary class="tap cursor-pointer font-mono text-xs text-quiet hover:text-signal transition-colors">
+        How I counted this
+      </summary>
+      <div class="pb-4">
+        <p class="text-paper/70 leading-relaxed" style="font-size: var(--type-meta)">
+          Closed issues assigned to me across five years, exported
+          with <code class="font-mono text-[0.9em] text-paper/85">-o json</code>, then
+          grouped by tracker and by the product's own feature flag. The tool is open source;
+          the Redmine instance behind these numbers is my employer's, so you can read the
+          method but you can't run it. Where a number is a range or an estimate, it's
+          written as one.
+        </p>
+        <a
+          href="https://github.com/mehboobali98/rmine"
+          target="_blank"
+          rel="noopener"
+          class="proof-link tap mt-2"
+        >
+          Read the source on GitHub
+        </a>
+      </div>
+    </details>
   </div>
 </section>
