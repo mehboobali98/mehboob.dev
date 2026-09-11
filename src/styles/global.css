@@ -74,7 +74,7 @@
   --type-body-lg: 1.125rem;
   --type-body: 1rem;
   --type-meta: 0.8125rem;
-  --type-micro: 0.6875rem;
+  --type-micro: 0.75rem;
 
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -298,7 +298,7 @@ main:focus {
 
 .prose figure[data-processing-model] figcaption {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -388,7 +388,7 @@ main:focus {
 
 .prose dl[data-runtime-shift] dt {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -593,7 +593,7 @@ main:focus {
 
 .terminal figcaption {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -647,7 +647,7 @@ main:focus {
 .metric dt,
 .metric .metric-label {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--type-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-quiet);
@@ -763,6 +763,11 @@ main:focus {
 
 .band--dense {
   padding-block: clamp(3.5rem, 6.25vw, var(--space-5));
+}
+
+/* Homepage previews are an index into the detailed pages, not another copy of them. */
+.band--compact {
+  padding-block: clamp(2.75rem, 4vw, 3.5rem);
 }
 
 /* ---------------------------------------------------------------------------

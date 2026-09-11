@@ -44,9 +44,9 @@ const mobileNodes = work.map((n, i) => ({
 const mobilePath = mobileNodes.map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
 
 const evidence = [
-  { n: '12–15h → <1h', label: 'device sync' },
-  { n: '8', label: 'engineers led' },
-  { n: '3', label: 'promotions in five years' },
+  { n: '12–15h → <1h', label: 'device sync', mobileLabel: 'device sync' },
+  { n: '8', label: 'engineers led', mobileLabel: 'team led' },
+  { n: '3', label: 'promotions in five years', mobileLabel: 'promotions' },
 ];
 
 const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf';
@@ -93,7 +93,10 @@ const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf'
           {evidence.map((e) => (
             <div class="min-w-0">
               <dd class="font-display wonk font-black text-[clamp(1.15rem,2.2vw,1.75rem)] text-signal leading-none m-0 whitespace-nowrap">{e.n}</dd>
-              <dt class="mt-1.5 t-micro leading-snug">{e.label}</dt>
+              <dt class="mt-1.5 t-micro leading-snug">
+                <span class="sm:hidden">{e.mobileLabel}</span>
+                <span class="hidden sm:inline">{e.label}</span>
+              </dt>
             </div>
           ))}
         </dl>

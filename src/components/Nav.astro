@@ -1,11 +1,12 @@
 ---
 const links = [
-  { href: '/#work', label: 'Work', section: 'work' },
-  { href: '/#numbers', label: 'Numbers', section: 'numbers' },
-  { href: '/#trajectory', label: 'Trajectory', section: 'trajectory' },
-  { href: '/#open-source', label: 'Open Source', section: 'open-source' },
-  { href: '/#writing', label: 'Writing', section: 'writing' },
+  { href: '/#work', label: 'Work', section: 'work', watches: ['work'] },
+  { href: '/#numbers', label: 'About', section: 'about', watches: ['numbers', 'trajectory'] },
+  { href: '/#open-source', label: 'Open Source', section: 'open-source', watches: ['open-source'] },
+  { href: '/#writing', label: 'Writing', section: 'writing', watches: ['writing'] },
 ];
+
+const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf';
 ---
 
 <header data-site-header class="site-header sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-line">
@@ -19,17 +20,18 @@ const links = [
         <a
           href={link.href}
           data-section-link={link.section}
+          data-watch-sections={link.watches.join(',')}
           class="section-link tap t-micro hover:text-paper transition-colors"
         >
           {link.label}
         </a>
       ))}
       <a
-        href="/#contact"
-        data-section-link="contact"
+        href={primaryResume}
+        download
         class="section-link t-micro text-signal border border-line-strong hover:border-signal rounded-sm px-3 py-1.5 transition-colors"
       >
-        Contact
+        Resume
       </a>
     </nav>
 
@@ -43,6 +45,7 @@ const links = [
             <a
               href={link.href}
               data-section-link={link.section}
+              data-watch-sections={link.watches.join(',')}
               class="section-link flex items-center justify-between gap-5 px-3 py-3 font-mono text-xs text-quiet rounded-sm hover:bg-surface-2 hover:text-paper transition-colors"
             >
               <span>{link.label}</span>
@@ -51,8 +54,8 @@ const links = [
           ))}
         </nav>
       </details>
-      <a href="/#contact" class="t-micro text-signal border border-line-strong rounded-sm px-2.5 py-1.5">
-        Contact
+      <a href={primaryResume} download class="t-micro text-signal border border-line-strong rounded-sm px-2.5 py-1.5">
+        Resume
       </a>
     </div>
   </div>
@@ -70,9 +73,14 @@ const links = [
     const currentLabel = header.querySelector<HTMLElement>('[data-current-label]');
     const progress = header.querySelector<HTMLElement>('[data-progress-bar]');
     const mobileIndex = header.querySelector<HTMLDetailsElement>('[data-mobile-index]');
-    const homeSections = links
-      .map((link) => ({ link, section: document.getElementById(link.dataset.sectionLink || '') }))
-      .filter((item) => item.section);
+    const homeSections = links.flatMap((link) =>
+      (link.dataset.watchSections || '')
+        .split(',')
+        .filter(Boolean)
+        .map((sectionId) => ({ link, section: document.getElementById(sectionId) }))
+        .filter((item) => item.section)
+    );
+    const contactSection = document.getElementById('contact');
 
     let frame = 0;
     const update = () => {
@@ -81,6 +89,7 @@ const links = [
       if (progress) progress.style.transform = `scaleX(${Math.min(1, window.scrollY / maxScroll)})`;
 
       let active = '';
+      let labelOverride = '';
       if (location.pathname.startsWith('/blog')) active = 'writing';
       if (location.pathname.startsWith('/work')) active = 'work';
 
@@ -90,6 +99,11 @@ const links = [
           if (item.section && item.section.getBoundingClientRect().top <= readingLine) {
             active = item.link.dataset.sectionLink || '';
           }
+        }
+
+        if (contactSection && contactSection.getBoundingClientRect().top <= readingLine) {
+          active = '';
+          labelOverride = 'Contact';
         }
       }
 
@@ -102,7 +116,7 @@ const links = [
 
       if (currentLabel) {
         const selected = links.find((link) => link.dataset.sectionLink === active);
-        currentLabel.textContent = selected?.textContent?.trim() || 'Top';
+        currentLabel.textContent = labelOverride || selected?.textContent?.trim() || 'Top';
       }
     };
 

@@ -13,6 +13,12 @@ const { study } = Astro.props as { study: CaseStudy };
 const index = caseStudies.findIndex((item) => item.slug === study.slug);
 const previous = index > 0 ? caseStudies[index - 1] : undefined;
 const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined;
+const accountability = [
+  { label: 'My part', body: study.accountability.mine },
+  { label: "The team's part", body: study.accountability.team },
+  { label: 'Hardest trade-off', body: study.accountability.tradeoff },
+  { label: "What I'd do earlier", body: study.accountability.hindsight },
+];
 ---
 
 <Layout title={`${study.title} | Mehboob Ali`} description={study.description}>
@@ -47,21 +53,41 @@ const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined
       <section class="band shell">
         <div class="case-visual">
           {study.visual === 'runtime' && (
-            <div class="runtime-case" aria-label="Runtime improved from 12 to 15 hours to under one hour">
-              <div>
-                <p>Before</p>
-                <strong>12–15 hours</strong>
+            <div>
+              <div class="runtime-case" aria-label="Runtime improved from 12 to 15 hours to under one hour">
+                <div>
+                  <p>Before</p>
+                  <strong>12–15 hours</strong>
+                </div>
+                <span aria-hidden="true">&rarr;</span>
+                <div>
+                  <p>After</p>
+                  <strong>Under 1 hour</strong>
+                </div>
               </div>
-              <span aria-hidden="true">&rarr;</span>
-              <div>
-                <p>After</p>
-                <strong>Under 1 hour</strong>
-              </div>
+              <p class="artifact-caption">Reconstructed from the measured production runtime. No customer data shown.</p>
             </div>
           )}
-          {study.visual === 'workflow' && <WorkflowGraph />}
+          {study.visual === 'workflow' && (
+            <div>
+              <WorkflowGraph />
+              <p class="artifact-caption">Reconstructed from EZO’s public Automation Engine documentation.</p>
+            </div>
+          )}
           {study.visual === 'cmdb' && <CmdbGraph />}
         </div>
+
+        <section class="mt-10" aria-labelledby="accountability-heading">
+          <h2 id="accountability-heading" class="sr-only">Ownership and reflection</h2>
+          <div class="accountability-grid">
+            {accountability.map((item) => (
+              <div>
+                <p class="t-micro">{item.label}</p>
+                <p class="mt-3 text-sm leading-relaxed text-paper/75">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div class="case-copy mt-16 lg:mt-24">
           <section>
@@ -158,6 +184,30 @@ const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined
     border: 1px solid var(--color-line);
     border-radius: 0.625rem;
     background: var(--color-surface);
+  }
+
+  .artifact-caption {
+    margin-top: 1.25rem;
+    max-width: 34rem;
+    color: var(--color-quiet);
+    font-size: var(--type-meta);
+    line-height: 1.6;
+  }
+
+  .accountability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: var(--color-line);
+  }
+
+  .accountability-grid > div {
+    min-width: 0;
+    padding: 1.5rem;
+    background: var(--color-ink);
   }
 
   .runtime-case {
@@ -267,6 +317,10 @@ const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined
     }
 
     .case-pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .accountability-grid {
       grid-template-columns: 1fr;
     }
 

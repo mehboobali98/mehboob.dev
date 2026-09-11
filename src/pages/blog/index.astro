@@ -28,7 +28,7 @@ function formatDate(date: Date) {
     <section class="band shell">
       <div class="measure">
         <p class="marker mb-6">Writing</p>
-        <h1 class="t-display-2 text-paper">Longer notes from the work.</h1>
+        <h1 class="t-display-2 text-paper">Notes from building and debugging.</h1>
         <p class="mt-6 text-paper/70 leading-relaxed">
           Debugging stories, design constraints, and the tooling decisions that were too useful
           to leave inside a pull request.
@@ -56,12 +56,12 @@ function formatDate(date: Date) {
             <div class="mt-20">
               <div class="flex items-center justify-between gap-6 pb-5 border-b border-line">
                 <p class="t-micro">Archive</p>
-                <p class="font-mono text-[11px] text-quiet">{archive.length} more notes</p>
+                <p class="font-mono text-xs text-quiet">{archive.length} more notes</p>
               </div>
               <div class="archive-grid">
                 {archive.map((post, index) => (
                   <a href={`/blog/${post.id}/`} data-reveal class="archive-card group">
-                    <p class="font-mono text-[11px] text-quiet">
+                    <p class="font-mono text-xs text-quiet">
                       {String(index + 2).padStart(2, '0')} · {formatDate(post.data.date)}
                     </p>
                     <h2 class="mt-4 font-display wonk font-semibold text-2xl leading-tight text-paper group-hover:text-signal transition-colors">
@@ -128,7 +128,7 @@ function formatDate(date: Date) {
     border-radius: 9999px;
     color: var(--color-quiet);
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.6875rem;
   }
 
   @media (min-width: 820px) {
