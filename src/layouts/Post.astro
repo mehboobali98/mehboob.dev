@@ -1,7 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import Nav from '../components/Nav.astro';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { mailto } from '../site';
 
 interface Props {
@@ -10,6 +10,24 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, description, date, tags } = post.data;
+const readingMinutes = Math.max(1, Math.ceil((post.body ?? '').trim().split(/\s+/).length / 220));
+
+const published = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const currentIndex = published.findIndex((item) => item.id === post.id);
+const newer = currentIndex > 0 ? published[currentIndex - 1] : undefined;
+const older = currentIndex >= 0 && currentIndex < published.length - 1
+  ? published[currentIndex + 1]
+  : undefined;
+
+const relatedWork: Record<string, { href: string; label: string }> = {
+  'the-sync-job-that-took-half-a-day': {
+    href: '/work/sync-pipeline/',
+    label: 'See the sync pipeline case study',
+  },
+};
+const related = relatedWork[post.id];
 
 const formatted = date.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -40,6 +58,8 @@ const formatted = date.toLocaleDateString('en-US', {
 
         <div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-quiet">
           <time datetime={date.toISOString()}>{formatted}</time>
+          <span class="text-line">/</span>
+          <span>{readingMinutes} min read</span>
           {tags.length > 0 && <span class="text-line">/</span>}
           {tags.map((t) => <span>{t}</span>)}
         </div>
@@ -48,13 +68,81 @@ const formatted = date.toLocaleDateString('en-US', {
           <slot />
         </div>
 
-        <div class="mt-20 pt-8 border-t border-line flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-quiet">
-          <a href="/blog/" class="hover:text-signal transition-colors">&larr; All writing</a>
-          <a href={mailto} class="hover:text-signal transition-colors">
-            Reply by email
-          </a>
+        <div class="mt-20 pt-8 border-t border-line">
+          <div class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-quiet">
+            <a href="/blog/" class="tap hover:text-signal transition-colors">&larr; All writing</a>
+            <a href={mailto} class="tap hover:text-signal transition-colors">Reply by email</a>
+            {related && (
+              <a href={related.href} class="tap text-signal hover:underline">{related.label} &rarr;</a>
+            )}
+          </div>
+
+          {(newer || older) && (
+            <nav aria-label="More writing" class="article-pagination mt-10">
+              {newer ? (
+                <a href={`/blog/${newer.id}/`}>
+                  <span>Newer</span>
+                  <strong>&larr; {newer.data.title}</strong>
+                </a>
+              ) : <span></span>}
+              {older && (
+                <a href={`/blog/${older.id}/`} class="text-right">
+                  <span>Older</span>
+                  <strong>{older.data.title} &rarr;</strong>
+                </a>
+              )}
+            </nav>
+          )}
         </div>
       </div>
     </article>
   </main>
 </Layout>
+
+<style>
+  .article-pagination {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--color-line);
+    background: var(--color-line);
+  }
+
+  .article-pagination a {
+    padding: 1.25rem;
+    background: var(--color-ink);
+    transition: background-color 0.2s ease;
+  }
+
+  .article-pagination a:hover {
+    background: var(--color-surface);
+  }
+
+  .article-pagination span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+  }
+
+  .article-pagination strong {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--color-paper);
+  }
+
+  @media (max-width: 520px) {
+    .article-pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .article-pagination > span:empty {
+      display: none;
+    }
+  }
+</style>

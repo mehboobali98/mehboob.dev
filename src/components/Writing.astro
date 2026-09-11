@@ -1,33 +1,90 @@
 ---
 import { getCollection } from 'astro:content';
-import PostRow from './PostRow.astro';
 
-// Three at most. The homepage is a summary of each thing, not the archive -- /blog is
-// where the full list lives. Renders nothing at all when there are no published posts,
-// so an empty section can never appear on the homepage.
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+const featured = posts[0];
+const secondary = posts.slice(1);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}
 ---
 
-{posts.length > 0 && (
-  <section id="writing" class="bg-ink border-t border-line">
+{featured && (
+  <section id="writing" class="bg-void border-t border-line">
     <div class="band shell">
-    <div class="measure">
-      <p class="marker mb-6">Writing</p>
-      <h2 class="t-display-2 text-paper">
-        The parts that needed more than three paragraphs.
-      </h2>
-    </div>
+      <div class="measure">
+        <p class="marker mb-6">Writing</p>
+        <h2 class="t-display-2 text-paper">
+          Longer notes from the work.
+        </h2>
+      </div>
 
-    <div class="mt-12 max-w-[46rem] flex flex-col">
-      {posts.map((post) => <PostRow post={post} />)}
-      <div class="border-t border-line"></div>
-    </div>
+      <div class="mt-12 writing-grid">
+        <a
+          href={`/blog/${featured.id}/`}
+          data-reveal
+          class="featured-post group block rounded-lg border border-line bg-surface p-7 sm:p-9 hover:border-signal transition-colors"
+        >
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-quiet">
+            <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
+            {featured.data.tags.map((tag) => <span>{tag}</span>)}
+          </div>
+          <h3 class="mt-5 font-display wonk font-semibold text-3xl sm:text-4xl leading-tight text-paper group-hover:text-signal transition-colors">
+            {featured.data.title}
+          </h3>
+          <p class="mt-5 max-w-[40rem] text-paper/75 leading-relaxed">
+            {featured.data.description}
+          </p>
+          <p class="mt-7 font-mono text-xs text-signal">Read the essay &rarr;</p>
+        </a>
 
-    <a href="/blog/" class="inline-block tap mt-10 font-mono text-xs text-signal hover:underline">
-      All writing &rarr;
-    </a>
+        <div class="flex flex-col border-b border-line">
+          {secondary.map((post) => (
+            <a
+              href={`/blog/${post.id}/`}
+              data-reveal
+              class="group block py-7 border-t border-line hover:border-signal transition-colors"
+            >
+              <time datetime={post.data.date.toISOString()} class="font-mono text-[11px] text-quiet">
+                {formatDate(post.data.date)}
+              </time>
+              <h3 class="mt-3 font-display wonk font-semibold text-2xl leading-tight text-paper group-hover:text-signal transition-colors">
+                {post.data.title}
+              </h3>
+              <p class="mt-3 text-sm leading-relaxed text-paper/65 line-clamp-2">
+                {post.data.description}
+              </p>
+            </a>
+          ))}
+
+          <a href="/blog/" class="tap mt-auto pt-7 pb-2 font-mono text-xs text-signal hover:underline">
+            All writing &rarr;
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 )}
+
+<style>
+  .writing-grid {
+    display: grid;
+    gap: 2.5rem 4rem;
+  }
+
+  @media (min-width: 1024px) {
+    .writing-grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
+      align-items: stretch;
+    }
+  }
+</style>

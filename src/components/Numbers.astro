@@ -10,11 +10,6 @@ import DeliveryChart from './DeliveryChart.astro';
 // quantities would be inventing data. It reads as what it is: five points on a path.
 const stats = [
   {
-    n: '5',
-    label: 'years',
-    desc: 'The short version: I started out implementing specs at 7Vals. Somewhere in there I started writing them instead.',
-  },
-  {
     // "tickets", not "features shipped": 28% of these never reached production.
     n: '276',
     label: 'feature tickets',
@@ -23,7 +18,7 @@ const stats = [
   },
   {
     n: '22',
-    label: 'Key Features',
+    label: 'key features',
     desc: 'Product-flagged, go-to-market work. Not the routine maintenance stuff.',
   },
   {
@@ -36,6 +31,11 @@ const stats = [
     label: 'months',
     desc: 'Zero to production on the CMDB module. Newest number on this list.',
   },
+  {
+    n: '5',
+    label: 'years',
+    desc: 'From implementing specifications to writing them, leading teams, and setting technical direction.',
+  },
 ];
 ---
 
@@ -43,7 +43,7 @@ const stats = [
   <div class="band band--dense shell">
     <p class="marker mb-6">By the numbers</p>
     <h2 class="t-display-2 text-paper max-w-[20ch]">
-      I built a tool to analyze my own delivery history. This is what it found.
+      What five years of tickets actually said.
     </h2>
     <p class="mt-6 text-paper/75 leading-relaxed measure">
       <!-- Underlined always: amber sits at 1.05:1 against the surrounding text, so hover
@@ -57,10 +57,13 @@ const stats = [
        whole width and their own ground rather than sitting politely in a column. -->
   <div class="bg-surface border-y border-line">
     <dl class="shell grid grid-cols-2 lg:grid-cols-5 gap-px bg-line">
-      <!-- Five stats in two columns leaves an empty sixth cell, which shows the bg-line
-           behind the gaps as a blank panel. Spanning the last one fills the row. -->
-      {stats.map((s) => (
-        <div class="bg-surface px-6 sm:px-8 py-10 lg:py-14 last:col-span-2 lg:last:col-span-1">
+      <!-- The lead metric spans the full phone width; the four supporting numbers form a
+           compact 2x2 beneath it. At lg all five return to one row. -->
+      {stats.map((s, index) => (
+        <div class:list={[
+          'bg-surface px-6 sm:px-8 py-9 lg:py-14',
+          index === 0 && 'col-span-2 lg:col-span-1',
+        ]}>
           <dt class="sr-only">{s.label}</dt>
           <dd class="m-0">
             <p class="font-display wonk font-black text-signal leading-none text-[3.25rem] lg:text-[4rem]">
@@ -75,7 +78,13 @@ const stats = [
                 <p class="mt-2 t-micro">{s.proportion}% in production</p>
               </div>
             )}
-            <p class="mt-4 text-paper/60 leading-relaxed" style="font-size: var(--type-meta)">
+            <p
+              class:list={[
+                'mt-4 text-paper/60 leading-relaxed',
+                index !== 0 && 'hidden sm:block',
+              ]}
+              style="font-size: var(--type-meta)"
+            >
               {s.desc}
             </p>
           </dd>

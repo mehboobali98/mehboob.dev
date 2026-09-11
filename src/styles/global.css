@@ -86,6 +86,10 @@ html {
   background: var(--color-ink);
 }
 
+main [id] {
+  scroll-margin-top: 4.75rem;
+}
+
 body {
   background: var(--color-ink);
   color: var(--color-paper);
@@ -148,10 +152,10 @@ main:focus {
    JS running for the page to be readable. */
 [data-reveal].reveal-pending {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(12px);
 }
 [data-reveal] {
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.42s ease, transform 0.42s ease;
 }
 
 /* Selected point on the numbers graph. Ring only, no transform -- the node already
@@ -621,6 +625,11 @@ main:focus {
   color: var(--color-quiet);
 }
 
+.terminal .terminal-line {
+  display: block;
+  min-height: 1lh;
+}
+
 /* ---------------------------------------------------------------------------
    Metric
 
@@ -744,16 +753,16 @@ main:focus {
 }
 
 .band {
-  padding-block: var(--space-6);
+  padding-block: clamp(5rem, 10vw, var(--space-6));
   padding-inline: clamp(1.25rem, 5vw, 5rem);
 }
 
 .band--air {
-  padding-block: var(--space-7);
+  padding-block: clamp(7rem, 15vw, var(--space-7));
 }
 
 .band--dense {
-  padding-block: var(--space-5);
+  padding-block: clamp(3.5rem, 6.25vw, var(--space-5));
 }
 
 /* ---------------------------------------------------------------------------
@@ -866,6 +875,24 @@ main:focus {
 .hero-content {
   position: relative;
   z-index: 1;
+}
+
+.hero-node circle,
+.hero-node text {
+  transition: transform 0.2s ease, fill 0.2s ease, fill-opacity 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hero-node:hover circle:first-of-type,
+.hero-node:focus-visible circle:first-of-type {
+  transform: scale(1.35);
+  fill-opacity: 0.22;
+}
+
+.hero-node:hover text,
+.hero-node:focus-visible text {
+  fill: var(--color-signal);
 }
 
 /* The path draws itself once on load. One orchestrated moment, not a page full

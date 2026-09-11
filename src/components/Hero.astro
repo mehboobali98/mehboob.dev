@@ -1,5 +1,5 @@
 ---
-import { mailto } from '../site';
+import { contact, mailto } from '../site';
 
 // The signature. Five years of work drawn the way the CMDB draws infrastructure: one
 // traversal through a quiet mesh, with the things he actually built as the labelled
@@ -44,49 +44,56 @@ const mobileNodes = work.map((n, i) => ({
 const mobilePath = mobileNodes.map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
 
 const evidence = [
-  { n: '8', label: 'engineers, as tech lead' },
-  { n: '7mo', label: 'CMDB to prod' },
+  { n: '12–15h → <1h', label: 'device sync' },
+  { n: '8', label: 'engineers led' },
+  { n: '3', label: 'promotions in five years' },
 ];
+
+const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf';
 ---
 
 <section id="top" class="hero">
-  <div class="shell w-full px-[clamp(1.25rem,5vw,5rem)] py-16">
-    <div class="hero-content grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-14 xl:gap-20 items-center">
+  <div class="shell w-full px-[clamp(1.25rem,5vw,5rem)] py-12 lg:py-8 xl:py-10 lg:min-h-[calc(100svh-3.5rem)] flex items-center">
+    <div class="hero-content w-full grid lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] gap-12 xl:gap-16 items-center">
       <div>
-        <p class="marker mb-7">Principal Software Engineer</p>
+        <p class="marker mb-5">Principal Software Engineer · 7Vals</p>
 
-        <h1 class="t-display-1 text-paper">
+        <h1 class="t-display-1 text-paper max-w-[39rem]">
           I build backend systems, then build the tools to understand them.
         </h1>
 
-        <p class="mt-7 text-paper/80 leading-relaxed max-w-[34rem]" style="font-size: var(--type-body-lg)">
-          Five years at 7Vals on Rails backends and IT-asset systems. I led the CMDB build and I run the
-          Workflow Automation program now. The tooling side got interesting along the way: a Redmine CLI,
-          Claude Code skills, an agent that turns tickets into pull requests.
+        <p class="mt-5 text-paper/80 leading-relaxed max-w-[34rem]" style="font-size: var(--type-body-lg)">
+          At 7Vals, I lead Workflow Automation. Before that, I took the CMDB from an idea to production.
+          I also build small tools for the parts of engineering work that are still too manual.
         </p>
 
-        <p class="mt-4 t-meta">Lahore, Pakistan. Open to remote or relocation.</p>
+        <p class="mt-4 t-meta flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span>Lahore, Pakistan · Open to remote or relocation</span>
+          <span aria-hidden="true" class="hidden sm:inline text-line-strong">/</span>
+          <a href={mailto} class="tap text-paper/75 hover:text-signal transition-colors">{contact.email}</a>
+        </p>
 
-        <div class="mt-8 flex flex-wrap gap-3">
+        <div class="mt-6 flex flex-wrap gap-3">
           <a
-            href={mailto}
+            href="#work"
             class="px-6 py-3 bg-signal text-ink font-medium rounded-sm hover:bg-signal/90 transition-colors"
           >
-            Email me
+            See the work
           </a>
           <a
-            href="#contact"
+            href={primaryResume}
+            download
             class="px-6 py-3 border border-line-strong text-paper font-medium rounded-sm hover:border-signal hover:text-signal transition-colors"
           >
-            Get my resume
+            Download my resume
           </a>
         </div>
 
-        <dl class="mt-9 flex flex-wrap gap-x-9 gap-y-4 border-t border-line pt-5 max-w-[34rem]">
+        <dl class="mt-7 grid grid-cols-[minmax(0,1.65fr)_minmax(0,0.6fr)_minmax(0,0.95fr)] sm:grid-cols-3 gap-x-4 sm:gap-x-7 border-t border-line pt-5 max-w-[38rem]">
           {evidence.map((e) => (
-            <div>
-              <dd class="font-display wonk font-black text-[1.75rem] text-signal leading-none m-0">{e.n}</dd>
-              <dt class="mt-1.5 t-micro">{e.label}</dt>
+            <div class="min-w-0">
+              <dd class="font-display wonk font-black text-[clamp(1.15rem,2.2vw,1.75rem)] text-signal leading-none m-0 whitespace-nowrap">{e.n}</dd>
+              <dt class="mt-1.5 t-micro leading-snug">{e.label}</dt>
             </div>
           ))}
         </dl>
@@ -163,9 +170,9 @@ const evidence = [
   The nodes are the same anchors as the desktop version, so this is still navigation.
 -->
 <section aria-label="What I've built" class="lg:hidden bg-void border-t border-line">
-  <div class="px-[clamp(1.25rem,5vw,5rem)] py-10">
-    <p class="t-micro mb-5">Five years, four things</p>
-    <svg viewBox="0 0 350 132" class="w-full h-auto" aria-labelledby="hero-graph-m">
+  <div class="px-[clamp(1.25rem,5vw,5rem)] py-7">
+    <p class="t-micro mb-3">Five years, four things</p>
+    <svg viewBox="0 0 350 112" class="w-full h-auto" aria-labelledby="hero-graph-m">
       <title id="hero-graph-m">
         A sync pipeline, a CMDB, the rmine CLI and a workflow engine, connected as one path.
       </title>
@@ -178,7 +185,7 @@ const evidence = [
         stroke-linejoin="round"
       />
       {mobileNodes.map((n) => (
-        <a href={n.href} aria-label={`${n.label}: ${n.note}`}>
+        <a href={n.href} class="hero-node" aria-label={`${n.label}: ${n.note}`}>
           {/* A generous transparent hit area: the visible node is 10px across, which is
               nowhere near a thumb. */}
           <circle cx={n.x} cy={n.y} r="24" fill="transparent" />

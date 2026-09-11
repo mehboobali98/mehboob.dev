@@ -108,72 +108,96 @@ const rmineHelp = [
 const publishedPosts = new Set(
   (await getCollection('blog', ({ data }) => !data.draft)).map((post) => `/blog/${post.id}`),
 );
+
+const featured = projects[0];
+const featuredStat = stats[0];
+const secondary = projects.slice(1).map((project, index) => ({
+  project,
+  stat: stats[index + 1],
+}));
 ---
 
 <section id="open-source" class="bg-ink border-t border-line">
   <div class="band shell">
-  <div class="measure">
-    <p class="marker mb-6">Open source</p>
-    <h2 class="t-display-2 text-paper">
-      Public, verifiable, and maintained.
-    </h2>
-  </div>
+    <div class="measure">
+      <p class="marker mb-6">Open source</p>
+      <h2 class="t-display-2 text-paper">
+        Public, verifiable, and maintained.
+      </h2>
+    </div>
 
-  <div class="mt-12 grid sm:grid-cols-2 gap-5">
-    {projects.map((p, i) => (
-      <div
+    <div class="mt-12 grid xl:grid-cols-[minmax(0,1.18fr)_minmax(22rem,0.82fr)] gap-5 items-stretch">
+      <article
         data-reveal
-        class="group flex flex-col min-w-0 p-8 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+        class="group min-w-0 p-7 sm:p-9 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
       >
-        <!-- Wraps rather than overflowing: at the narrow end of the two-up grid,
-             "bitwise_attributes" plus its language tag is wider than the card. min-w-0 on
-             the card and break-words here are what keep it inside 320px. -->
         <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h3 class="t-display-3 text-paper min-w-0 break-words">{p.name}</h3>
-          <span class="font-mono text-[11px] text-quiet">{p.tag}</span>
+          <h3 class="t-display-3 text-paper">{featured.name}</h3>
+          <span class="font-mono text-[11px] text-quiet">{featured.tag}</span>
         </div>
-        <p class="mt-4 text-paper/80 leading-relaxed text-sm">{p.desc}</p>
-        <div class="mt-auto pt-6 flex items-center justify-between gap-4">
+        <p class="mt-4 max-w-[38rem] text-paper/80 leading-relaxed">{featured.desc}</p>
+        <p class="mt-4 max-w-[38rem] text-sm text-paper/65 leading-relaxed">
+          It started as a way to inspect five years of ticket history. The team now uses the same
+          binary day to day, and the delivery numbers above came straight out of it.
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
           <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
-            <a href={p.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
-              {p.cta} &rarr;
+            <a href={featured.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
+              {featured.cta} &rarr;
             </a>
-            {p.post && publishedPosts.has(p.post) && (
-              <a href={p.post} class="tap text-quiet hover:text-signal transition-colors">
+            {featured.post && publishedPosts.has(featured.post) && (
+              <a href={featured.post} class="tap text-quiet hover:text-signal transition-colors">
                 Read the post &rarr;
               </a>
             )}
           </div>
-          {stats[i] && (
+          {featuredStat && (
             <p class="font-mono text-[11px] text-quiet flex items-center gap-3 shrink-0">
-              {stats[i]!.stars !== null && stats[i]!.stars! >= STAR_THRESHOLD && (
-                <span>&#9733; {stats[i]!.stars}</span>
+              {featuredStat.stars !== null && featuredStat.stars >= STAR_THRESHOLD && (
+                <span>&#9733; {featuredStat.stars}</span>
               )}
-              {stats[i]!.pushedAt && <span>pushed {timeAgo(stats[i]!.pushedAt)}</span>}
+              {featuredStat.pushedAt && <span>pushed {timeAgo(featuredStat.pushedAt)}</span>}
             </p>
           )}
         </div>
-      </div>
-    ))}
-  </div>
 
-  <div class="mt-16 section-grid">
-    <div class="measure">
-      <p class="t-micro mb-4">Why rmine exists</p>
-      <p class="text-paper/80 leading-relaxed">
-        I wanted to know what five years of my own ticket history actually said. Nothing made
-        that easy, so I wrote something: a CLI in Go with a Claude Code skill built in, so an
-        agent can query tickets and time logs on its own instead of me pasting API responses
-        into a prompt.
-      </p>
-      <p class="mt-4 text-paper/80 leading-relaxed">
-        The rest of the team runs it day to day, and the delivery numbers on this page came
-        straight out of it. Not a demo. Just what the tool actually found.
-      </p>
+        <div class="mt-8">
+          <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
+        </div>
+      </article>
+
+      <div class="grid gap-5">
+        {secondary.map(({ project, stat }) => (
+          <article
+            data-reveal
+            class="group flex flex-col min-w-0 p-7 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+          >
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="font-display wonk font-semibold text-2xl text-paper min-w-0 break-words">
+                {project.name}
+              </h3>
+              <span class="font-mono text-[11px] text-quiet">{project.tag}</span>
+            </div>
+            <p class="mt-4 text-paper/75 leading-relaxed text-sm">{project.desc}</p>
+            <div class="mt-auto pt-5 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
+                <a href={project.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
+                  {project.cta} &rarr;
+                </a>
+                {project.post && publishedPosts.has(project.post) && (
+                  <a href={project.post} class="tap text-quiet hover:text-signal transition-colors">
+                    Read the post &rarr;
+                  </a>
+                )}
+              </div>
+              {stat?.pushedAt && (
+                <p class="font-mono text-[11px] text-quiet shrink-0">pushed {timeAgo(stat.pushedAt)}</p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
-    <div>
-      <Terminal caption="rmine --help" command="rmine --help" output={rmineHelp} />
-    </div>
-  </div>
   </div>
 </section>
