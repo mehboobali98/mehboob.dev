@@ -1,0 +1,155 @@
+---
+const before = [
+  'Read one inventory record',
+  'Load its related data',
+  'Process and persist it',
+  'Repeat the same lookups',
+];
+
+const after = [
+  'Collect a bounded batch',
+  'Eager-load related data once',
+  'Process the batch',
+  'Persist and move to the next batch',
+];
+---
+
+<figure aria-labelledby="sync-flow-title" aria-describedby="sync-flow-caption">
+  <h3 id="sync-flow-title" class="sr-only">Device synchronization processing model before and after</h3>
+
+  <div class="pipeline-comparison">
+    <section aria-labelledby="sync-before-title">
+      <div class="pipeline-heading">
+        <p class="t-micro">Before</p>
+        <h4 id="sync-before-title">One record at a time</h4>
+      </div>
+      <ol class="pipeline-flow">
+        {before.map((step) => <li>{step}</li>)}
+      </ol>
+      <p class="repeat-note">Repeat per record</p>
+    </section>
+
+    <section aria-labelledby="sync-after-title" class="is-after">
+      <div class="pipeline-heading">
+        <p class="t-micro">After</p>
+        <h4 id="sync-after-title">One bounded batch at a time</h4>
+      </div>
+      <ol class="pipeline-flow">
+        {after.map((step) => <li>{step}</li>)}
+      </ol>
+      <p class="repeat-note">Repeat per batch</p>
+    </section>
+  </div>
+
+  <figcaption id="sync-flow-caption">
+    Generalized from the shipped processing-model change. Proprietary implementation details and customer data are omitted.
+  </figcaption>
+</figure>
+
+<style>
+  .pipeline-comparison {
+    display: grid;
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: var(--color-line);
+  }
+
+  .pipeline-comparison section {
+    min-width: 0;
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    background: var(--color-ink);
+  }
+
+  .pipeline-comparison section.is-after {
+    background: color-mix(in srgb, var(--color-surface) 70%, var(--color-ink));
+  }
+
+  .pipeline-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .pipeline-heading h4 {
+    font-family: var(--font-display);
+    font-variation-settings: "WONK" 1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-paper);
+  }
+
+  .pipeline-flow {
+    margin-top: 1.25rem;
+    counter-reset: step;
+  }
+
+  .pipeline-flow li {
+    position: relative;
+    counter-increment: step;
+    min-height: 2.75rem;
+    padding: 0.25rem 0 1rem 2rem;
+    color: color-mix(in srgb, var(--color-paper) 78%, transparent);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .pipeline-flow li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0.42rem;
+    top: 1.2rem;
+    bottom: -0.1rem;
+    width: 1px;
+    background: var(--color-line-strong);
+  }
+
+  .pipeline-flow li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    z-index: 1;
+    width: 0.9rem;
+    color: var(--color-quiet);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    line-height: 1.25rem;
+    text-align: center;
+    background: var(--color-ink);
+  }
+
+  .is-after .pipeline-flow li::before {
+    color: var(--color-signal);
+    background: color-mix(in srgb, var(--color-surface) 70%, var(--color-ink));
+  }
+
+  .repeat-note,
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    line-height: 1.6;
+  }
+
+  .repeat-note {
+    margin-top: 0.25rem;
+    color: var(--color-signal);
+  }
+
+  figcaption {
+    margin-top: 1.25rem;
+    max-width: 39rem;
+    color: var(--color-quiet);
+  }
+
+  @media (min-width: 720px) {
+    .pipeline-comparison {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

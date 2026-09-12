@@ -22,7 +22,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
   <article id={sync.id} data-reveal class="border-t border-line bg-ink">
     <div class="band band--compact shell grid xl:grid-cols-[minmax(0,0.82fr)_minmax(30rem,1.18fr)] gap-10 xl:gap-20 items-center">
       <div class="measure min-w-0">
-        <p class="t-micro">01 · {sync.eyebrow}</p>
+        <p class="t-micro">01 · {sync.flagship ? `Flagship · ${sync.eyebrow}` : sync.eyebrow}</p>
         <h3 class="mt-4 t-display-3 text-paper">{sync.title}</h3>
         <p class="mt-5 text-paper/80 leading-relaxed">{sync.description}</p>
         <div class="mt-5 flex flex-wrap gap-2">
@@ -38,7 +38,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
           <dt>Before</dt>
           <dd>12–15<span>hours</span></dd>
         </div>
-        <div class="runtime-arrow" aria-hidden="true">&rarr;</div>
+        <div class="runtime-arrow" aria-hidden="true"></div>
         <div>
           <dt>After</dt>
           <dd>Under 1<span>hour</span></dd>
@@ -165,6 +165,10 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     color: var(--color-line-strong);
     font-family: var(--font-mono);
     font-size: 1.25rem;
+  }
+
+  .runtime-arrow::before {
+    content: '\2192';
   }
 
   .workflow-panel,
