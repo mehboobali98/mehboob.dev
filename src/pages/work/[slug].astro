@@ -21,7 +21,11 @@ const accountability = [
 ];
 ---
 
-<Layout title={`${study.title} | Mehboob Ali`} description={study.description}>
+<Layout
+  title={`${study.title} | Mehboob Ali`}
+  description={study.description}
+  ogImage={`/og/work/${study.slug}.png`}
+>
   <Nav />
   <main id="main" tabindex="-1">
     <article>
