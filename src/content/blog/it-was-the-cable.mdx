@@ -41,7 +41,7 @@ I'd set the wired interface up in the installer with a static address, and it ne
 dmesg | grep -i -E "r8169|enp7s0|firmware"
 ```
 
-In the output, the `r8169` driver attached to the Realtek RTL8106e, then failed to load `rtl_nic/rtl8106e-1.fw`, then logged `enp7s0: Link is Down` over and over. The firmware failure was the line I noticed first. It wasn't the problem. The driver had attached to the card correctly, and that firmware file is optional for this chip. The line that mattered was `Link is Down`: the port wasn't seeing anything on the other end.
+In the output, the `r8169` driver attached to the Realtek RTL8106e, then failed to load `rtl_nic/rtl8106e-1.fw`, then logged `enp7s0: Link is Down` over and over. The firmware failure was the line I noticed first. It wasn't the problem. The driver had attached to the card correctly, and Ethernet later worked without that firmware file. The line that mattered was `Link is Down`: the port wasn't seeing anything on the other end.
 
 The only Ethernet cable in the house was plugged into the PS5.
 
