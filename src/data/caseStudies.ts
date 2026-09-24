@@ -1,4 +1,15 @@
-export type CaseStudyVisual = 'runtime' | 'workflow' | 'cmdb';
+export type CaseStudyVisual = 'sync' | 'workflow' | 'cmdb';
+
+interface CaseStudySummary {
+  role: string;
+  constraint: string;
+  decision: string;
+  result: {
+    value: string;
+    note: string;
+    evidenceNeeded?: boolean;
+  };
+}
 
 export interface CaseStudy {
   id: string;
@@ -8,6 +19,9 @@ export interface CaseStudy {
   description: string;
   stack: string[];
   visual: CaseStudyVisual;
+  flagship?: boolean;
+  summary: CaseStudySummary;
+  artifactTitle: string;
   facts: Array<{ label: string; value: string }>;
   challenge: string;
   approach: string;
@@ -31,7 +45,18 @@ export const caseStudies: CaseStudy[] = [
     description:
       "AssetSonar's device sync was taking 12 to 15 hours. I rebuilt the pipeline around batched writes and removed the redundant lookups.",
     stack: ['Ruby on Rails', 'Delayed Job', 'PostgreSQL'],
-    visual: 'runtime',
+    visual: 'sync',
+    flagship: true,
+    summary: {
+      role: 'Backend engineer brought in to diagnose and redesign the production path',
+      constraint: 'A 12–15 hour sync could not keep its intended hourly schedule',
+      decision: 'Batch the unit of work, eager-load related data, and keep the downstream contract stable',
+      result: {
+        value: 'Under 1 hour',
+        note: 'Measured across a 15-day production window; the pattern was reused in later MDM integrations.',
+      },
+    },
+    artifactTitle: 'Record-by-record work became bounded batch work.',
     facts: [
       { label: 'Before', value: '12–15 hours' },
       { label: 'After', value: 'Under 1 hour' },
@@ -48,7 +73,7 @@ export const caseStudies: CaseStudy[] = [
       mine: 'I profiled the existing job, redesigned the batching and query paths, and shipped the change without altering the downstream data contract.',
       team: 'The backend team carried the pattern into later MDM integrations. I owned the original performance redesign.',
       tradeoff: 'The quickest rewrite would have changed the payload shape. Keeping the contract stable made the rollout safer and the pattern reusable.',
-      hindsight: 'I would add query-count and runtime budgets earlier, before a slow job could become a half-day dependency.',
+      hindsight: 'The fix started too late. I would put query counts and runtime budgets beside the job before its first large workload, not after it had become a half-day dependency.',
     },
     post: '/blog/the-sync-job-that-took-half-a-day',
   },
@@ -61,9 +86,20 @@ export const caseStudies: CaseStudy[] = [
       'I led the replacement of a one-step rules engine with a production node canvas supporting branching, iteration, API execution, and readable run histories.',
     stack: ['Ruby on Rails', 'React Flow', 'ITSM'],
     visual: 'workflow',
+    summary: {
+      role: 'Technical delivery lead for an approximately 8-engineer team',
+      constraint: 'One trigger and one sub-trigger; no chaining, branching, or useful failure path',
+      decision: 'Composable nodes, schema-aware outputs, and run history that follows each branch',
+      result: {
+        value: 'Running in production',
+        note: 'Evidence gap: add one verified adoption, reliability, or time-saving outcome before merge.',
+        evidenceNeeded: true,
+      },
+    },
+    artifactTitle: 'One condition can fork into two observable paths.',
     facts: [
       { label: 'Role', value: 'Technical delivery lead' },
-      { label: 'Team', value: '8 engineers' },
+      { label: 'Team', value: 'Approximately 8 engineers' },
       { label: 'Duration', value: '5 months' },
       { label: 'Status', value: 'Running in production' },
     ],
@@ -72,12 +108,12 @@ export const caseStudies: CaseStudy[] = [
     approach:
       'I split delivery across execution, expression resolution, event triggers, branching and iteration, data transformation, integrations, and monitoring. Responses become schemas later nodes can read; arrays split into items and paginated endpoints follow themselves.',
     result:
-      'A process such as employee offboarding can now cross several systems as one observable workflow. The engine runs in customer production accounts, appears in client demos, and remains the program I lead.',
+      'The engine is running in production and remains the program I lead. It can carry an offboarding flow across several systems and show where a branch failed. I still need one verified operational outcome—such as active workflows, setup time saved, or recovery time—to make the result concrete.',
     accountability: {
       mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned.',
-      team: 'Eight engineers owned execution, expressions, triggers, branching, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
+      team: 'Approximately eight engineers owned execution, expressions, triggers, branching, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
       tradeoff: 'More flexible workflows are harder to explain when they fail. Schema-aware outputs and readable run histories had to grow with the node model.',
-      hindsight: 'I would define replay behaviour and operational limits earlier, before the catalogue of nodes expanded.',
+      hindsight: 'We let the node catalogue grow before replay rules and operational limits were boring and explicit. I would reverse that order.',
     },
     proof: {
       label: 'Publicly documented by EZO',
@@ -93,6 +129,17 @@ export const caseStudies: CaseStudy[] = [
       'I led the architecture and delivery of a relationship model that can answer what touches a configuration item several hops away.',
     stack: ['Ruby on Rails', 'PostgreSQL', 'Graph modeling'],
     visual: 'cmdb',
+    summary: {
+      role: 'Architecture and delivery lead for a 5-engineer team',
+      constraint: 'Direct-only associations turned multi-hop questions into manual lookup chains',
+      decision: 'N-level traversal that preserves relationship type and direction, revealed one level at a time',
+      result: {
+        value: 'Released to production in 7 months',
+        note: 'Evidence gap: add one verified usage, support, or decision-time outcome before merge.',
+        evidenceNeeded: true,
+      },
+    },
+    artifactTitle: 'A multi-hop question becomes one traversal.',
     facts: [
       { label: 'Role', value: 'Architecture and lead' },
       { label: 'Team', value: '5 engineers' },
@@ -104,12 +151,12 @@ export const caseStudies: CaseStudy[] = [
     approach:
       'I designed the data model for n-level traversal and led the ITSM-integrated interface built on top of it. Each configuration item expands to its next level while preserving relationship type and direction.',
     result:
-      'The module moved from architecture to production in seven months. It gave the product a launch-ready relationship view and made multi-hop impact analysis part of the interface rather than a support request.',
+      'The module moved from architecture to production in seven months and put multi-hop relationship exploration into the product interface. I still need one verified usage, support, or decision-time outcome to show what that changed for customers.',
     accountability: {
       mine: 'I designed the n-level traversal model and led delivery across the data model, relationship rules, and the interface built on top of them.',
       team: 'Five engineers implemented and integrated the module across the wider ITSM product.',
       tradeoff: 'Traversal depth is useful until the graph becomes unreadable. The model preserves type and direction while the interface reveals one useful level at a time.',
-      hindsight: 'I would prototype the deepest real relationship paths earlier, so model and interface limits could be tested together.',
+      hindsight: 'I would bring the ugliest real relationship paths into week one. Clean demo graphs do not expose where the model and the interface become hard to read.',
     },
     proof: {
       label: 'Publicly documented by EZO',

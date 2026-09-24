@@ -12,11 +12,11 @@ export const getStaticPaths = (() => caseStudies.map((study) => ({
 export const GET: APIRoute = async ({ props }) => {
   const { study } = props as { study: CaseStudy };
   const image = await renderShareCard({
-    eyebrow: `Case study · ${study.eyebrow}`,
+    eyebrow: `${study.flagship ? 'Flagship case study' : 'Case study'} · ${study.eyebrow}`,
     title: study.title,
     detail: study.stack.join(' · '),
-    labels: study.visual === 'runtime'
-      ? ['before', 'rewrite', 'after']
+    labels: study.visual === 'sync'
+      ? ['record', 'batch', 'under 1h']
       : study.visual === 'workflow'
         ? ['trigger', 'branch', 'action']
         : ['item', 'relation', 'impact'],

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
 import CmdbGraph from '../../components/CmdbGraph.astro';
+import SyncPipeline from '../../components/SyncPipeline.astro';
 import WorkflowGraph from '../../components/WorkflowGraph.astro';
 import { caseStudies, type CaseStudy } from '../../data/caseStudies';
 
@@ -19,6 +20,17 @@ const accountability = [
   { label: 'Hardest trade-off', body: study.accountability.tradeoff },
   { label: "What I'd do earlier", body: study.accountability.hindsight },
 ];
+const summary = [
+  { label: 'Role', body: study.summary.role },
+  { label: 'Constraint', body: study.summary.constraint },
+  { label: 'Decision', body: study.summary.decision },
+  {
+    label: 'Result',
+    body: study.summary.result.value,
+    note: study.summary.result.note,
+    evidenceNeeded: study.summary.result.evidenceNeeded,
+  },
+];
 ---
 
 <Layout
@@ -29,26 +41,29 @@ const accountability = [
   <Nav />
   <main id="main" tabindex="-1">
     <article>
-      <header class="band shell">
+      <header class="band band--dense shell case-hero">
         <a href="/#work" class="tap font-mono text-xs text-quiet hover:text-signal transition-colors">
           &larr; Selected work
         </a>
-        <p class="marker mt-12 mb-6">{study.eyebrow}</p>
+        <p class="marker mt-10 mb-5">{study.flagship ? `Flagship · ${study.eyebrow}` : study.eyebrow}</p>
         <h1 class="t-display-1 text-paper max-w-[19ch]">{study.title}</h1>
-        <p class="mt-7 text-paper/80 leading-relaxed max-w-[42rem]" style="font-size: var(--type-body-lg)">
+        <p class="mt-6 text-paper/80 leading-relaxed max-w-[42rem]" style="font-size: var(--type-body-lg)">
           {study.description}
         </p>
-        <div class="mt-7 flex flex-wrap gap-2">
+        <div class="mt-6 flex flex-wrap gap-2">
           {study.stack.map((item) => <span class="case-pill">{item}</span>)}
         </div>
       </header>
 
-      <section aria-label="Project evidence" class="border-y border-line bg-surface">
+      <section aria-label="Project summary" class="border-y border-line bg-surface">
         <dl class="shell evidence-grid">
-          {study.facts.map((fact) => (
-            <div>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
+          {summary.map((item) => (
+            <div class:list={[item.evidenceNeeded && 'needs-evidence']}>
+              <dt>{item.label}</dt>
+              <dd>
+                {item.body}
+                {item.note && <span class="evidence-note">{item.note}</span>}
+              </dd>
             </div>
           ))}
         </dl>
@@ -56,26 +71,17 @@ const accountability = [
 
       <section class="band shell">
         <div class="case-visual">
-          {study.visual === 'runtime' && (
-            <div>
-              <div class="runtime-case" aria-label="Runtime improved from 12 to 15 hours to under one hour">
-                <div>
-                  <p>Before</p>
-                  <strong>12–15 hours</strong>
-                </div>
-                <span aria-hidden="true">&rarr;</span>
-                <div>
-                  <p>After</p>
-                  <strong>Under 1 hour</strong>
-                </div>
-              </div>
-              <p class="artifact-caption">Reconstructed from the measured production runtime. No customer data shown.</p>
-            </div>
-          )}
+          <div class="artifact-heading">
+            <p class="t-micro">Sanitized artifact</p>
+            <h2>{study.artifactTitle}</h2>
+          </div>
+          {study.visual === 'sync' && <SyncPipeline />}
           {study.visual === 'workflow' && (
             <div>
               <WorkflowGraph />
-              <p class="artifact-caption">Reconstructed from EZO’s public Automation Engine documentation.</p>
+              <p class="artifact-caption">
+                Reconstructed from EZO’s public Automation Engine documentation. Labels are illustrative; no customer data is shown.
+              </p>
             </div>
           )}
           {study.visual === 'cmdb' && <CmdbGraph />}
@@ -157,18 +163,23 @@ const accountability = [
 
   .evidence-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .evidence-grid > div {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 0.4rem 1rem;
     min-width: 0;
-    padding: 1.5rem clamp(1.25rem, 5vw, 3rem);
-    border-right: 1px solid var(--color-line);
+    padding: 1.15rem clamp(1.25rem, 5vw, 3rem);
     border-bottom: 1px solid var(--color-line);
   }
 
-  .evidence-grid dt,
-  .runtime-case p {
+  .evidence-grid > div:last-child {
+    border-bottom: 0;
+  }
+
+  .evidence-grid dt {
     font-family: var(--font-mono);
     font-size: var(--type-micro);
     letter-spacing: 0.12em;
@@ -177,10 +188,22 @@ const accountability = [
   }
 
   .evidence-grid dd {
-    margin: 0.55rem 0 0;
+    margin: 0;
     color: var(--color-paper);
     font-size: 0.9375rem;
-    line-height: 1.35;
+    line-height: 1.45;
+  }
+
+  .evidence-note {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--color-quiet);
+    font-size: var(--type-micro);
+    line-height: 1.55;
+  }
+
+  .needs-evidence .evidence-note {
+    color: var(--color-signal);
   }
 
   .case-visual {
@@ -188,6 +211,22 @@ const accountability = [
     border: 1px solid var(--color-line);
     border-radius: 0.625rem;
     background: var(--color-surface);
+  }
+
+  .artifact-heading {
+    display: grid;
+    gap: 0.65rem;
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .artifact-heading h2 {
+    max-width: 28ch;
+    color: var(--color-paper);
+    font-family: var(--font-display);
+    font-variation-settings: "WONK" 1;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.15;
   }
 
   .artifact-caption {
@@ -212,29 +251,6 @@ const accountability = [
     min-width: 0;
     padding: 1.5rem;
     background: var(--color-ink);
-  }
-
-  .runtime-case {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .runtime-case strong {
-    display: block;
-    margin-top: 0.75rem;
-    font-family: var(--font-display);
-    font-variation-settings: "WONK" 1;
-    font-size: clamp(2.5rem, 8vw, 6rem);
-    line-height: 0.95;
-    color: var(--color-signal);
-  }
-
-  .runtime-case > span {
-    color: var(--color-line-strong);
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
   }
 
   .case-copy {
@@ -295,31 +311,62 @@ const accountability = [
     color: var(--color-paper);
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 640px) {
     .evidence-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .evidence-grid > div {
+      display: block;
+      padding-block: 1.5rem;
+      border-right: 1px solid var(--color-line);
+    }
+
+    .evidence-grid > div:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .evidence-grid > div:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .evidence-grid > div:nth-child(n + 3) {
       border-bottom: 0;
     }
 
+    .evidence-grid dd {
+      margin-top: 0.55rem;
+    }
+
+  }
+
+  @media (min-width: 900px) {
     .case-copy section {
       grid-template-columns: 9rem 16rem minmax(0, 1fr);
       align-items: start;
     }
   }
 
+  @media (min-width: 1100px) {
+    .evidence-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .evidence-grid > div,
+    .evidence-grid > div:nth-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .evidence-grid > div:nth-child(2n) {
+      border-right: 1px solid var(--color-line);
+    }
+
+    .evidence-grid > div:last-child {
+      border-right: 0;
+    }
+  }
+
   @media (max-width: 540px) {
-    .runtime-case {
-      grid-template-columns: 1fr;
-    }
-
-    .runtime-case > span {
-      transform: rotate(90deg);
-      width: max-content;
-    }
-
     .case-pagination {
       grid-template-columns: 1fr;
     }

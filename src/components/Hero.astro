@@ -134,7 +134,7 @@ const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf'
             <a
               href={n.href}
               class="hero-node"
-              aria-label={`${n.label}: ${n.note}`}
+              aria-label={`${n.label} ${n.note}`}
               style={`animation-delay:${0.5 + i * 0.22}s`}
             >
               <circle cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
@@ -188,7 +188,7 @@ const primaryResume = '/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf'
         stroke-linejoin="round"
       />
       {mobileNodes.map((n) => (
-        <a href={n.href} class="hero-node" aria-label={`${n.label}: ${n.note}`}>
+        <a href={n.href} class="hero-node" aria-label={`${n.label} ${n.note}`}>
           {/* A generous transparent hit area: the visible node is 10px across, which is
               nowhere near a thumb. */}
           <circle cx={n.x} cy={n.y} r="24" fill="transparent" />
