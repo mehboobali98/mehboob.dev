@@ -40,6 +40,7 @@ const formatted = date.toLocaleDateString('en-US', {
 <Layout
   title={`${title} | Mehboob Ali`}
   description={description}
+  ogImage={`/og/blog/${post.id}.png`}
   article={{ headline: title, datePublished: date.toISOString(), keywords: tags }}
 >
   <Nav />
