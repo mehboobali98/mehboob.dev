@@ -10,7 +10,7 @@ const projects = [
     desc: 'Redmine CLI with a Claude Code skill built in, plus a companion spec-estimator skill (rmine-skills). Adopted by the team at 7Vals.',
     href: 'https://github.com/mehboobali98/rmine',
     cta: 'View on GitHub',
-    post: '/blog/designing-a-cli-for-agents',
+    post: '/blog/designing-a-cli-for-agents/',
   },
   {
     name: 'bitwise_attributes',
@@ -19,7 +19,7 @@ const projects = [
     desc: 'Packs boolean flag attributes into a single ActiveRecord integer column. Started as an internal pattern I used for two years before publishing it.',
     href: 'https://github.com/mehboobali98/bitwise_attributes',
     cta: 'View on GitHub',
-    post: '/blog/two-years-before-i-published-it',
+    post: '/blog/two-years-before-i-published-it/',
   },
   // No adoption line on this one. The other two earned theirs (a team runs rmine daily,
   // the gem was internal for two years) and this is a tool with one user, so the claim
@@ -31,7 +31,7 @@ const projects = [
     desc: "Job discovery for Codex. The finder and judge agents can't write; one deterministic script owns every tracker change, and it never submits an application.",
     href: 'https://github.com/mehboobali98/job-search-agent',
     cta: 'View on GitHub',
-    post: '/blog/every-fixture-was-one-line-long',
+    post: '/blog/every-fixture-was-one-line-long/',
   },
 ];
 
@@ -42,7 +42,7 @@ async function fetchRepoStats(repo: string) {
   try {
     // Unauthenticated the GitHub API allows 60 requests an hour per IP, which CI runners
     // and build hosts share, so this rate-limits far more often than it does locally. The
-    // catch below handles that, but the fallback quietly drops the "pushed today" line
+    // catch below handles that, but the fallback quietly drops the "pushed" date
     // that this section's own heading is claiming. A token raises the limit to 1000/hr;
     // when there isn't one the behaviour is exactly what it was before.
     const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
@@ -68,17 +68,13 @@ async function fetchRepoStats(repo: string) {
 // A star count in low single digits reads as weaker than no star count at all, and it
 // isn't the claim worth making about these repos anyway: one of them is running inside a
 // team every day, which the description says and a number can't. Recency still earns its
-// place, because "pushed today" is the thing that proves "maintained" in the heading.
+// place, because the last-pushed date is the thing that proves "maintained" in the heading.
 const STAR_THRESHOLD = 25;
 
-function timeAgo(date: Date | null) {
-  if (!date) return null;
-  const days = Math.floor((Date.now() - date.getTime()) / 86400000);
-  if (days < 1) return 'today';
-  if (days < 30) return `${days}d ago`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo ago`;
-  return `${Math.floor(months / 12)}y ago`;
+// An absolute date rather than "11d ago": the page is built on push, not on a schedule,
+// so a relative age is only true on the day of the deploy and then silently goes stale.
+function pushedOn(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 
 const stats = await Promise.all(projects.map((p) => fetchRepoStats(p.repo)));
@@ -101,7 +97,7 @@ const rmineHelp = [
 // other surface on the site filters on `!data.draft` before linking a post; this does
 // the same, which is what lets a project card ship before its write-up is published.
 const publishedPosts = new Set(
-  (await getCollection('blog', ({ data }) => !data.draft)).map((post) => `/blog/${post.id}`),
+  (await getCollection('blog', ({ data }) => !data.draft)).map((post) => `/blog/${post.id}/`),
 );
 
 const featured = projects[0];
@@ -152,7 +148,7 @@ const secondary = projects.slice(1).map((project, index) => ({
               {featuredStat.stars !== null && featuredStat.stars >= STAR_THRESHOLD && (
                 <span>&#9733; {featuredStat.stars}</span>
               )}
-              {featuredStat.pushedAt && <span>pushed {timeAgo(featuredStat.pushedAt)}</span>}
+              {featuredStat.pushedAt && <span>pushed <time datetime={featuredStat.pushedAt.toISOString()}>{pushedOn(featuredStat.pushedAt)}</time></span>}
             </p>
           )}
         </div>
@@ -187,7 +183,7 @@ const secondary = projects.slice(1).map((project, index) => ({
                 )}
               </div>
               {stat?.pushedAt && (
-                <p class="font-mono text-xs text-quiet shrink-0">pushed {timeAgo(stat.pushedAt)}</p>
+                <p class="font-mono text-xs text-quiet shrink-0">pushed <time datetime={stat.pushedAt.toISOString()}>{pushedOn(stat.pushedAt)}</time></p>
               )}
             </div>
           </article>

@@ -249,6 +249,8 @@ main:focus {
   color: var(--color-signal);
   text-decoration: underline;
   text-underline-offset: 3px;
+  /* A bare URL as link text is one unbreakable word; at 320px it pushed the page sideways. */
+  overflow-wrap: anywhere;
 }
 
 .prose ul,
