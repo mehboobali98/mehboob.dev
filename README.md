@@ -16,7 +16,7 @@ src/
     OpenSource.astro       Edit the `projects` / `alsoBuilt` arrays here
     Now.astro
     Contact.astro          Edit the `resumes` array here
-    Writing.astro          The three most recent posts, pulled from the blog collection
+    Writing.astro          The two most recent posts, pulled from the blog collection
     PostRow.astro          One post row, shared by the homepage section and /blog
   content/blog/            Posts live here, one .mdx file each
   content.config.ts        Post frontmatter schema
@@ -58,7 +58,7 @@ Body starts here. Standard Markdown, plus JSX if you want it.
 with the file and line rather than silently publishing something half-formed.
 
 Publishing a post means exactly one thing: it appears at `/blog`, on the homepage
-Writing section (newest three), and in `/rss.xml`. Set `draft: true` and it gets no route
+Writing section (newest two), and in `/rss.xml`. Set `draft: true` and it gets no route
 at all -- not merely unlinked, but genuinely unreachable -- so unfinished writing can sit
 in the repo safely.
 
@@ -73,9 +73,10 @@ Run `npm run dev` and the post shows up as you save.
   all ship three or four unrelated accent colors.
 - **Prose styling** lives under `.prose` in `global.css`. There's no typography plugin,
   so a new element type (tables, footnotes) needs a rule adding there.
-- **Images** aren't set up as a pipeline. Put a file in `public/` and reference it as
-  `/name.png`; if posts start needing real image handling, that's the point to add
-  `astro:assets`.
+- **Images** go in `src/assets/blog/` and are referenced from the post with a relative
+  path, e.g. `![alt](../../assets/blog/name.png)`. Astro's image pipeline (sharp) then
+  emits a WebP with `width` and `height` set, so the page doesn't shift as it loads.
+  Don't put post images in `public/`: those are served as-is, unsized and unconverted.
 
 ## Local development
 
