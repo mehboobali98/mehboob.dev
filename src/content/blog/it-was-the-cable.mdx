@@ -122,7 +122,7 @@ Pinging `192.168.10.8` worked with no packet loss, so the dongle was on the netw
 
 The problem was a setting on the dongle. In the SolarGo app, under the dongle's Privacy & Security screen, Modbus TCP was turned off. With it off, the dongle wasn't answering Home Assistant. After enabling it, the same command printed the model name and serial number, and the integration found the inverter straight away.
 
-![Home Assistant Energy dashboard for 23 September, showing solar, grid import and export, and home usage](/it-was-the-cable-energy-dashboard.png)
+![Home Assistant Energy dashboard for 23 September, showing solar, grid import and export, and home usage](../../assets/blog/it-was-the-cable-energy-dashboard.png)
 
 The Energy dashboard now takes grid import and export from the inverter's meter sensors and solar from its total PV generation. With no battery, the inverter shuts down around dusk, so there's nothing to read overnight.
 
