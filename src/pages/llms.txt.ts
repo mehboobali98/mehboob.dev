@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 import { contact } from '../site';
+import { caseStudies } from '../data/caseStudies';
 
 // https://llmstxt.org convention: a plain-Markdown summary of the site for models that
 // are given the URL directly. Generated from the same collection that builds /blog, so
@@ -17,23 +18,26 @@ export async function GET(context: APIContext) {
     return `- [${p.data.title}](${site}/blog/${p.id}/) (${date}): ${p.data.description.trim().replace(/\s+/g, ' ')}`;
   });
 
+  // Same reasoning for the case studies: the homepage and /work pages render from this
+  // data, so the summary here can't claim a different stack or scope than they do.
+  const workLines = caseStudies.map(
+    (s) =>
+      `- [${s.title}](${site}/work/${s.slug}/): ${s.description.trim().replace(/\s+/g, ' ')} ` +
+      `(${s.facts.map((f) => `${f.label}: ${f.value}`).join('; ')}; stack: ${s.stack.join(', ')})`
+  );
+
   const body = `# Mehboob Ali
 
 > Principal Software Engineer in Lahore, Pakistan. Backend systems, technical
-> leadership, and developer tooling. Currently leads the CMDB and Workflow
-> Automation programs at 7Vals, and builds tooling that both engineers and coding
-> agents use.
+> leadership, and developer tooling. Leads Workflow Automation at 7Vals after
+> taking the CMDB / IT Graph from architecture to production, and builds tooling
+> that both engineers and coding agents use.
 
 Open to remote or relocation. Contact: ${contact.email}
 
 ## Selected work
 
-- Device synchronization: rebuilt a Rails sync pipeline running 12-15 hours down to
-  under an hour, using batching and eager loading. The pattern was reused across
-  later device integrations.
-- CMDB / IT Graph: led a 5-engineer team for roughly seven months, architecture to
-  production, covering configuration-item modeling and n-level relationship traversal.
-- Workflow Automation: technical lead for an approximately 8-engineer team.
+${workLines.join('\n')}
 
 ## Open source
 
@@ -45,6 +49,15 @@ Open to remote or relocation. Contact: ${contact.email}
   subagents and a calibration skill that checks estimates against logged time.
 - [bitwise_attributes](https://github.com/mehboobali98/bitwise_attributes): a Ruby gem
   packing boolean flags into a single ActiveRecord integer column.
+- [job-search-agent](https://github.com/mehboobali98/job-search-agent): job discovery
+  for Codex. The finder and judge agents can't write; one deterministic script owns
+  every tracker change, and it never submits an application.
+
+## Publication
+
+- [Open research knowledge graph for structuring scholarly contributions using
+  transformers](https://doi.org/10.1109/ICACS55311.2023.10089637). Mehboob Ali,
+  Abdullah Malik and Maryam Bashir. IEEE ICACS, 2023.
 
 ## Writing
 

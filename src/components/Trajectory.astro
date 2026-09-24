@@ -42,6 +42,7 @@ const leverage = [
     body: 'Setup installs checks for debugger statements, conflict markers, lockfile drift, and Ruby syntax. Ticket references are added automatically.',
   },
   {
+    id: 'performance-feedback',
     title: 'Performance feedback at the source',
     meta: 'Bullet · Slack · staging',
     body: 'N+1 warnings reach Slack with the request, suggested fix, stack frames, and the exact GitHub line before the regression reaches production.',
@@ -71,6 +72,17 @@ const leverage = [
           </li>
         ))}
       </ol>
+
+      <p class="mt-8 t-micro">Publication</p>
+      <p class="mt-2 text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">
+        <a
+          href="https://doi.org/10.1109/ICACS55311.2023.10089637"
+          target="_blank"
+          rel="noopener"
+          class="text-paper underline underline-offset-2 decoration-line-strong hover:text-signal"
+        >Open research knowledge graph for structuring scholarly contributions using transformers</a>.
+        With Abdullah Malik and Maryam Bashir. IEEE ICACS, 2023.
+      </p>
     </div>
 
     <div class="min-w-0 xl:pt-1">
@@ -82,7 +94,7 @@ const leverage = [
 
       <ol class="mt-6 sm:mt-8 grid gap-3 sm:gap-4">
         {leverage.map((item, index) => (
-          <li data-reveal class="impact-card rounded-lg border border-line bg-ink/45 p-5 sm:p-7">
+          <li id={item.id} data-reveal class="impact-card rounded-lg border border-line bg-ink/45 p-5 sm:p-7">
             <div class="flex items-start gap-4">
               <span aria-hidden="true" class="font-mono text-xs text-signal pt-1">
                 {String(index + 1).padStart(2, '0')}

@@ -17,10 +17,21 @@ const variants = [
   { label: 'Full-Stack / Product', file: 'Fullstack_Product_Resume' },
 ];
 
+// Each principle points at the thing on the site that shows it. Without that, three
+// sentences about how someone works could sit on anyone's portfolio.
 const principles = [
-  'I write down the messy part first. Once the uncertainty is visible, splitting the work gets much easier.',
-  "I don't disappear after release. I stay close to the logs, support questions, and awkward edge cases.",
-  'If I have to explain the same manual fix twice, I start looking for the tool that removes it.',
+  {
+    text: 'I write down the messy part first. Once the uncertainty is visible, splitting the work gets much easier.',
+    proof: { label: 'The spec auditor', href: '/blog/three-agents-that-dont-trust-each-other/' },
+  },
+  {
+    text: "I don't disappear after release. I stay close to the logs, support questions, and awkward edge cases.",
+    proof: { label: 'N+1 warnings routed to Slack', href: '#performance-feedback' },
+  },
+  {
+    text: 'If I have to explain the same manual fix twice, I start looking for the tool that removes it.',
+    proof: { label: 'Why rmine exists', href: '/blog/designing-a-cli-for-agents/' },
+  },
 ];
 ---
 
@@ -34,7 +45,10 @@ const principles = [
             <span aria-hidden="true" class="font-mono text-xs text-signal">
               {String(index + 1).padStart(2, '0')}
             </span>
-            <p class="mt-3 text-paper/85 leading-relaxed">{principle}</p>
+            <p class="mt-3 text-paper/85 leading-relaxed">{principle.text}</p>
+            <a href={principle.proof.href} class="tap inline-block mt-3 font-mono text-xs text-signal hover:underline">
+              {principle.proof.label} &rarr;
+            </a>
           </li>
         ))}
       </ol>

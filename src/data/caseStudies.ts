@@ -44,7 +44,7 @@ export const caseStudies: CaseStudy[] = [
     title: 'The sync job that took half a day',
     description:
       "AssetSonar's device sync was taking 12 to 15 hours. I rebuilt the pipeline around batched writes and removed the redundant lookups.",
-    stack: ['Ruby on Rails', 'Delayed Job', 'PostgreSQL'],
+    stack: ['Ruby on Rails', 'Delayed Job', 'MySQL'],
     visual: 'sync',
     flagship: true,
     summary: {
@@ -75,7 +75,7 @@ export const caseStudies: CaseStudy[] = [
       tradeoff: 'The quickest rewrite would have changed the payload shape. Keeping the contract stable made the rollout safer and the pattern reusable.',
       hindsight: 'The fix started too late. I would put query counts and runtime budgets beside the job before its first large workload, not after it had become a half-day dependency.',
     },
-    post: '/blog/the-sync-job-that-took-half-a-day',
+    post: '/blog/the-sync-job-that-took-half-a-day/',
   },
   {
     id: 'workflow',
@@ -117,7 +117,7 @@ export const caseStudies: CaseStudy[] = [
     },
     proof: {
       label: 'Publicly documented by EZO',
-      href: 'https://ezo.io/assetsonar/blog/automation-engine/',
+      href: 'https://ezo.io/assetsonar/docs/automate-it-workflows/',
     },
   },
   {
@@ -127,7 +127,7 @@ export const caseStudies: CaseStudy[] = [
     title: 'A CMDB that actually models relationships',
     description:
       'I led the architecture and delivery of a relationship model that can answer what touches a configuration item several hops away.',
-    stack: ['Ruby on Rails', 'PostgreSQL', 'Graph modeling'],
+    stack: ['Ruby on Rails', 'MySQL', 'Graph modeling'],
     visual: 'cmdb',
     summary: {
       role: 'Architecture and delivery lead for a 5-engineer team',
@@ -160,7 +160,7 @@ export const caseStudies: CaseStudy[] = [
     },
     proof: {
       label: 'Publicly documented by EZO',
-      href: 'https://ezo.io/assetsonar/blog/visualize-cmdb-relationships-assetsonar-it-graph/',
+      href: 'https://ezo.io/assetsonar/docs/visualize-and-manage-cmdb-relationships-with-it-graph/',
     },
   },
 ];
