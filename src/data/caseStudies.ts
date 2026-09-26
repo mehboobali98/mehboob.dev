@@ -107,8 +107,8 @@ export const caseStudies: CaseStudy[] = [
     result:
       'The engine is running in production and remains the program I lead. It can carry an offboarding flow across several systems and show where a branch failed.',
     accountability: {
-      mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned.',
-      team: 'Approximately eight engineers owned execution, expressions, triggers, branching, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
+      mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned. I also built the HTTP request node, webhook triggers, success and failure branching, and execution logs myself.',
+      team: 'Approximately eight engineers owned execution, expressions, event and time triggers, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
       tradeoff: 'More flexible workflows are harder to explain when they fail. Schema-aware outputs and readable run histories had to grow with the node model.',
       hindsight: 'We let the node catalogue grow before replay rules and operational limits were boring and explicit. I would reverse that order.',
     },
@@ -149,7 +149,7 @@ export const caseStudies: CaseStudy[] = [
     result:
       'The module moved from architecture to production in seven months and put multi-hop relationship exploration into the product interface.',
     accountability: {
-      mine: 'I designed the n-level traversal model and led delivery across the data model, relationship rules, and the interface built on top of them.',
+      mine: 'I designed the n-level traversal model, wrote the design RFCs, built the new module\'s backend, and led delivery across the data model, relationship rules, and the interface built on top of them.',
       team: 'Five engineers implemented and integrated the module across the wider ITSM product.',
       tradeoff: 'Traversal depth is useful until the graph becomes unreadable. The model preserves type and direction while the interface reveals one useful level at a time.',
       hindsight: 'I would bring the ugliest real relationship paths into week one. Clean demo graphs do not expose where the model and the interface become hard to read.',
