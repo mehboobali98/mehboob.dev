@@ -1,20 +1,15 @@
 ---
 import { contact, mailto } from '../site';
 
-// Five equally-weighted resume variants made the visitor do the sorting. Most people who
-// reach this section want one file, so one is offered outright and the tailored variants
-// sit behind a disclosure for the recruiter who is hiring for a specific shape of role.
-// PDF stays first everywhere because it renders the same on every machine, including a
-// phone; the DOCX is there for ATS uploads that want an editable file.
+// One primary resume keeps the positioning the same here as everywhere else; the
+// full-stack variant sits behind a disclosure for Rails + React roles. Both are the
+// phone-free public builds of the LaTeX sources, so there is no DOCX to offer.
 const base = '/resume/Mehboob_Ali_';
 
-const primary = { label: 'Staff / Principal / Tech Lead', file: 'Staff_Principal_Tech_Lead_Resume' };
+const primary = { label: 'Senior Backend Engineer (Ruby on Rails)', file: 'Resume' };
 
 const variants = [
-  { label: 'Backend / Platform', file: 'Backend_Platform_Resume' },
-  { label: 'Applied AI & Developer Tools', file: 'Applied_AI_LLM_Resume' },
-  { label: 'Developer Productivity / AI Enablement', file: 'Developer_Productivity_AI_Enablement_Resume' },
-  { label: 'Full-Stack / Product', file: 'Fullstack_Product_Resume' },
+  { label: 'Full-stack (Rails + React)', file: 'Resume_Fullstack' },
 ];
 
 // Each principle points at the thing on the site that shows it. Without that, three
@@ -82,19 +77,12 @@ const principles = [
           >
             Download PDF
           </a>
-          <a
-            href={`${base}${primary.file}.docx`}
-            download
-            class="tap font-mono text-xs text-quiet hover:text-signal transition-colors"
-          >
-            DOCX
-          </a>
         </div>
       </div>
 
       <details class="mt-5">
         <summary class="tap font-mono text-xs text-quiet hover:text-signal transition-colors cursor-pointer">
-          Four more, tailored to the role
+          Full-stack variant
         </summary>
         <div class="mt-2 flex flex-col">
           {variants.map((r) => (
@@ -102,7 +90,6 @@ const principles = [
               <p class="text-sm text-paper/80">{r.label}</p>
               <p class="flex gap-4 font-mono text-xs shrink-0">
                 <a href={`${base}${r.file}.pdf`} download class="tap text-signal hover:underline">PDF &darr;</a>
-                <a href={`${base}${r.file}.docx`} download class="tap text-quiet hover:text-signal transition-colors">DOCX</a>
               </p>
             </div>
           ))}

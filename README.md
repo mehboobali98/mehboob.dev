@@ -151,10 +151,11 @@ was never checked; someone else registered it in May 2026.)
 
 ## Updating the resumes
 
-`public/resume/` holds five tailored variants, each as a PDF and a DOCX. Swap the files and keep the
-filenames the same, or update the `resumes` array at the top of `src/components/Contact.astro` if you
-rename them. The array stores a base filename per variant and the markup appends `.pdf` / `.docx`, so
-both formats have to keep matching names. They're served as static downloads, no build step needed.
+`public/resume/` holds two PDFs: `Mehboob_Ali_Resume.pdf` (primary, Senior Backend) and
+`Mehboob_Ali_Resume_Fullstack.pdf`. Both are the phone-free public builds of the LaTeX sources kept
+with the job-search profile (`*_Public.tex`). Replace the files in place and keep the names, since
+the hero, nav and contact links point at these stable paths. The five older variants were retired
+on 2026-09-26; `public/_redirects` sends their old URLs to the nearest current file.
 
 ## Notes for next time
 
