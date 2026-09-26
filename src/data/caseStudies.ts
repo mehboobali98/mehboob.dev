@@ -60,14 +60,14 @@ export const caseStudies: CaseStudy[] = [
       { label: 'Before', value: '12–15 hours' },
       { label: 'After', value: 'Under 1 hour' },
       { label: 'Scale', value: 'Millions of records' },
-      { label: 'Durability', value: 'All later MDM integrations' },
+      { label: 'Durability', value: 'Reused in later MDM integrations' },
     ],
     challenge:
       "New hardware would not show up for most of a working day. The pipeline had accumulated N+1 queries and unbatched writes on a table carrying years of device history.",
     approach:
       'I traced the expensive query paths, rebuilt the work around bounded batches, and removed repeated lookups from the hot path. The redesign had to reduce runtime without changing the data contract downstream integrations relied on.',
     result:
-      'The same job now finishes in under an hour. More importantly, the batching pattern became the base for every MDM integration added afterward instead of remaining a one-off performance patch.',
+      'The same job now finishes in under an hour. More importantly, the batching pattern was reused in the MDM integrations added afterward instead of remaining a one-off performance patch.',
     accountability: {
       mine: 'I profiled the existing job, redesigned the batching and query paths, and shipped the change without altering the downstream data contract.',
       team: 'The backend team carried the pattern into later MDM integrations. I owned the original performance redesign.',
@@ -98,7 +98,6 @@ export const caseStudies: CaseStudy[] = [
     facts: [
       { label: 'Role', value: 'Technical delivery lead' },
       { label: 'Team', value: 'Approximately 8 engineers' },
-      { label: 'Duration', value: '5 months' },
       { label: 'Status', value: 'Running in production' },
     ],
     challenge:

@@ -10,16 +10,16 @@ import DeliveryChart from './DeliveryChart.astro';
 // case pages carry the rest.
 const stats = [
   {
-    // "tickets", not "features shipped": not every ticket reached production, and a
-    // failure rate is not what this section is for.
-    n: '276',
-    label: 'feature tickets',
-    desc: 'Across AssetSonar and the EZOfficeInventory line, from 2021 to mid-2026.',
+    // Only tickets I was a developer on and that reached Deployed. Tickets I only wrote,
+    // and ones still open or parked on staging, are left out.
+    n: '170',
+    label: 'features deployed',
+    desc: 'Built by me and deployed, across AssetSonar and the EZOfficeInventory line, 2021 to mid-2026.',
   },
   {
-    n: '22',
-    label: 'key features',
-    desc: 'Product-flagged, go-to-market work. Not the routine maintenance stuff.',
+    n: '20',
+    label: 'flagship releases',
+    desc: 'Product-flagged launches, deployed. Not the routine maintenance stuff.',
   },
   {
     n: '7',
@@ -77,7 +77,7 @@ const stats = [
   <!-- The shape behind the totals, and the method that produced them. -->
   <div class="band band--compact shell section-grid">
     <div>
-      <p class="t-micro mb-5">Feature tickets per year</p>
+      <p class="t-micro mb-5">Features deployed per year</p>
       <DeliveryChart />
     </div>
     <details class="measure-sm border-y border-line py-1">
@@ -86,12 +86,12 @@ const stats = [
       </summary>
       <div class="pb-4">
         <p class="text-paper/70 leading-relaxed" style="font-size: var(--type-meta)">
-          Closed issues assigned to me across five years, exported
-          with <code class="font-mono text-[0.9em] text-paper/85">-o json</code>, then
-          grouped by tracker and by the product's own feature flag. The tool is open source;
-          the Redmine instance behind these numbers is my employer's, so you can read the
-          method but you can't run it. Where a number is a range or an estimate, it's
-          written as one.
+          Feature tickets I worked on as a developer, exported
+          with <code class="font-mono text-[0.9em] text-paper/85">-o json</code>, keeping
+          only the ones that were deployed, then grouped by the product's own feature flag.
+          The tool is open source and the tickets are private, so you can read the method
+          but you can't rerun it. Where a number is a range or an estimate, it's written
+          as one.
         </p>
         <a
           href="https://github.com/mehboobali98/rmine"
