@@ -7,7 +7,6 @@ interface CaseStudySummary {
   result: {
     value: string;
     note: string;
-    evidenceNeeded?: boolean;
   };
 }
 
@@ -92,8 +91,7 @@ export const caseStudies: CaseStudy[] = [
       decision: 'Composable nodes, schema-aware outputs, and run history that follows each branch',
       result: {
         value: 'Running in production',
-        note: 'Evidence gap: add one verified adoption, reliability, or time-saving outcome before merge.',
-        evidenceNeeded: true,
+        note: 'Still the program I lead; the node model is documented in EZO’s public Automation Engine docs.',
       },
     },
     artifactTitle: 'One condition can fork into two observable paths.',
@@ -108,7 +106,7 @@ export const caseStudies: CaseStudy[] = [
     approach:
       'I split delivery across execution, expression resolution, event triggers, branching and iteration, data transformation, integrations, and monitoring. Responses become schemas later nodes can read; arrays split into items and paginated endpoints follow themselves.',
     result:
-      'The engine is running in production and remains the program I lead. It can carry an offboarding flow across several systems and show where a branch failed. I still need one verified operational outcome—such as active workflows, setup time saved, or recovery time—to make the result concrete.',
+      'The engine is running in production and remains the program I lead. It can carry an offboarding flow across several systems and show where a branch failed.',
     accountability: {
       mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned.',
       team: 'Approximately eight engineers owned execution, expressions, triggers, branching, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
@@ -135,8 +133,7 @@ export const caseStudies: CaseStudy[] = [
       decision: 'N-level traversal that preserves relationship type and direction, revealed one level at a time',
       result: {
         value: 'Released to production in 7 months',
-        note: 'Evidence gap: add one verified usage, support, or decision-time outcome before merge.',
-        evidenceNeeded: true,
+        note: 'Multi-hop relationship exploration shipped inside the ITSM product; documented publicly by EZO.',
       },
     },
     artifactTitle: 'A multi-hop question becomes one traversal.',
@@ -151,7 +148,7 @@ export const caseStudies: CaseStudy[] = [
     approach:
       'I designed the data model for n-level traversal and led the ITSM-integrated interface built on top of it. Each configuration item expands to its next level while preserving relationship type and direction.',
     result:
-      'The module moved from architecture to production in seven months and put multi-hop relationship exploration into the product interface. I still need one verified usage, support, or decision-time outcome to show what that changed for customers.',
+      'The module moved from architecture to production in seven months and put multi-hop relationship exploration into the product interface.',
     accountability: {
       mine: 'I designed the n-level traversal model and led delivery across the data model, relationship rules, and the interface built on top of them.',
       team: 'Five engineers implemented and integrated the module across the wider ITSM product.',
