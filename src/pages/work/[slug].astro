@@ -28,7 +28,6 @@ const summary = [
     label: 'Result',
     body: study.summary.result.value,
     note: study.summary.result.note,
-    evidenceNeeded: study.summary.result.evidenceNeeded,
   },
 ];
 ---
@@ -58,7 +57,7 @@ const summary = [
       <section aria-label="Project summary" class="border-y border-line bg-surface">
         <dl class="shell evidence-grid">
           {summary.map((item) => (
-            <div class:list={[item.evidenceNeeded && 'needs-evidence']}>
+            <div>
               <dt>{item.label}</dt>
               <dd>
                 {item.body}
@@ -200,10 +199,6 @@ const summary = [
     color: var(--color-quiet);
     font-size: var(--type-micro);
     line-height: 1.55;
-  }
-
-  .needs-evidence .evidence-note {
-    color: var(--color-signal);
   }
 
   .case-visual {
