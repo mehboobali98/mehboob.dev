@@ -1,0 +1,14 @@
+# Read by Cloudflare at deploy time; not served itself.
+# The five tailored resumes were retired on 2026-09-26 for one primary resume plus a
+# full-stack variant. Links to the old stable paths already exist, so they point at the
+# nearest current file instead of 404ing.
+/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.pdf               /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Staff_Principal_Tech_Lead_Resume.docx              /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Backend_Platform_Resume.pdf                        /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Backend_Platform_Resume.docx                       /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Applied_AI_LLM_Resume.pdf                          /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Applied_AI_LLM_Resume.docx                         /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Developer_Productivity_AI_Enablement_Resume.pdf    /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Developer_Productivity_AI_Enablement_Resume.docx   /resume/Mehboob_Ali_Resume.pdf 301
+/resume/Mehboob_Ali_Fullstack_Product_Resume.pdf                       /resume/Mehboob_Ali_Resume_Fullstack.pdf 301
+/resume/Mehboob_Ali_Fullstack_Product_Resume.docx                      /resume/Mehboob_Ali_Resume_Fullstack.pdf 301
