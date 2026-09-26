@@ -4,7 +4,7 @@ import WorkflowGraph from './WorkflowGraph.astro';
 import { caseStudies } from '../data/caseStudies';
 
 const [sync, workflow, cmdb] = caseStudies;
-const workflowPreviewFacts = workflow.facts.filter((fact) => ['Team', 'Duration'].includes(fact.label));
+const workflowPreviewFacts = workflow.facts.filter((fact) => ['Team', 'Status'].includes(fact.label));
 const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includes(fact.label));
 ---
 

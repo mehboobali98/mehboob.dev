@@ -28,7 +28,8 @@ export async function GET(context: APIContext) {
 
   const body = `# Mehboob Ali
 
-> Principal Software Engineer in Lahore, Pakistan. Backend systems, technical
+> Senior backend engineer (Ruby on Rails, MySQL) in Lahore, Pakistan, currently
+> Principal Software Engineer at 7Vals. Backend systems, technical
 > leadership, and developer tooling. Leads Workflow Automation at 7Vals after
 > taking the CMDB / IT Graph from architecture to production, and builds tooling
 > that both engineers and coding agents use.
