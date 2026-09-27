@@ -107,7 +107,7 @@ export const caseStudies: CaseStudy[] = [
     result:
       'The engine is running in production and remains the program I lead. It can carry an offboarding flow across several systems and show where a branch failed.',
     accountability: {
-      mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned. I also built the HTTP request node, webhook triggers, success and failure branching, and execution logs myself.',
+      mine: 'I split the engine into workstreams, set the integration boundaries, reviewed the cross-cutting decisions, and kept backend and frontend delivery aligned. I also built the HTTP request node, webhook triggers, and success and failure branching myself, and improved the execution logs.',
       team: 'Approximately eight engineers owned execution, expressions, event and time triggers, iteration, transformation, integrations, monitoring, and the node-canvas interface.',
       tradeoff: 'More flexible workflows are harder to explain when they fail. Schema-aware outputs and readable run histories had to grow with the node model.',
       hindsight: 'We let the node catalogue grow before replay rules and operational limits were boring and explicit. I would reverse that order.',
