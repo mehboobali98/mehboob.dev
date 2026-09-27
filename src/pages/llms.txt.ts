@@ -30,8 +30,8 @@ export async function GET(context: APIContext) {
 
 > Senior backend engineer (Ruby on Rails, MySQL) in Lahore, Pakistan, currently
 > Principal Software Engineer at 7Vals. Backend systems, technical
-> leadership, and developer tooling. Leads Workflow Automation at 7Vals after
-> taking the CMDB / IT Graph from architecture to production, and builds tooling
+> leadership, and developer tooling. Leads workflow automation at 7Vals after
+> taking a CMDB relationship graph from architecture to production, and builds tooling
 > that both engineers and coding agents use.
 
 Open to remote or relocation. Contact: ${contact.email}
