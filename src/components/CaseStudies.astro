@@ -1,5 +1,6 @@
 ---
 import CmdbGraph from './CmdbGraph.astro';
+import RackEditor from './RackEditor.astro';
 import WorkflowGraph from './WorkflowGraph.astro';
 import { caseStudies } from '../data/caseStudies';
 
@@ -116,6 +117,31 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
       </div>
     </div>
   </article>
+
+  <article id="rack-editor" data-reveal class="border-t border-line bg-surface">
+    <div class="band band--compact shell grid xl:grid-cols-[minmax(0,0.82fr)_minmax(30rem,1.18fr)] gap-10 xl:gap-20 items-center">
+      <div class="measure min-w-0">
+        <p class="t-micro">Also built</p>
+        <h3 class="mt-4 t-display-3 text-paper">A server rack layout editor</h3>
+        <p class="mt-5 text-paper/80 leading-relaxed">
+          Both halves are mine: the Rails API that saves a layout's racks and devices in one
+          transaction, and the React editor on top of it.
+        </p>
+        <p class="mt-4 text-paper/80 leading-relaxed">
+          Drop a device on a rack and it lands in the nearest free slot tall enough to hold it,
+          or the editor says there's no room. Drag one onto occupied units and it goes back
+          where it was.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {['Ruby on Rails', 'React', 'TypeScript', 'React Flow'].map((item) => <span class="tech-pill">{item}</span>)}
+        </div>
+      </div>
+
+      <div class="rack-panel min-w-0">
+        <RackEditor />
+      </div>
+    </div>
+  </article>
 </section>
 
 <style>
@@ -177,7 +203,8 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
   }
 
   .workflow-panel,
-  .cmdb-panel {
+  .cmdb-panel,
+  .rack-panel {
     padding: clamp(1.25rem, 4vw, 3.5rem);
     border: 1px solid var(--color-line);
     border-radius: 0.5rem;
