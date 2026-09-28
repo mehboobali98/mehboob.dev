@@ -1,0 +1,156 @@
+---
+/** A redrawn, generic server rack layout editor: a 2U server dragged from the palette skips a 1U gap and lands in the next free 2U slot. */
+const U = 20;
+const top = 30;
+
+const palette = [
+  { name: 'Server', size: '2U', lit: true },
+  { name: 'Switch', size: '1U' },
+  { name: 'UPS', size: '2U' },
+  { name: 'Firewall', size: '1U' },
+];
+
+const slots = [
+  { kind: 'switch', h: 1 },
+  { kind: 'gap', h: 1 },
+  { kind: 'firewall', h: 1 },
+  { kind: 'server', h: 2 },
+  { kind: 'ghost', h: 2 },
+  { kind: 'server', h: 2 },
+  { kind: 'blank', h: 1 },
+  { kind: 'ups', h: 2 },
+].reduce<{ kind: string; h: number; u: number }[]>((placed, slot) => {
+  const last = placed.at(-1);
+  return [...placed, { ...slot, u: last ? last.u + last.h : 0 }];
+}, []);
+
+const layouts = [
+  { id: 'd', cls: 'hidden sm:block', width: 460, pal: 140, rackX: 250, rackW: 210, items: 4 },
+  { id: 'm', cls: 'sm:hidden', width: 300, pal: 96, rackX: 122, rackW: 178, items: 3 },
+];
+
+const ghost = slots.find((s) => s.kind === 'ghost')!;
+const height = top + slots.reduce((sum, s) => sum + s.h, 0) * U + 8;
+---
+
+<figure>
+  {layouts.map(({ id, cls, width, pal, rackX, rackW, items }) => {
+    const x = rackX + 12;
+    const w = rackW - 24;
+    const from = { x: pal, y: top + 18 };
+    const to = { x, y: top + (ghost.u + ghost.h / 2) * U };
+    const bend = (to.x - from.x) / 2;
+    return (
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        width={width}
+        class:list={[cls, 'mx-auto max-w-full h-auto']}
+        role="img"
+        aria-labelledby={`rack-title-${id}`}
+      >
+        <title id={`rack-title-${id}`}>
+          A server rack layout editor. A 2U server dragged from the palette skips a 1U gap
+          that is too short and lands in the next free 2U slot.
+        </title>
+
+        <g font-family="var(--font-mono)">
+          <text x="0" y="18" font-size="12" fill="var(--color-quiet)">Palette</text>
+          <text x={rackX} y="18" font-size="12" fill="var(--color-quiet)">Rack, 12U</text>
+
+          {palette.slice(0, items).map((item, i) => {
+            const y = top + i * 46;
+            const ink = item.lit ? 'var(--color-react)' : 'var(--color-paper)';
+            return (
+              <>
+                <rect
+                  x="0.75"
+                  y={y + 0.75}
+                  width={pal - 1.5}
+                  height="34.5"
+                  rx="4"
+                  fill="var(--color-surface)"
+                  stroke={item.lit ? 'var(--color-react)' : 'var(--color-line)'}
+                  stroke-width="1.5"
+                />
+                <text x="10" y={y + 22} font-size="13" fill={ink}>{item.name}</text>
+                <text x={pal - 10} y={y + 22} font-size="12" text-anchor="end" fill="var(--color-quiet)">{item.size}</text>
+              </>
+            );
+          })}
+
+          <rect
+            x={rackX + 0.75}
+            y={top - 6}
+            width={rackW - 1.5}
+            height={slots.reduce((sum, s) => sum + s.h, 0) * U + 12}
+            rx="4"
+            fill="none"
+            stroke="var(--color-line-strong)"
+            stroke-width="1.5"
+          />
+
+          {slots.map(({ kind, h, u }) => {
+            const y = top + u * U + 2;
+            const dh = h * U - 4;
+            const mid = y + dh / 2;
+            if (kind === 'gap') {
+              return <text x={x + 8} y={mid + 4} font-size="12" fill="var(--color-quiet)">1U free, too short</text>;
+            }
+            if (kind === 'ghost') {
+              return (
+                <>
+                  <rect x={x} y={y} width={w} height={dh} rx="2" fill="var(--color-react)" fill-opacity="0.1" stroke="var(--color-react)" stroke-width="1.5" stroke-dasharray="4 3" />
+                  <text x={x + 10} y={mid + 5} font-size="13" fill="var(--color-react)">Server 2U</text>
+                </>
+              );
+            }
+            return (
+              <>
+                <rect x={x} y={y} width={w} height={dh} rx="2" fill="var(--color-surface)" stroke="var(--color-line)" stroke-width="1" />
+                {kind === 'switch' && Array.from({ length: Math.floor((w - 16) / 10) }, (_, i) => (
+                  <rect x={x + 8 + i * 10} y={mid - 3} width="6" height="6" rx="1" fill="var(--color-line-strong)" />
+                ))}
+                {kind === 'firewall' && (
+                  <>
+                    <circle cx={x + 10} cy={mid} r="2" fill="var(--color-quiet)" />
+                    <circle cx={x + 18} cy={mid} r="2" fill="var(--color-quiet)" />
+                    <rect x={x + w - 40} y={mid - 2} width="30" height="4" rx="1" fill="var(--color-line-strong)" />
+                  </>
+                )}
+                {kind === 'server' && (
+                  <>
+                    {Array.from({ length: 6 }, (_, i) => (
+                      <rect x={x + 8 + i * 12} y={y + 6} width="8" height={dh - 12} rx="1.5" fill="var(--color-line-strong)" />
+                    ))}
+                    <circle cx={x + w - 12} cy={mid} r="3" fill="none" stroke="var(--color-quiet)" stroke-width="1.5" />
+                  </>
+                )}
+                {kind === 'blank' && (
+                  <>
+                    <circle cx={x + 6} cy={mid} r="1.5" fill="var(--color-line-strong)" />
+                    <circle cx={x + w - 6} cy={mid} r="1.5" fill="var(--color-line-strong)" />
+                  </>
+                )}
+                {kind === 'ups' && (
+                  <>
+                    <rect x={x + 8} y={mid - 7} width="30" height="14" rx="1.5" fill="var(--color-line)" />
+                    {[0, 1, 2].map((i) => <circle cx={x + w - 12 - i * 9} cy={mid} r="2" fill="var(--color-quiet)" />)}
+                  </>
+                )}
+              </>
+            );
+          })}
+
+          <path
+            d={`M${from.x} ${from.y} C${from.x + bend} ${from.y} ${to.x - bend} ${to.y} ${to.x} ${to.y}`}
+            fill="none"
+            stroke="var(--color-react)"
+            stroke-width="1.5"
+            stroke-dasharray="3 4"
+          />
+          <circle cx={to.x} cy={to.y} r="3" fill="var(--color-react)" />
+        </g>
+      </svg>
+    );
+  })}
+</figure>
