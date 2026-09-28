@@ -70,6 +70,11 @@
   --color-void: #07090C;
   --color-ember: #8C5F1E;
 
+  /* Tech colours from the LinkedIn banner; each marks only its own technology. */
+  --color-mysql: #3FA7C0;        /* 6.65:1 */
+  --color-react: #61DAFB;        /* 11.47:1 */
+  --color-go: #00ADD8;           /* 7.07:1 */
+
   /* One measure token, so body copy can't drift back to 83 characters a line. */
   --measure: 34rem;
 
@@ -661,6 +666,17 @@ main:focus {
 .terminal .terminal-line {
   display: block;
   min-height: 1lh;
+}
+
+@media (width < 40rem) {
+  .terminal[data-hang] pre {
+    white-space: pre-wrap;
+  }
+
+  .terminal[data-hang] .terminal-line {
+    padding-left: var(--hang);
+    text-indent: calc(var(--hang) * -1);
+  }
 }
 
 /* ---------------------------------------------------------------------------

@@ -9,9 +9,11 @@ interface Props {
   // A plain string is printed as-is; { dim: true } greys it, for the parts of the output
   // that are chrome rather than content.
   output: (string | { text: string; dim?: boolean })[];
+  // On phones, wrap long lines and continue them this many characters in, under their column.
+  hang?: number;
 }
 
-const { caption, command, output } = Astro.props;
+const { caption, command, output, hang } = Astro.props;
 
 function escapeHtml(value: string) {
   return value
@@ -33,7 +35,7 @@ const terminalHtml = [
 
 <!-- tabindex on the pre: it scrolls sideways on narrow screens, and Shiki only adds that
      automatically to code blocks in posts. The figcaption already names it. -->
-<figure class="terminal">
+<figure class="terminal" data-hang={hang ? true : undefined} style={hang ? `--hang: ${hang}ch` : undefined}>
   <figcaption>{caption}</figcaption>
   <pre tabindex="0" set:html={terminalHtml}></pre>
 </figure>

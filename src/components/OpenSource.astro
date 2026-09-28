@@ -154,7 +154,7 @@ const secondary = projects.slice(1).map((project, index) => ({
         </div>
 
         <div class="mt-8">
-          <Terminal caption="Real output excerpt · rmine --help" command="rmine --help" output={rmineHelp} />
+          <Terminal caption="Real output excerpt · rmine --help" command="rmine --help" output={rmineHelp} hang={14} />
         </div>
       </article>
 
