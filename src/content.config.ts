@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { cardMotif } from './lib/cardMotif';
 
 // Posts are plain files on disk, not a CMS -- same principle as the rest of the site,
 // where content lives next to the markup that renders it. `draft: true` keeps a post
@@ -13,6 +14,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    card: cardMotif.optional(),
   }),
 });
 
