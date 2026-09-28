@@ -34,19 +34,16 @@ const principles = [
   <div id="now" class="bg-surface border-b border-line">
     <div class="shell px-[clamp(1.25rem,5vw,5rem)] py-10 sm:py-12 grid lg:grid-cols-[10rem_minmax(0,1fr)] gap-6 lg:gap-10 items-start">
       <h2 class="marker">How I work</h2>
-      <ol class="grid sm:grid-cols-3 gap-px border border-line rounded-md bg-line overflow-hidden">
-        {principles.map((principle, index) => (
+      <ul class="grid sm:grid-cols-3 gap-px border border-line rounded-md bg-line overflow-hidden">
+        {principles.map((principle) => (
           <li class="bg-surface px-5 py-5 sm:min-h-32">
-            <span aria-hidden="true" class="font-mono text-xs text-signal">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <p class="mt-3 text-paper/85 leading-relaxed">{principle.text}</p>
+            <p class="text-paper/85 leading-relaxed">{principle.text}</p>
             <a href={principle.proof.href} class="tap inline-block mt-3 font-mono text-xs text-signal hover:underline">
               {principle.proof.label} &rarr;
             </a>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   </div>
 
