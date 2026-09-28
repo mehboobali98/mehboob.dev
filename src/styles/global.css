@@ -622,14 +622,16 @@ main:focus {
    are template decoration and the frame here is only doing the job of saying
    "this is a terminal".
    --------------------------------------------------------------------------- */
-.terminal {
+.terminal,
+.exhibit {
   border: 1px solid var(--color-line);
   border-radius: 6px;
   background: var(--color-surface);
   overflow: hidden;
 }
 
-.terminal figcaption {
+.terminal figcaption,
+.exhibit figcaption {
   font-family: var(--font-mono);
   font-size: var(--type-micro);
   letter-spacing: 0.1em;

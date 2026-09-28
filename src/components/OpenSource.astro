@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import AgentsDiagram from './AgentsDiagram.astro';
 import Terminal from './Terminal.astro';
 
 const projects = [
@@ -7,10 +8,21 @@ const projects = [
     name: 'rmine',
     tag: 'Go',
     repo: 'mehboobali98/rmine',
-    desc: 'Redmine CLI with a Claude Code skill built in, plus a companion spec-estimator skill (rmine-skills). Used by the team at 7Vals.',
+    desc: 'Redmine CLI with JSON output and a Claude Code skill built in. Used by the team at 7Vals.',
+    detail: 'It started as a way to inspect five years of ticket history. The team now uses the same binary day to day, and the delivery numbers above came straight out of it.',
     href: 'https://github.com/mehboobali98/rmine',
     cta: 'View on GitHub',
     post: '/blog/designing-a-cli-for-agents/',
+  },
+  {
+    name: 'rmine-skills',
+    tag: 'Claude Code plugin',
+    repo: 'mehboobali98/rmine-skills',
+    desc: 'Six Claude Code skills built on rmine, used by the team at 7Vals. They estimate tickets, draft time logs from git, and check sprint capacity.',
+    detail: "Its /estimate skill hands a ticket to three subagents, and none of them can write a file. Most of the design went into what each one isn't allowed to see.",
+    href: 'https://github.com/mehboobali98/rmine-skills',
+    cta: 'View on GitHub',
+    post: '/blog/three-agents-that-dont-trust-each-other/',
   },
   {
     name: 'bitwise_attributes',
@@ -100,12 +112,9 @@ const publishedPosts = new Set(
   (await getCollection('blog', ({ data }) => !data.draft)).map((post) => `/blog/${post.id}/`),
 );
 
-const featured = projects[0];
-const featuredStat = stats[0];
-const secondary = projects.slice(1).map((project, index) => ({
-  project,
-  stat: stats[index + 1],
-}));
+const withStats = projects.map((project, index) => ({ project, stat: stats[index] }));
+const featured = withStats.slice(0, 2);
+const secondary = withStats.slice(2);
 ---
 
 <section id="open-source" class="bg-ink border-t border-line">
@@ -117,48 +126,51 @@ const secondary = projects.slice(1).map((project, index) => ({
       </h2>
     </div>
 
-    <div class="mt-10 grid xl:grid-cols-[minmax(0,1.18fr)_minmax(22rem,0.82fr)] gap-5 items-stretch">
-      <article
-        data-reveal
-        class="group min-w-0 p-7 sm:p-9 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
-      >
-        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h3 class="t-display-3 text-paper">{featured.name}</h3>
-          <span class="font-mono text-xs text-quiet">{featured.tag}</span>
-        </div>
-        <p class="mt-4 max-w-[38rem] text-paper/80 leading-relaxed">{featured.desc}</p>
-        <p class="mt-4 max-w-[38rem] text-sm text-paper/65 leading-relaxed">
-          It started as a way to inspect five years of ticket history. The team now uses the same
-          binary day to day, and the delivery numbers above came straight out of it.
-        </p>
+    <div class="mt-10 grid gap-5">
+      <div class="grid xl:grid-cols-2 gap-5 items-stretch">
+        {featured.map(({ project, stat }) => (
+          <article
+            data-reveal
+            class="group flex flex-col min-w-0 p-7 sm:p-9 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
+          >
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="t-display-3 text-paper">{project.name}</h3>
+              <span class="font-mono text-xs text-quiet">{project.tag}</span>
+            </div>
+            <p class="mt-4 max-w-[38rem] text-paper/80 leading-relaxed">{project.desc}</p>
+            <p class="mt-4 max-w-[38rem] text-sm text-paper/65 leading-relaxed">{project.detail}</p>
 
-        <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
-            <a href={featured.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
-              {featured.cta} &rarr;
-            </a>
-            {featured.post && publishedPosts.has(featured.post) && (
-              <a href={featured.post} class="tap text-quiet hover:text-signal transition-colors">
-                Read the post &rarr;
-              </a>
-            )}
-          </div>
-          {featuredStat && (
-            <p class="font-mono text-xs text-quiet flex items-center gap-3 shrink-0">
-              {featuredStat.stars !== null && featuredStat.stars >= STAR_THRESHOLD && (
-                <span>&#9733; {featuredStat.stars}</span>
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
+                <a href={project.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
+                  {project.cta} &rarr;
+                </a>
+                {project.post && publishedPosts.has(project.post) && (
+                  <a href={project.post} class="tap text-quiet hover:text-signal transition-colors">
+                    Read the post &rarr;
+                  </a>
+                )}
+              </div>
+              {stat && (
+                <p class="font-mono text-xs text-quiet flex items-center gap-3 shrink-0">
+                  {stat.stars !== null && stat.stars >= STAR_THRESHOLD && (
+                    <span>&#9733; {stat.stars}</span>
+                  )}
+                  {stat.pushedAt && <span>pushed <time datetime={stat.pushedAt.toISOString()}>{pushedOn(stat.pushedAt)}</time></span>}
+                </p>
               )}
-              {featuredStat.pushedAt && <span>pushed <time datetime={featuredStat.pushedAt.toISOString()}>{pushedOn(featuredStat.pushedAt)}</time></span>}
-            </p>
-          )}
-        </div>
+            </div>
 
-        <div class="mt-8">
-          <Terminal caption="Real output excerpt · rmine --help" command="rmine --help" output={rmineHelp} hang={14} />
-        </div>
-      </article>
+            <div class="mt-auto pt-8">
+              {project.name === 'rmine'
+                ? <Terminal caption="Real output excerpt · rmine --help" command="rmine --help" output={rmineHelp} hang={14} />
+                : <AgentsDiagram />}
+            </div>
+          </article>
+        ))}
+      </div>
 
-      <div class="grid gap-5">
+      <div class="grid md:grid-cols-2 gap-5">
         {secondary.map(({ project, stat }) => (
           <article
             data-reveal
