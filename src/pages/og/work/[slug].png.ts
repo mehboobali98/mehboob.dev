@@ -12,7 +12,7 @@ export const getStaticPaths = (() => caseStudies.map((study) => ({
 export const GET: APIRoute = async ({ props }) => {
   const { study } = props as { study: CaseStudy };
   const image = await renderShareCard({
-    eyebrow: `${study.flagship ? 'Flagship case study' : 'Case study'} · ${study.eyebrow}`,
+    eyebrow: `Case study · ${study.eyebrow}`,
     title: study.title,
     detail: study.stack.join(' · '),
     motif: study.visual === 'sync'
