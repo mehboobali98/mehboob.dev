@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
     eyebrow: 'Writing',
     title: 'Notes from building and debugging.',
     detail: 'Backend systems · performance · developer tooling',
-    labels: ['observe', 'debug', 'write'],
+    motif: { motif: 'path', labels: ['observe', 'debug', 'write'] },
   });
 
   return new Response(new Uint8Array(image), {

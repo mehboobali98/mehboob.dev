@@ -1,5 +1,6 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
+import type { CardMotif } from '../../../lib/cardMotif';
 import { renderShareCard } from '../../../lib/shareCard';
 
 export const prerender = true;
@@ -12,12 +13,20 @@ export const getStaticPaths = (async () => {
       title: post.data.title,
       date: post.data.date.toISOString(),
       tags: post.data.tags,
+      card: post.data.card,
+      slug: post.id,
     },
   }));
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, date, tags } = props as { title: string; date: string; tags: string[] };
+  const { title, date, tags, card, slug } = props as {
+    title: string;
+    date: string;
+    tags: string[];
+    card?: CardMotif;
+    slug: string;
+  };
   const formattedDate = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -28,7 +37,8 @@ export const GET: APIRoute = async ({ props }) => {
     eyebrow: 'Engineering note',
     title,
     detail: [formattedDate, ...tags].join(' · '),
-    labels: ['observe', 'debug', 'write'],
+    motif: card,
+    seed: slug,
   });
 
   return new Response(new Uint8Array(image), {

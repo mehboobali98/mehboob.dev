@@ -15,11 +15,11 @@ export const GET: APIRoute = async ({ props }) => {
     eyebrow: `${study.flagship ? 'Flagship case study' : 'Case study'} · ${study.eyebrow}`,
     title: study.title,
     detail: study.stack.join(' · '),
-    labels: study.visual === 'sync'
-      ? ['record', 'batch', 'under 1h']
+    motif: study.visual === 'sync'
+      ? { motif: 'bars', before: { label: '12–15 h', value: 12 }, after: { label: 'under 1 h', value: 1 } }
       : study.visual === 'workflow'
-        ? ['trigger', 'branch', 'action']
-        : ['item', 'relation', 'impact'],
+        ? { motif: 'path', labels: ['trigger', 'branch', 'action'] }
+        : { motif: 'path', labels: ['item', 'relation', 'impact'] },
   });
 
   return new Response(new Uint8Array(image), {
