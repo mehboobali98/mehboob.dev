@@ -6,6 +6,15 @@ description: >-
   default header I had never read.
 date: 2026-08-24
 tags: ['Cloudflare', 'Performance']
+card:
+  motif: log
+  accent: cloudflare
+  lines:
+    - { text: 'cf-cache-status: HIT', tone: quiet }
+    - { text: 'cache-control: public,', tone: accent }
+    - { text: '  max-age=0, must-revalidate', tone: accent }
+    - { text: '' }
+    - { text: '304 Not Modified × 6' }
 ---
 
 I was auditing this site's own performance and everything looked fine. Lighthouse

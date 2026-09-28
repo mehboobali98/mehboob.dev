@@ -27,6 +27,13 @@ rule, a content rule.
   Don't switch to purple/violet gradients or glassmorphism. That's the single most
   recognizable "AI generated this in five minutes" tell right now, along with frosted-glass
   cards and floating gradient blobs. This palette was chosen specifically to not be that.
+- **Share cards are the exception** (Mehboob's call, 28 Sep 2026, so they stand out in
+  LinkedIn Featured and match his LinkedIn banner). `src/lib/shareCard.ts` uses the
+  banner's ground: ink with a warm `#8C5F1E` glow behind the text and a cool `#2B4C7E` one
+  top right. Each card's motif takes the colour of the technology its post is about, from
+  the palette in `src/lib/cardMotif.ts`, where every entry clears 3:1 on ink. A tech colour
+  only ever marks that technology; amber stays the brand and the AI colour. The pages
+  themselves still use amber alone.
 - **Type:** Fraunces (display/headlines), IBM Plex Sans (body), IBM Plex Mono (labels,
   data, meta). Not Inter. Not Poppins. Those are the fonts every template defaults to;
   picking something with real character was a deliberate choice, keep it.
