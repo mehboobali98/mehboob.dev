@@ -1,0 +1,42 @@
+---
+/** The three /estimate subagents, drawn like the post's share card at a size that stays 12px or more on phones. */
+const agents = [
+  { name: 'auditor', note: "can't give hours", y: 9 },
+  { name: 'estimator', note: 'prices it against the code', y: 53 },
+  { name: 'validator', note: 'never sees the derivation', y: 119 },
+];
+const rail = 11;
+const wall = 97;
+---
+
+<figure class="exhibit">
+  <figcaption>The three subagents behind /estimate</figcaption>
+  <div class="p-[1.1rem]">
+    <svg viewBox="0 0 248 146" width="248" class="block max-w-full h-auto" role="img" aria-labelledby="agents-title">
+      <title id="agents-title">
+        The auditor can't give hours. The estimator prices the work against the code. Below a
+        wall, the validator never sees how the estimate was derived.
+      </title>
+
+      <path d={`M${rail} ${agents[0].y} L${rail} ${agents[1].y}`} stroke="var(--color-signal)" stroke-width="2" />
+      <path
+        d={`M${rail} ${agents[1].y + 11} L${rail} ${wall - 9}`}
+        stroke="var(--color-signal)"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-dasharray="0.5 6"
+      />
+      <path d={`M0 ${wall} L248 ${wall}`} stroke="var(--color-line-strong)" stroke-width="1.5" stroke-dasharray="7 5" />
+
+      {agents.map(({ name, note, y }, i) => (
+        <>
+          {i < 2
+            ? <circle cx={rail} cy={y} r="5.5" fill="var(--color-signal)" />
+            : <circle cx={rail} cy={y} r="5" fill="var(--color-surface)" stroke="var(--color-paper)" stroke-width="1.5" />}
+          <text x="30" y={y + 5} font-family="var(--font-mono)" font-size="14" fill="var(--color-paper)">{name}</text>
+          <text x="30" y={y + 24} font-family="var(--font-mono)" font-size="13" fill="var(--color-quiet)">{note}</text>
+        </>
+      ))}
+    </svg>
+  </div>
+</figure>
