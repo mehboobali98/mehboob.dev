@@ -18,7 +18,6 @@ export interface CaseStudy {
   description: string;
   stack: string[];
   visual: CaseStudyVisual;
-  flagship?: boolean;
   summary: CaseStudySummary;
   artifactTitle: string;
   facts: Array<{ label: string; value: string }>;
@@ -45,7 +44,6 @@ export const caseStudies: CaseStudy[] = [
       "AssetSonar's device sync was taking 12 to 15 hours. I rebuilt the pipeline around batched writes and removed the redundant lookups.",
     stack: ['Ruby on Rails', 'Delayed Job', 'MySQL'],
     visual: 'sync',
-    flagship: true,
     summary: {
       role: 'Backend engineer brought in to diagnose and redesign the production path',
       constraint: 'A 12–15 hour sync could not keep its intended hourly schedule',
