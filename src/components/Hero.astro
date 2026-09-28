@@ -8,10 +8,10 @@ import { contact, mailto } from '../site';
 //
 // The nodes are also the page's table of contents. Each one is a real anchor.
 const work = [
-  { x: 118, y: 322, label: 'sync', note: '12-15h to <1h', href: '#sync' },
-  { x: 244, y: 208, label: 'CMDB', note: 'n-level traversal', href: '#cmdb' },
-  { x: 366, y: 274, label: 'rmine', note: 'Go, open source', href: '#open-source' },
-  { x: 452, y: 150, label: 'workflow', note: 'node canvas', href: '#workflow' },
+  { x: 118, y: 322, label: 'sync', note: '12-15h to <1h', href: '#sync', dx: 18, dy: -4, anchor: 'start' },
+  { x: 244, y: 208, label: 'CMDB', note: 'n-level traversal', href: '#cmdb', dx: -18, dy: -26, anchor: 'end' },
+  { x: 366, y: 274, label: 'rmine', note: 'Go, open source', href: '#open-source', dx: 18, dy: -4, anchor: 'start' },
+  { x: 452, y: 150, label: 'workflow', note: 'node canvas', href: '#workflow', dx: 18, dy: -4, anchor: 'start' },
 ];
 
 const start = { x: 18, y: 392 };
@@ -19,10 +19,10 @@ const pathD = [start, ...work].map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y
 
 // The rest of the graph. Everything else in five years that isn't one of the four.
 const mesh = [
-  [60, 250, 140, 180], [140, 180, 96, 96], [60, 250, 20, 170], [140, 180, 232, 118],
+  [140, 180, 96, 96], [60, 250, 20, 170], [140, 180, 232, 118],
   [232, 118, 300, 60], [300, 60, 404, 84], [186, 402, 268, 430], [268, 430, 360, 396],
   [360, 396, 452, 424], [404, 84, 500, 52], [452, 424, 520, 356], [96, 96, 176, 40],
-  [232, 118, 244, 208], [404, 84, 366, 274], [186, 402, 118, 322], [520, 356, 452, 150],
+  [232, 118, 244, 208], [404, 84, 452, 150], [186, 402, 118, 322], [520, 356, 452, 150],
 ];
 const meshNodes = [
   [60, 250], [140, 180], [96, 96], [20, 170], [232, 118], [300, 60], [404, 84],
@@ -140,18 +140,28 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
               <circle cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
               <circle cx={n.x} cy={n.y} r="5.5" fill="var(--color-signal)" />
               <text
-                x={n.x + 16}
-                y={n.y - 2}
+                x={n.x + n.dx}
+                y={n.y + n.dy}
+                text-anchor={n.anchor}
                 font-family="var(--font-mono)"
-                font-size="15"
+                font-size="20"
                 fill="var(--color-paper)"
+                stroke="var(--color-void)"
+                stroke-width="6"
+                stroke-linejoin="round"
+                paint-order="stroke"
               >{n.label}</text>
               <text
-                x={n.x + 16}
-                y={n.y + 15}
+                x={n.x + n.dx}
+                y={n.y + n.dy + 21}
+                text-anchor={n.anchor}
                 font-family="var(--font-mono)"
-                font-size="11"
+                font-size="17.5"
                 fill="var(--color-quiet)"
+                stroke="var(--color-void)"
+                stroke-width="6"
+                stroke-linejoin="round"
+                paint-order="stroke"
               >{n.note}</text>
             </a>
           ))}
