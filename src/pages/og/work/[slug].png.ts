@@ -16,10 +16,10 @@ export const GET: APIRoute = async ({ props }) => {
     title: study.title,
     detail: study.stack.join(' · '),
     motif: study.visual === 'sync'
-      ? { motif: 'bars', before: { label: '12–15 h', value: 12 }, after: { label: 'under 1 h', value: 1 } }
+      ? { motif: 'bars', accent: 'mysql', before: { label: '12–15 h', value: 12 }, after: { label: 'under 1 h', value: 1 } }
       : study.visual === 'workflow'
-        ? { motif: 'path', labels: ['trigger', 'branch', 'action'] }
-        : { motif: 'path', labels: ['item', 'relation', 'impact'] },
+        ? { motif: 'path', accent: 'react', labels: ['webhook', 'HTTP request', 'on failure'] }
+        : { motif: 'path', accent: 'mysql', labels: ['item', 'relation', 'impact'] },
   });
 
   return new Response(new Uint8Array(image), {
