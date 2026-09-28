@@ -32,8 +32,9 @@ rule, a content rule.
   banner's ground: ink with a warm `#8C5F1E` glow behind the text and a cool `#2B4C7E` one
   top right. Each card's motif takes the colour of the technology its post is about, from
   the palette in `src/lib/cardMotif.ts`, where every entry clears 3:1 on ink. A tech colour
-  only ever marks that technology; amber stays the brand and the AI colour. The pages
-  themselves still use amber alone.
+  only ever marks that technology; amber stays the brand and the AI colour. On the pages,
+  the workflow canvas and the CMDB traversal take their cards' colours (React and MySQL,
+  as tokens in `global.css`); everything else is still amber.
 - **Type:** Fraunces (display/headlines), IBM Plex Sans (body), IBM Plex Mono (labels,
   data, meta). Not Inter. Not Poppins. Those are the fonts every template defaults to;
   picking something with real character was a deliberate choice, keep it.

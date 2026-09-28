@@ -33,12 +33,19 @@ const quietEdges = [
 ];
 
 const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' ');
+
+/** The traversal stacked for phones, with one related record off the asset and the licence. */
+const mobileHops = hops.map((h, i) => ({ ...h, y: 36 + i * 80 }));
+const mobileRelated = [
+  { hop: 0, label: 'INC-4821', type: 'ticket' },
+  { hop: 2, label: 'CTR-77', type: 'contract' },
+].map((r) => ({ ...r, y: mobileHops[r.hop].y + 11, from: 44 + mobileHops[r.hop].label.length * 9 }));
 ---
 
 <figure>
   <svg
     viewBox="0 0 512 300"
-    class="w-full h-auto"
+    class="hidden sm:block w-full h-auto"
     role="img"
     aria-labelledby="cmdb-title cmdb-desc"
   >
@@ -56,7 +63,7 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
     <path
       d={pathD}
       fill="none"
-      stroke="var(--color-signal)"
+      stroke="var(--color-mysql)"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -87,7 +94,7 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
 
     {hops.map((n) => (
       <>
-        <circle cx={n.x} cy={n.y} r="6" fill="var(--color-signal)" />
+        <circle cx={n.x} cy={n.y} r="6" fill="var(--color-mysql)" />
         <text
           x={n.x}
           y={n.y - 15}
@@ -103,6 +110,58 @@ const pathD = hops.map((h, i) => `${i === 0 ? 'M' : 'L'}${h.x},${h.y}`).join(' '
           text-anchor="middle"
           font-family="var(--font-mono)"
           font-size="12"
+          fill="var(--color-paper)"
+        >{n.label}</text>
+      </>
+    ))}
+  </svg>
+
+  <svg viewBox="0 0 300 300" class="sm:hidden w-full h-auto" role="img" aria-labelledby="cmdb-title-m">
+    <title id="cmdb-title-m">
+      A server traverses to its installed software, that software's licence, and the vendor
+      behind the licence. A ticket hangs off the server and a contract off the licence.
+    </title>
+
+    <path d={`M16,${mobileHops[0].y} L16,${mobileHops[3].y}`} stroke="var(--color-mysql)" stroke-width="2.5" />
+
+    {mobileRelated.map((r) => (
+      <>
+        <line x1={r.from} y1={r.y} x2="200" y2={r.y} stroke="var(--color-line)" stroke-width="1.5" />
+        <circle cx="204" cy={r.y} r="4" fill="var(--color-ink)" stroke="var(--color-line-strong)" stroke-width="1.5" />
+        <text
+          x="216"
+          y={r.y - 5}
+          font-family="var(--font-mono)"
+          font-size="12"
+          letter-spacing="0.06em"
+          fill="var(--color-quiet)"
+        >{r.type}</text>
+        <text
+          x="216"
+          y={r.y + 13}
+          font-family="var(--font-mono)"
+          font-size="13"
+          fill="var(--color-quiet)"
+        >{r.label}</text>
+      </>
+    ))}
+
+    {mobileHops.map((n) => (
+      <>
+        <circle cx="16" cy={n.y} r="7" fill="var(--color-mysql)" />
+        <text
+          x="36"
+          y={n.y - 4}
+          font-family="var(--font-mono)"
+          font-size="12"
+          letter-spacing="0.08em"
+          fill="var(--color-quiet)"
+        >{n.tier}</text>
+        <text
+          x="36"
+          y={n.y + 16}
+          font-family="var(--font-mono)"
+          font-size="15"
           fill="var(--color-paper)"
         >{n.label}</text>
       </>
