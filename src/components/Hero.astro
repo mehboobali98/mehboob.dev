@@ -233,7 +233,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
     let playback: Playback | undefined;
     let cancelled = false;
     const stop = () => playback?.stop();
-    window.addEventListener('resize', stop, { once: true });
+    window.addEventListener('resize', stop);
     fontsReady()
       .then(nextFrame)
       .then(() => {
@@ -249,6 +249,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
           return;
         }
         playback = play(scene);
+        playback.done.then(() => window.removeEventListener('resize', stop));
       })
       .catch(release);
     return () => {

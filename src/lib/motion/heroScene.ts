@@ -48,10 +48,6 @@ export function createHeroScene(root: HTMLElement): Scene | null {
     return { x: q.x - hero.left, y: q.y - hero.top };
   };
 
-  graph.setAttribute('data-hero-scripted', '');
-  statics.forEach((el) => el.style.setProperty('visibility', 'hidden'));
-  root.querySelector('[data-hero-pending]')?.removeAttribute('data-hero-pending');
-
   const layer = make('g', { 'aria-hidden': 'true' }, graph);
   const defs = make('defs', {}, layer);
   blur(defs, 'hero-fx-glow', 4);
@@ -263,6 +259,10 @@ export function createHeroScene(root: HTMLElement): Scene | null {
       el.style.removeProperty('transform-origin');
     });
   };
+
+  graph.setAttribute('data-hero-scripted', '');
+  statics.forEach((el) => el.style.setProperty('visibility', 'hidden'));
+  root.querySelector('[data-hero-pending]')?.removeAttribute('data-hero-pending');
 
   return { duration: DURATION, seek, finish };
 }
