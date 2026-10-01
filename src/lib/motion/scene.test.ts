@@ -82,4 +82,38 @@ describe('play', () => {
     await playback.done;
     expect(r.finished()).toBe(1);
   });
+
+  it('stop() does not throw when finish() throws', async () => {
+    const h = harness();
+    let finished = 0;
+    const scene: Scene = {
+      duration: 5,
+      seek() {},
+      finish() {
+        finished++;
+        throw new Error('boom');
+      },
+    };
+    const playback = play(scene, h.opts);
+    playback.stop();
+    await playback.done;
+    expect(finished).toBe(1);
+  });
+
+  it('natural completion does not throw when finish() throws', async () => {
+    const h = harness();
+    let finished = 0;
+    const scene: Scene = {
+      duration: 1,
+      seek() {},
+      finish() {
+        finished++;
+        throw new Error('boom');
+      },
+    };
+    const playback = play(scene, h.opts);
+    for (let i = 0; i < 20; i++) h.advance(100);
+    await playback.done;
+    expect(finished).toBe(1);
+  });
 });

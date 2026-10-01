@@ -38,6 +38,7 @@ export function play(scene: Scene, opts: PlayOptions = {}): Playback {
     cancel(frame);
     try {
       scene.finish();
+    } catch {
     } finally {
       resolve();
     }
