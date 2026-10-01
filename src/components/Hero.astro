@@ -1,7 +1,15 @@
 ---
 import { contact, mailto } from '../site';
+
+// The rest of the graph. Everything else in five years that isn't one of the four.
 import { mesh, meshNodes, start, work } from '../data/heroGraph';
 
+// The signature. Five years of work drawn the way the CMDB draws infrastructure: one
+// traversal through a quiet mesh, with the things he actually built as the labelled
+// nodes on it. It is the relationship model applied to the person who wrote it, which
+// is the one element on this page that no other portfolio could lift and reuse.
+//
+// The nodes are also the page's table of contents. Each one is a real anchor.
 const pathD = [start, ...work].map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
 
 // Short labels on purpose: three of these have to sit on one line inside the type
