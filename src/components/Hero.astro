@@ -1,33 +1,8 @@
 ---
 import { contact, mailto } from '../site';
+import { mesh, meshNodes, start, work } from '../data/heroGraph';
 
-// The signature. Five years of work drawn the way the CMDB draws infrastructure: one
-// traversal through a quiet mesh, with the things he actually built as the labelled
-// nodes on it. It is the relationship model applied to the person who wrote it, which
-// is the one element on this page that no other portfolio could lift and reuse.
-//
-// The nodes are also the page's table of contents. Each one is a real anchor.
-const work = [
-  { x: 118, y: 322, label: 'sync', note: '12-15h to <1h', href: '#sync', dx: 18, dy: -4, anchor: 'start' },
-  { x: 244, y: 208, label: 'CMDB', note: 'n-level traversal', href: '#cmdb', dx: -18, dy: -26, anchor: 'end' },
-  { x: 366, y: 274, label: 'rmine', note: 'Go, open source', href: '#open-source', dx: 18, dy: -4, anchor: 'start' },
-  { x: 452, y: 150, label: 'workflow', note: 'node canvas', href: '#workflow', dx: 18, dy: -4, anchor: 'start' },
-];
-
-const start = { x: 18, y: 392 };
 const pathD = [start, ...work].map((n, i) => `${i === 0 ? 'M' : 'L'}${n.x},${n.y}`).join(' ');
-
-// The rest of the graph. Everything else in five years that isn't one of the four.
-const mesh = [
-  [140, 180, 96, 96], [60, 250, 20, 170], [140, 180, 232, 118],
-  [232, 118, 300, 60], [300, 60, 404, 84], [186, 402, 268, 430], [268, 430, 360, 396],
-  [360, 396, 452, 424], [404, 84, 500, 52], [452, 424, 520, 356], [96, 96, 176, 40],
-  [232, 118, 244, 208], [404, 84, 452, 150], [186, 402, 118, 322], [520, 356, 452, 150],
-];
-const meshNodes = [
-  [60, 250], [140, 180], [96, 96], [20, 170], [232, 118], [300, 60], [404, 84],
-  [186, 402], [268, 430], [360, 396], [452, 424], [500, 52], [520, 356], [176, 40],
-];
 
 // Short labels on purpose: three of these have to sit on one line inside the type
 // column, and the long version of each is two screens down in the numbers band.
