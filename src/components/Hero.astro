@@ -35,7 +35,8 @@ const evidence = [
 const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
 ---
 
-<section id="top" class="hero">
+<section id="top" class="hero" data-hero>
+  <svg class="hero-burst" data-hero-burst aria-hidden="true"></svg>
   <div class="shell w-full px-[clamp(1.25rem,5vw,5rem)] py-12 lg:py-8 xl:py-10 lg:min-h-[calc(100svh-3.5rem)] flex items-center">
     <div class="hero-content w-full grid lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] gap-12 xl:gap-16 items-center">
       <div>
@@ -75,7 +76,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
         <dl class="mt-7 grid grid-cols-[minmax(0,1.65fr)_minmax(0,0.6fr)_minmax(0,0.95fr)] sm:grid-cols-3 gap-x-4 sm:gap-x-7 border-t border-line pt-5 max-w-[38rem]">
           {evidence.map((e) => (
             <div class="min-w-0">
-              <dd class="font-display wonk font-black text-[clamp(1.15rem,2.2vw,1.75rem)] text-signal leading-none m-0 whitespace-nowrap">{e.n}</dd>
+              <dd data-hero-stat class="font-display wonk font-black text-[clamp(1.15rem,2.2vw,1.75rem)] text-signal leading-none m-0 whitespace-nowrap">{e.n}</dd>
               <dt class="mt-1.5 t-micro leading-snug">
                 <span class="sm:hidden">{e.mobileLabel}</span>
                 <span class="hidden sm:inline">{e.label}</span>
@@ -88,21 +89,32 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
       <!-- No role="img": it hides the element's children from assistive tech, which would
            leave these four links focusable but unnamed. -->
       <div class="hidden lg:block" style="--path-len: 1600">
-        <svg viewBox="0 0 624 470" class="w-full h-auto" aria-labelledby="hero-graph-title">
+        <script is:inline>
+          (function () {
+            var host = document.currentScript && document.currentScript.parentElement;
+            if (!host || window.__mbHeroPlayed) return;
+            if (!matchMedia('(min-width: 1024px)').matches) return;
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            host.setAttribute('data-hero-pending', '');
+            setTimeout(function () { host.removeAttribute('data-hero-pending'); }, 2500);
+          })();
+        </script>
+        <svg viewBox="0 0 624 470" class="w-full h-auto" aria-labelledby="hero-graph-title" data-hero-graph>
           <title id="hero-graph-title">
             A graph of four things built over five years: a sync pipeline, a CMDB, the rmine
             CLI, and a workflow automation engine, connected as one traversal.
           </title>
 
-          <g stroke="var(--color-line)" stroke-width="1" stroke-opacity="0.75">
+          <g data-hero-static stroke="var(--color-line)" stroke-width="1" stroke-opacity="0.75">
             {mesh.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} />)}
           </g>
-          <g fill="var(--color-line-strong)">
+          <g data-hero-static fill="var(--color-line-strong)">
             {meshNodes.map(([cx, cy]) => <circle cx={cx} cy={cy} r="2.5" />)}
           </g>
 
           <path
             class="hero-path"
+            data-hero-static
             d={pathD}
             fill="none"
             stroke="var(--color-signal)"
@@ -111,12 +123,13 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
             stroke-linejoin="round"
           />
 
-          <circle cx={start.x} cy={start.y} r="3.5" fill="var(--color-signal)" />
+          <circle data-hero-static cx={start.x} cy={start.y} r="3.5" fill="var(--color-signal)" />
 
           {work.map((n, i) => (
             <a
               href={n.href}
               class="hero-node"
+              data-hero-static
               aria-label={`${n.label} ${n.note}`}
               style={`animation-delay:${0.5 + i * 0.22}s`}
             >
@@ -200,3 +213,48 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
     </svg>
   </div>
 </section>
+
+<script>
+  import { createHeroScene } from '../lib/motion/heroScene';
+  import { play, type Playback } from '../lib/motion/scene';
+  import { fontsReady, motionAllowed, nextFrame, onAstroLifecycle } from '../lib/motion/trigger';
+
+  const flags = window as Window & { __mbHeroPlayed?: boolean };
+
+  onAstroLifecycle(() => {
+    const root = document.querySelector<HTMLElement>('[data-hero]');
+    if (!root) return;
+    const release = () => root.querySelector('[data-hero-pending]')?.removeAttribute('data-hero-pending');
+    if (flags.__mbHeroPlayed || !motionAllowed() || !window.matchMedia('(min-width: 1024px)').matches) {
+      release();
+      return;
+    }
+    flags.__mbHeroPlayed = true;
+    let playback: Playback | undefined;
+    let cancelled = false;
+    const stop = () => playback?.stop();
+    window.addEventListener('resize', stop, { once: true });
+    fontsReady()
+      .then(nextFrame)
+      .then(() => {
+        if (cancelled) return;
+        let scene: ReturnType<typeof createHeroScene> = null;
+        try {
+          scene = createHeroScene(root);
+        } catch {
+          scene = null;
+        }
+        if (!scene) {
+          release();
+          return;
+        }
+        playback = play(scene);
+      })
+      .catch(release);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('resize', stop);
+      stop();
+    };
+  });
+</script>
