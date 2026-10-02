@@ -43,10 +43,22 @@ rule, a content rule.
   which is the single most differentiated thing in the case studies. If you extend the
   visual language elsewhere on the site, extend *that* concept rather than inventing a
   new decorative motif. Don't add a second unrelated visual gimmick on top of it.
-- **Motion:** one scroll-reveal treatment, applied consistently, respecting
-  `prefers-reduced-motion`, content visible by default even if JS fails. Do not add
-  animation to individual elements just because it's easy to add. If you're not sure
-  whether a new animation is restrained or excessive, it's excessive.
+- **Motion:** two deliberate kinds.
+  1. One scroll-reveal treatment for sections, as before.
+  2. Motion graphics that play a real mechanism from the work: the hero's career traversal
+     and each case study's scene.
+
+  Every scene follows these rules:
+  - It plays once when it comes into view, then settles into the static design exactly.
+  - It never moves real text: it animates aria-hidden stand-ins and hands back to the real
+    element.
+  - It shows the static design under `prefers-reduced-motion`, without JavaScript, and if it
+    fails.
+  - It stays inside the Lighthouse budget in AUDIT-RESPONSE.md.
+
+  No decorative motion: no particle backgrounds, no ambient loops, nothing that doesn't show
+  how something real works. If a new animation doesn't explain a mechanism, it doesn't go in.
+  (Changed with Mehboob's approval, 1 Oct 2026.)
 
 ## Explicitly banned, because they're the current tells for "AI built this"
 
