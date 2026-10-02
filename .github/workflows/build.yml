@@ -25,6 +25,8 @@ jobs:
 
       - run: npm ci
 
+      - run: npm test
+
       - run: npm run build
         env:
           # OpenSource.astro calls the GitHub API at build time for each repo's star count

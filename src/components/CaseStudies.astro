@@ -34,15 +34,16 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
         </a>
       </div>
 
-      <div class="runtime-panel" role="group" aria-label="Runtime improvement">
+      <div class="runtime-panel" role="group" aria-label="Runtime improvement" data-sync-panel>
         <dl>
           <dt>Before</dt>
-          <dd><span class="runtime-figure">12–15</span> hours<span class="runtime-bar" aria-hidden="true"></span></dd>
+          <dd><span class="runtime-figure">12–15</span> <span class="runtime-unit">hours</span><span class="runtime-bar" aria-hidden="true"></span></dd>
         </dl>
         <dl class="runtime-after">
           <dt>After</dt>
-          <dd><span class="runtime-figure">Under 1</span> hour<span class="runtime-bar" aria-hidden="true"></span></dd>
+          <dd><span class="runtime-figure">Under 1</span> <span class="runtime-unit">hour</span><span class="runtime-bar" aria-hidden="true"></span></dd>
         </dl>
+        <button type="button" class="runtime-replay" data-sync-replay aria-label="Replay the sync animation" hidden>Replay</button>
       </div>
     </div>
   </article>
@@ -144,14 +145,146 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
   </article>
 </section>
 
+<script>
+  import { play, type Playback, type Scene } from '../lib/motion/scene';
+  import { createSyncScene } from '../lib/motion/syncScene';
+  import { fontsReady, isOnScreen, motionAllowed, onAstroLifecycle, whenVisible } from '../lib/motion/trigger';
+
+  const create = (panel: HTMLElement): Scene | null => {
+    try {
+      return createSyncScene(panel);
+    } catch {
+      return null;
+    }
+  };
+
+  const landedOnPanel = (panel: HTMLElement): boolean => {
+    const id = location.hash.slice(1);
+    if (!id) return false;
+    const target = document.getElementById(id);
+    if (!target || !target.contains(panel)) return false;
+    return panel.getBoundingClientRect().top - target.getBoundingClientRect().top < window.innerHeight;
+  };
+
+  onAstroLifecycle(() => {
+    const panel = document.querySelector<HTMLElement>('[data-sync-panel]');
+    const button = panel?.querySelector<HTMLButtonElement>('[data-sync-replay]');
+    if (!panel || !button || !motionAllowed()) return;
+
+    let playback: Playback | undefined;
+    let armed: Scene | null = null;
+    let watcher: { promise: Promise<void>; cancel(): void } | undefined;
+    let frame = 0;
+    let disposed = false;
+
+    const label = (text: 'Play' | 'Replay') => {
+      button.textContent = text;
+      button.setAttribute('aria-label', `${text} the sync animation`);
+    };
+
+    const start = (scene: Scene | null) => {
+      if (!scene || disposed) return;
+      const hadFocus = document.activeElement === button;
+      button.hidden = true;
+      playback = play(scene);
+      playback.done.then(() => {
+        if (disposed) return;
+        label('Replay');
+        button.hidden = false;
+        if (hadFocus) button.focus({ preventScroll: true });
+      });
+    };
+    const replay = () => {
+      playback?.stop();
+      armed?.finish();
+      armed = null;
+      start(create(panel));
+    };
+    const seekArmed = () => {
+      if (!armed) return;
+      try {
+        armed.seek(0);
+      } catch {
+        armed.finish();
+        armed = null;
+      }
+    };
+    const onResize = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (!armed) return;
+        armed.finish();
+        armed = create(panel);
+        seekArmed();
+      });
+    };
+
+    button.addEventListener('click', replay);
+    fontsReady().then(() => {
+      if (disposed) return;
+      if (isOnScreen(panel) || landedOnPanel(panel)) {
+        label('Play');
+        button.hidden = false;
+        return;
+      }
+      armed = create(panel);
+      seekArmed();
+      window.addEventListener('resize', onResize);
+      watcher = whenVisible(panel, 0.4);
+      watcher.promise.then(() => {
+        window.removeEventListener('resize', onResize);
+        const scene = armed;
+        armed = null;
+        start(scene);
+      });
+    });
+
+    return () => {
+      disposed = true;
+      watcher?.cancel();
+      playback?.stop();
+      armed?.finish();
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', onResize);
+      button.removeEventListener('click', replay);
+    };
+  });
+</script>
+
 <style>
   .runtime-panel {
+    position: relative;
     display: grid;
     gap: clamp(1.75rem, 4vw, 2.75rem);
     padding: clamp(1.5rem, 5vw, 4rem);
     border: 1px solid var(--color-line);
     border-radius: 0.5rem;
     background: var(--color-surface);
+  }
+
+  .runtime-replay {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.85rem;
+    z-index: 3;
+    padding: 0.4rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-quiet);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .runtime-replay:hover {
+    color: var(--color-signal);
+  }
+
+  .runtime-replay[hidden] {
+    display: none;
   }
 
   .runtime-panel dt,
