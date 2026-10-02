@@ -93,7 +93,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
           (function () {
             var host = document.currentScript && document.currentScript.parentElement;
             if (!host || window.__mbHeroPlayed) return;
-            if (!matchMedia('(min-width: 1024px)').matches) return;
+            if (!matchMedia('(min-width: 64rem)').matches) return;
             if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             host.setAttribute('data-hero-pending', '');
             setTimeout(function () { host.removeAttribute('data-hero-pending'); }, 2500);
@@ -129,13 +129,13 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
             <a
               href={n.href}
               class="hero-node"
-              data-hero-static
               aria-label={`${n.label} ${n.note}`}
               style={`animation-delay:${0.5 + i * 0.22}s`}
             >
-              <circle cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
-              <circle cx={n.x} cy={n.y} r="5.5" fill="var(--color-signal)" />
+              <circle data-hero-static cx={n.x} cy={n.y} r="15" fill="var(--color-signal)" fill-opacity="0.12" />
+              <circle data-hero-static cx={n.x} cy={n.y} r="5.5" fill="var(--color-signal)" />
               <text
+                data-hero-static
                 x={n.x + n.dx}
                 y={n.y + n.dy}
                 text-anchor={n.anchor}
@@ -148,6 +148,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
                 paint-order="stroke"
               >{n.label}</text>
               <text
+                data-hero-static
                 x={n.x + n.dx}
                 y={n.y + n.dy + 21}
                 text-anchor={n.anchor}
@@ -225,7 +226,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
     const root = document.querySelector<HTMLElement>('[data-hero]');
     if (!root) return;
     const release = () => root.querySelector('[data-hero-pending]')?.removeAttribute('data-hero-pending');
-    if (flags.__mbHeroPlayed || !motionAllowed() || !window.matchMedia('(min-width: 1024px)').matches) {
+    if (flags.__mbHeroPlayed || !motionAllowed() || !window.matchMedia('(min-width: 64rem)').matches) {
       release();
       return;
     }
