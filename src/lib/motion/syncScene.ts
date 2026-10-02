@@ -106,9 +106,9 @@ export function createSyncScene(panel: HTMLElement): Scene | null {
   const layer = svg.querySelector('g')!;
   host.append(svg);
 
-  before.figure.style.visibility = 'hidden';
-  before.unit.style.visibility = 'hidden';
-  after.figure.style.visibility = 'hidden';
+  before.figure.style.opacity = '0';
+  before.unit.style.opacity = '0';
+  after.figure.style.opacity = '0';
   before.bar.style.transformOrigin = '0 50%';
   after.bar.style.transformOrigin = '0 50%';
 
@@ -246,7 +246,7 @@ export function createSyncScene(panel: HTMLElement): Scene | null {
 
   const finish = (): void => {
     host.remove();
-    for (const el of [before.figure, before.unit, after.figure]) el.style.removeProperty('visibility');
+    for (const el of [before.figure, before.unit, after.figure]) el.style.removeProperty('opacity');
     for (const el of [before.bar, after.bar]) {
       el.style.removeProperty('transform');
       el.style.removeProperty('transform-origin');
