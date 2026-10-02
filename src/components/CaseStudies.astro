@@ -184,12 +184,14 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
 
     const start = (scene: Scene | null) => {
       if (!scene || disposed) return;
+      const hadFocus = document.activeElement === button;
       button.hidden = true;
       playback = play(scene);
       playback.done.then(() => {
         if (disposed) return;
         label('Replay');
         button.hidden = false;
+        if (hadFocus) button.focus({ preventScroll: true });
       });
     };
     const replay = () => {
@@ -198,6 +200,15 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
       armed = null;
       start(create(panel));
     };
+    const seekArmed = () => {
+      if (!armed) return;
+      try {
+        armed.seek(0);
+      } catch {
+        armed.finish();
+        armed = null;
+      }
+    };
     const onResize = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
@@ -205,7 +216,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
         if (!armed) return;
         armed.finish();
         armed = create(panel);
-        armed?.seek(0);
+        seekArmed();
       });
     };
 
@@ -218,7 +229,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
         return;
       }
       armed = create(panel);
-      armed?.seek(0);
+      seekArmed();
       window.addEventListener('resize', onResize);
       watcher = whenVisible(panel, 0.4);
       watcher.promise.then(() => {
