@@ -176,13 +176,18 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     let frame = 0;
     let disposed = false;
 
+    const label = (text: 'Play' | 'Replay') => {
+      button.textContent = text;
+      button.setAttribute('aria-label', `${text} the sync animation`);
+    };
+
     const start = (scene: Scene | null) => {
       if (!scene || disposed) return;
       button.hidden = true;
       playback = play(scene);
       playback.done.then(() => {
         if (disposed) return;
-        button.textContent = 'Replay';
+        label('Replay');
         button.hidden = false;
       });
     };
@@ -207,7 +212,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     fontsReady().then(() => {
       if (disposed) return;
       if (isOnScreen(panel) || landedOnPanel(panel)) {
-        button.textContent = 'Play';
+        label('Play');
         button.hidden = false;
         return;
       }
