@@ -38,6 +38,7 @@ export function createHeroScene(root: HTMLElement): Scene | null {
   const statics = Array.from(root.querySelectorAll<SVGElement>('[data-hero-static]'));
   const texts = anchors.map((a) => Array.from(a.querySelectorAll('text')));
   if (!graph || !burst || anchors.length !== work.length || stats.length === 0) return null;
+  if (!graph.getClientRects().length) return null;
   if (texts.some((pair) => pair.length < 2)) return null;
   const ctm = graph.getScreenCTM();
   if (!ctm) return null;
