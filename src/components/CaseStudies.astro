@@ -162,7 +162,8 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     const id = location.hash.slice(1);
     if (!id) return false;
     const target = document.getElementById(id);
-    return !!target && target.contains(panel);
+    if (!target || !target.contains(panel)) return false;
+    return panel.getBoundingClientRect().top - target.getBoundingClientRect().top < window.innerHeight;
   };
 
   onAstroLifecycle(() => {
