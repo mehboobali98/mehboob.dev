@@ -1,0 +1,70 @@
+---
+title: The real text never moves
+description: >-
+  The diagrams on this site now play the mechanism they describe. Each scene animates a
+  copy drawn over the real graphic and hands back to it exactly. How that works, how it's
+  tested, and what it costs in page speed.
+date: 2026-10-04
+tags: ['SVG', 'Animation', 'Accessibility', 'Testing']
+draft: true
+card:
+  motif: log
+  lines:
+    - { text: 'real svg: opacity 0', tone: quiet }
+    - { text: 'overlay: aria-hidden, drawing' }
+    - { text: 'stroke-width="2.01"', tone: struck }
+    - { text: 't = 4.58  frame == static', tone: accent }
+    - { text: 'overlay removed' }
+---
+
+The four diagrams in the case studies and open-source sections of this site used to be static. Now each one plays the thing it describes, once, the first time you scroll to it. The workflow graph runs an offboarding event through its trigger, its condition and a connector that calls out and gets a `200` back. The CMDB graph expands one level at a time, then traces the path from a server to the vendor behind its software licence. The rack editor drags a 2U server into a 1U gap, bounces it, and scans down for the next slot tall enough to hold it. The `/estimate` diagram shows the estimator's working shatter against the wall that keeps the validator blind.
+
+I set one rule before drawing anything. The animation can't be the only way to get the content. Someone on a phone with reduced motion turned on, someone using a screen reader, someone who copies a node label into a search box: all of them should get exactly what was there before.
+
+## A copy on top
+
+Each diagram is an SVG with real `<text>` elements. Animating those would mean moving text that a screen reader might be in the middle of reading, and reflowing the page under it. So a scene doesn't touch them. It lays a second SVG over the panel, marks it `aria-hidden`, and draws every frame there. While the scene plays, the real SVG gets `opacity: 0`.
+
+Opacity, rather than `display: none` or `visibility: hidden`, is deliberate. Both of those take the element out of the accessibility tree. At zero opacity it's still there: still announced, still found by Ctrl+F, still selectable. When the last frame is drawn, the overlay removes itself and the opacity comes back.
+
+The overlay's `viewBox` is worked out from where the real graphic sits, so one unit in the overlay is one unit in the diagram, but it covers the whole panel. That's what lets a shockwave run past the edge of the graph instead of being clipped to the SVG's box.
+
+## Every frame is a function of time
+
+A scene is a pure function. Give it a time in seconds and a layout, desktop or phone, and it returns the SVG markup for that frame. Nothing is carried from one frame to the next, and every random-looking particle comes from a seeded hash.
+
+That one decision paid for itself more than once. Replay is just running time from zero again. A test can ask for any frame it likes. And the recordings I used to review the scenes were made by pausing the browser's clock and stepping it a sixtieth of a second at a time, so every frame of every recording can be reproduced exactly.
+
+## The handover has to be invisible
+
+The moment the overlay disappears is the one place a scene can look broken. If the last animated frame differs from the static graphic by a pixel, you see it jump.
+
+So each scene also has a function that draws the settled graphic, using the same element builders as the animation, and a unit test asserts that the frame 0.02 seconds before the end is the same string, character for character.
+
+It failed the first time I ran it. The highlighted path in the CMDB graph thickens on impact and then decays back with an exponential, and an exponential never quite reaches zero. Two hundredths of a second before the end, the stroke was `2.01` instead of `2`. The camera shake had the same problem: an amplitude of 0.0003 is still a transform. Neither was visible. Both meant the overlay and the real graphic disagreed at the moment of handover. Anything that decays now snaps to zero once it falls below a few hundredths of a unit, which is well under a pixel.
+
+A browser test then checks what a person would see. It lets each scene play at 1440 and 390 pixels wide, hides the Replay button, and compares the panel against the same panel on the previous version of the site. The mean pixel difference is 0.0 for all four.
+
+## When there's no animation
+
+Under `prefers-reduced-motion`, without JavaScript, or if a scene throws, the page shows the static design, and those cases match the previous version too. A scene only hides the real graphic after it has loaded and armed, and only while its panel is still off screen, so a slow connection never leaves you looking at an empty box.
+
+If a link drops you right at a diagram, it doesn't autoplay at you. It shows a Play button instead. Scroll away halfway through and the scene stops and puts the real graphic back.
+
+Each scene loads only as you get near it, at 4 to 5 KB gzipped apiece plus 2.9 KB of shared drawing code. The JavaScript the page loads up front went down, by 1.35 KB, because an older animation moved out of the initial bundle and into one of these lazy chunks.
+
+## The bug that wasn't mine
+
+I ran a layout-shift observer while every scene played, expecting to find nothing, or something I'd caused. On a phone it recorded three small shifts. The main branch recorded the same three.
+
+They came from the header. Its Index button shows the name of the section you're in, the name's width changes as you scroll, and on phones between 320 and 414 pixels wide the longer names wrapped the header onto a second line. Phones now just show "Index". From 640 pixels up, where there's room, the section name sits in a slot of fixed width, so changing sections can't move anything.
+
+## What it costs
+
+Animation has a price in page speed, and I wanted the real number, not the one from my laptop. Cloudflare builds a preview for every branch, so I deployed the version of the site from before any of this work next to the current one and ran Lighthouse three times on each, interleaved.
+
+On desktop, performance went from 99 to 97, almost all of it in Speed Index. The likely cause is the hero animation, which is still changing pixels while the page finishes loading. On mobile it stayed at 100. Accessibility and SEO are 100 on both.
+
+The live domain scored lower than either preview: 92 on desktop, 96 on mobile, and 74 for Best Practices. That gap isn't the animations. Cloudflare injects two scripts on the real domain that previews don't get. One is an analytics beacon that the site's own Content Security Policy blocks, so it records nothing and logs an error on every page. The other is a bot-detection script that uses deprecated browser APIs. A static portfolio needs neither, so both are going.
+
+Two points of desktop Speed Index, for diagrams that show how the work actually behaves. I'll take that.
