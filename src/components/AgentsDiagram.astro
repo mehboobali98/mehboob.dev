@@ -1,18 +1,19 @@
 ---
-/** The three /estimate subagents, drawn like the post's share card at a size that stays 12px or more on phones. */
-const agents = [
-  { name: 'auditor', note: "can't give hours", y: 9 },
-  { name: 'estimator', note: 'prices it against the code', y: 53 },
-  { name: 'validator', note: 'never sees the derivation', y: 119 },
-];
-const rail = 11;
-const wall = 97;
+import { agents, rail, wall } from '../data/agentsDiagram';
 ---
 
 <figure class="exhibit">
   <figcaption>The three subagents behind /estimate</figcaption>
-  <div class="p-[1.1rem]">
-    <svg viewBox="0 0 248 146" width="248" class="block max-w-full h-auto" role="img" aria-labelledby="agents-title">
+  <div class="p-[1.1rem] scene-host" data-scene="agents">
+    <svg
+      viewBox="0 0 248 146"
+      width="248"
+      class="block max-w-full h-auto"
+      role="img"
+      aria-labelledby="agents-title"
+      data-scene-graphic
+      data-layout="desktop"
+    >
       <title id="agents-title">
         The auditor can't give hours. The estimator prices the work against the code. Below a
         wall, the validator never sees how the estimate was derived.
