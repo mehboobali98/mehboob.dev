@@ -204,3 +204,14 @@ const secondary = withStats.slice(2);
     </div>
   </div>
 </section>
+
+<script>
+  import { mountScene } from '../lib/motion/mount';
+  import { onAstroLifecycle } from '../lib/motion/trigger';
+
+  onAstroLifecycle(() => {
+    const host = document.querySelector<HTMLElement>('[data-scene="agents"]');
+    const button = host?.closest('figure')?.querySelector<HTMLButtonElement>('[data-scene-replay]');
+    return host && button ? mountScene(host, button, 'subagents', () => import('../lib/motion/agentsScene')) : undefined;
+  });
+</script>
