@@ -57,7 +57,6 @@ describe('camera', () => {
     expect(cameraTransform([{ t: 0, x: 250, y: 150, s: 1 }], 2, VB)).toBe('');
   });
   it('clamps the view inside the vb while zoomed', () => {
-    // At s = 2 the view is 300 x 200, so its centre x is clamped to at least -50 + 150 = 100; y = 150 is already inside [50, 250].
     expect(cameraTransform(keys, 0, VB)).toBe('translate(250 150) scale(2.0000) translate(-100 -150)');
   });
   it('shakeAt decays from each hit', () => {
