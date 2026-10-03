@@ -67,6 +67,8 @@ I wanted the cost on a real network, not on my laptop. Cloudflare builds a previ
 
 The desktop performance median fell from 99 to 97, with most of the difference in Speed Index, which went from 1.2 seconds to 1.8. The hero animation may explain some of that, but three runs don't isolate it, and single runs swung by as much as seven points. On mobile the median stayed at 100. Accessibility stayed at 100. Both previews scored 66 for SEO, only because Cloudflare marks previews `noindex`. The live site scores 100.
 
-The live domain scored lower again: 92 on desktop and 96 on mobile, with Best Practices at 74 and 75. The homepage audits caught two scripts Cloudflare adds to the real domain and not to previews: an analytics beacon that the site's Content Security Policy blocks, and a bot-detection script that uses deprecated browser APIs. A static portfolio needs neither, so both are going.
+The live domain scored lower again: 92 on desktop and 96 on mobile, with Best Practices at 74 and 75. The homepage audits caught two scripts Cloudflare adds to the real domain and not to previews: an analytics beacon that the site's Content Security Policy blocks, and a bot-detection script that uses deprecated browser APIs.
+
+I turned the analytics off. The beacon had never been allowed to run anyway. Three more runs afterwards gave 98 on desktop and 96 on mobile, with Best Practices at 81 and 82. The bot-detection script is still there. On Cloudflare's free plan it can't be switched off, even with Bot Fight Mode disabled, and it's now the only Best Practices failure: deprecated APIs in a script I don't ship.
 
 The original labels stay where they were. The copy does the moving.
