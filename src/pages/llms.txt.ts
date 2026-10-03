@@ -60,6 +60,10 @@ ${workLines.join('\n')}
   transformers](https://doi.org/10.1109/ICACS55311.2023.10089637). Mehboob Ali,
   Abdullah Malik and Maryam Bashir. IEEE ICACS, 2023.
 
+## Certification
+
+- AWS Certified AI Practitioner (AIF-C01), 2026.
+
 ## Writing
 
 ${postLines.join('\n')}
