@@ -45,8 +45,8 @@ rule, a content rule.
   new decorative motif. Don't add a second unrelated visual gimmick on top of it.
 - **Motion:** two deliberate kinds.
   1. One scroll-reveal treatment for sections, as before.
-  2. Motion graphics that play a real mechanism from the work: the hero's career traversal
-     and each case study's scene.
+  2. Motion graphics that play a real mechanism from the work: the hero's career traversal,
+     each case study's scene and the rmine-skills diagram.
 
   Every scene follows these rules:
   - It plays once when it comes into view, then settles into the static design exactly.
@@ -54,7 +54,8 @@ rule, a content rule.
     element.
   - It shows the static design under `prefers-reduced-motion`, without JavaScript, and if it
     fails.
-  - It stays inside the Lighthouse budget in AUDIT-RESPONSE.md.
+  - It stays inside the Lighthouse budget: desktop performance 100, mobile 93 or better,
+    accessibility and SEO 100, CLS 0, and no layout shifts while it plays.
 
   No decorative motion: no particle backgrounds, no ambient loops, nothing that doesn't show
   how something real works. If a new animation doesn't explain a mechanism, it doesn't go in.
