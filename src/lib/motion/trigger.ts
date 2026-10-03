@@ -50,3 +50,14 @@ export function onAstroLifecycle(setup: () => (() => void) | void): void {
     teardown = undefined;
   });
 }
+
+/** Visibility ratio to autoplay at: 40% of the host, or 40% of the viewport for tall hosts. */
+export const autoplayThreshold = (hostHeight: number, viewportHeight: number, base = 0.4): number => Math.min(base, (base * viewportHeight) / Math.max(1, hostHeight));
+
+/** Calls cb whenever the reduced-motion preference changes; returns an unsubscribe. */
+export function onMotionChange(cb: (allowed: boolean) => void): () => void {
+  const q = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const handler = () => cb(!q.matches);
+  q.addEventListener('change', handler);
+  return () => q.removeEventListener('change', handler);
+}

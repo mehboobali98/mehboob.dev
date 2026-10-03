@@ -1,31 +1,19 @@
 ---
-// The Workflow Automation Engine is publicly a node canvas: you connect triggers to
-// conditions to actions. So the site's node motif isn't a metaphor here, it's the shape of
-// the product being described. The connector node is the one worth drawing: it's a web
-// request node with the auth and the action list already built, which is what turns a
-// rules engine into something that can drive Entra or Teams. Drawn from EZO's public
-// documentation, which is linked beside it.
-const nodes = [
-  { x: 8, y: 62, w: 136, label: 'Trigger', sub: 'member.offboarded', kind: 'lit' },
-  { x: 176, y: 62, w: 124, label: 'Condition', sub: 'status = inactive', kind: 'quiet' },
-  { x: 332, y: 20, w: 132, label: 'Connector', sub: 'Entra: update user', kind: 'lit' },
-  { x: 332, y: 104, w: 132, label: 'Action', sub: 'open ticket', kind: 'quiet' },
-];
-
-/** The same four nodes stacked for phones, sized to render at 12px or more. */
-const mobileNodes = [
-  { ...nodes[0], x: 0, y: 0, w: 244 },
-  { ...nodes[1], x: 0, y: 82, w: 244 },
-  { ...nodes[2], x: 40, y: 170, w: 260 },
-  { ...nodes[3], x: 40, y: 252, w: 260 },
-];
+import { desktopEdges, mobileEdges, mobileNodes, nodes } from '../data/workflowGraph';
 
 const stroke = (kind: string) => (kind === 'lit' ? 'var(--color-react)' : 'var(--color-line-strong)');
 const ink = (kind: string) => (kind === 'lit' ? 'var(--color-react)' : 'var(--color-quiet)');
 ---
 
 <figure>
-  <svg viewBox="0 0 476 160" class="hidden sm:block w-full h-auto" role="img" aria-labelledby="wf-title wf-desc">
+  <svg
+    viewBox="0 0 476 160"
+    class="hidden sm:block w-full h-auto"
+    role="img"
+    aria-labelledby="wf-title wf-desc"
+    data-scene-graphic
+    data-layout="desktop"
+  >
     <title id="wf-title">
       A workflow automation graph: a trigger feeds a condition, which branches into two actions.
     </title>
@@ -35,9 +23,7 @@ const ink = (kind: string) => (kind === 'lit' ? 'var(--color-react)' : 'var(--co
     </desc>
 
     <g stroke="var(--color-line-strong)" stroke-width="1" fill="none">
-      <path d="M144,86 L176,86" />
-      <path d="M300,86 C318,86 318,44 332,44" />
-      <path d="M300,86 C318,86 318,128 332,128" />
+      {desktopEdges.map((d) => <path d={d} />)}
     </g>
 
     {nodes.map((n) => (
@@ -71,16 +57,21 @@ const ink = (kind: string) => (kind === 'lit' ? 'var(--color-react)' : 'var(--co
     ))}
   </svg>
 
-  <svg viewBox="0 0 300 306" class="sm:hidden w-full h-auto" role="img" aria-labelledby="wf-title-m">
+  <svg
+    viewBox="0 0 300 306"
+    class="sm:hidden w-full h-auto"
+    role="img"
+    aria-labelledby="wf-title-m"
+    data-scene-graphic
+    data-layout="phone"
+  >
     <title id="wf-title-m">
       A member offboarding trigger reaches an inactive-status condition, which branches to an
       Entra user update and to opening a ticket.
     </title>
 
     <g stroke="var(--color-line-strong)" stroke-width="1.5" fill="none">
-      <path d="M24,54 L24,82" />
-      <path d="M24,136 L24,185 Q24,197 36,197 L40,197" />
-      <path d="M24,136 L24,267 Q24,279 36,279 L40,279" />
+      {mobileEdges.map((d) => <path d={d} />)}
     </g>
 
     {mobileNodes.map((n) => (

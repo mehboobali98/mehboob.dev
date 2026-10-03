@@ -37,3 +37,15 @@ export function hash(a: number, b = 0): number {
   r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
   return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
 }
+
+/** Progress of t from a to b, clamped to [0, 1]. */
+export const span = (t: number, a: number, b: number): number => clamp((t - a) / (b - a));
+
+/** Damped spring that is exactly zero after 1.2 s, so scenes settle precisely. */
+export const springOut = (u: number, amp: number): number => (u <= 0 ? amp : u > 1.2 ? 0 : amp * Math.exp(-6 * u) * Math.cos(11 * u));
+
+/** Overshooting 0 to 1 entrance driven by springOut. */
+export const pop = (u: number): number => (u <= 0 ? 0 : 1 - springOut(u, 1));
+
+/** Formats n with at most two decimals for SVG attributes. */
+export const round2 = (n: number): string => (Math.round(n * 100) / 100).toString();
