@@ -156,6 +156,7 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     ['[data-sync-panel]', 'sync', () => import('../lib/motion/syncScene').then((m) => ({ createScene: m.createSyncScene }))],
     ['[data-scene="cmdb"]', 'CMDB', () => import('../lib/motion/cmdbScene')],
     ['[data-scene="workflow"]', 'workflow', () => import('../lib/motion/workflowScene')],
+    ['[data-scene="rack"]', 'rack editor', () => import('../lib/motion/rackScene')],
   ];
 
   onAstroLifecycle(() => {
