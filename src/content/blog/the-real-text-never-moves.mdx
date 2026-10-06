@@ -69,6 +69,6 @@ The desktop performance median fell from 99 to 97, with most of the difference i
 
 The live domain's medians were lower again: 92 on desktop and 96 on mobile, with Best Practices at 74 and 75. The homepage audits caught two scripts Cloudflare adds to the real domain and not to previews: an analytics beacon that the site's Content Security Policy blocks, and a bot-detection script that uses deprecated browser APIs.
 
-I turned the analytics off. The beacon had never been allowed to run anyway. Three more runs afterwards had medians of 98 on desktop and 96 on mobile, with Best Practices at 81 and 82. The bot-detection script is still there. On Cloudflare's free plan it can't be switched off, even with Bot Fight Mode disabled, and it's now the only Best Practices failure: deprecated APIs in a script I don't ship.
+I turned the analytics off. The beacon had never been allowed to run anyway. Three more runs afterwards had medians of 98 on desktop and 96 on mobile, with Best Practices at 81 and 82. The bot-detection script is still there. On Cloudflare's free plan it can't be switched off, even with Bot Fight Mode disabled, and it's now the only audit pulling the Best Practices score down: deprecated APIs in a script I don't ship.
 
 The original labels stay where they were. The copy does the moving.
