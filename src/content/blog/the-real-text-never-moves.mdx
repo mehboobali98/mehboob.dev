@@ -1,0 +1,74 @@
+---
+title: The real text never moves
+description: >-
+  Four diagrams on this site now animate the mechanisms they explain. The animation is a
+  copy drawn over the real graphic, and the original labels stay put. How that works, how
+  it's tested, and what it costs in page speed.
+date: 2026-10-06
+tags: ['SVG', 'Animation', 'Accessibility', 'Testing']
+draft: false
+card:
+  motif: log
+  lines:
+    - { text: 'original svg: opacity 0', tone: quiet }
+    - { text: 'copy: aria-hidden, drawing' }
+    - { text: 'stroke-width="2.51"', tone: struck }
+    - { text: 'last frame == static', tone: accent }
+    - { text: 'copy removed' }
+---
+
+Four diagrams on this site now animate the mechanisms they explain: an offboarding workflow, a CMDB relationship graph, a server rack editor, and `/estimate`, my tool that keeps an estimator's reasoning away from the agent that checks it. Each one can play once as you scroll to it. The workflow diagram, for instance, shows an event reaching a trigger, a condition coming back `true`, and a connector getting a `200` from the service it calls.
+
+The animation is a copy. The original labels stay where they were.
+
+I set one rule before drawing anything. The animation can't be the only way to get the content. Someone with reduced motion turned on, someone using a screen reader, someone copying a node label into a search box: all of them should get exactly what was there before.
+
+## A copy on top
+
+Each diagram is an SVG with real `<text>` elements, and I wanted those to stay in place for reading, searching and copying. So a scene never touches them. It draws into a second SVG laid over the panel and marked `aria-hidden`, and while it plays, the original gets `opacity: 0`.
+
+Opacity, rather than `display: none` or `visibility: hidden`, is deliberate. Both of those take the element out of the accessibility tree. At zero opacity it's still there: still announced, still found by Ctrl+F, still selectable. When the scene finishes, the copy removes itself and the opacity comes back.
+
+The copy's `viewBox` is worked out from where the original sits, so one unit in the copy is one unit in the diagram, but it covers the whole panel. That's what lets a shockwave run past the edge of the graph instead of being clipped to the SVG's box.
+
+## Every frame is a function of time
+
+Each frame is a pure function of three things: the time in seconds, the layout (desktop or phone), and the copy's measured `viewBox`. Nothing carries over from the previous frame, and every random-looking particle comes from a seeded hash.
+
+That paid for itself more than once. Replay is just running time from zero again. A test can ask for any frame it likes. And the recordings I reviewed the scenes from were made by pausing the browser's clock and stepping it a sixtieth of a second at a time, so every frame can be reproduced exactly.
+
+## The handover has to be invisible
+
+The moment the copy disappears is where a scene can look broken. If the last animated frame differs from the original by a pixel, you see a jump.
+
+So each scene can also draw its settled graphic, with the same element builders the animation uses, and a unit test asserts that the frame 0.02 seconds before the end is the same string, character for character.
+
+The first version failed on the phone layout. The highlighted path in the CMDB graph thickens on impact and decays back exponentially, and an exponential never quite reaches zero: two hundredths of a second before the end, the stroke was `2.51` instead of `2.5`. The camera shake has the same kind of tail, which would leave a transform on the last frame. Neither is visible. Both meant the copy and the original disagreed at the moment of handover. The path widening and the shake now clamp to zero below 0.02 diagram units.
+
+A browser check then confirms that the restored panel matches the old version at 1440 and 390 pixels wide. With the Replay button hidden, the mean pixel difference was 0.0 for all four.
+
+## When there's no animation
+
+Reduced motion and disabled JavaScript both matched the old panels in the browser checks. If drawing throws during playback, cleanup removes the copy and restores the original.
+
+Autoplay only arms while a panel is still off screen, so a slow connection never leaves you looking at an empty box. If a scene finishes loading after you've already reached it, or a link drops you right at it, it waits for you to press Play. Scroll away halfway through and it stops and puts the original back.
+
+Each scene loads only as you get near it, at 4 to 5 KB gzipped apiece plus 2.9 KB of shared drawing code. The JavaScript the page loads up front went down by 1.35 KB, because an older animation moved out of the initial bundle.
+
+## Three shifts in the header
+
+I ran a layout-shift observer while every scene played. On a phone it recorded three small shifts, and the main branch recorded the same three.
+
+They came from the header. Its Index button shows the name of the section you're in, the name's width changes as you scroll, and between 320 and 414 pixels wide the longer names wrapped the header onto a second line. Phones now just show "Index". From 640 pixels up, where there's room, the section name sits in a slot of fixed width, so changing sections can't move anything.
+
+## What it costs
+
+I wanted the cost on a real network, not on my laptop. Cloudflare builds a preview for every branch, so I deployed the version of the site from before any of this work next to the current one and ran Lighthouse three times on each, interleaved.
+
+The desktop performance median fell from 99 to 97, with most of the difference in Speed Index, which went from 1.2 seconds to 1.8. The hero animation may explain some of that, but three runs don't isolate it, and single runs swung by as much as seven points. On mobile the median stayed at 100. Accessibility stayed at 100. Both previews scored 66 for SEO, only because Cloudflare marks previews `noindex`. The live site scores 100.
+
+The live domain's medians were lower again: 92 on desktop and 96 on mobile, with Best Practices at 74 and 75. The homepage audits caught two scripts Cloudflare adds to the real domain and not to previews: an analytics beacon that the site's Content Security Policy blocks, and a bot-detection script that uses deprecated browser APIs.
+
+I turned the analytics off. The beacon had never been allowed to run anyway. Three more runs afterwards had medians of 98 on desktop and 96 on mobile, with Best Practices at 81 and 82. The bot-detection script is still there. On Cloudflare's free plan it can't be switched off, even with Bot Fight Mode disabled, and it's now the only audit pulling the Best Practices score down: deprecated APIs in a script I don't ship.
+
+The original labels stay where they were. The copy does the moving.
