@@ -62,7 +62,8 @@ ${workLines.join('\n')}
 
 ## Certification
 
-- AWS Certified AI Practitioner (AIF-C01), 2026.
+- [AWS Certified AI Practitioner (AIF-C01)](https://www.credly.com/badges/f55aec75-406b-498c-ae29-14d1aa8d5a8c),
+  2026.
 
 ## Writing
 
