@@ -53,6 +53,9 @@ ${workLines.join('\n')}
 - [job-search-agent](https://github.com/mehboobali98/job-search-agent): job discovery
   for Codex. The finder and judge agents can't write; one deterministic script owns
   every tracker change, and it never submits an application.
+- [clip-studio](https://github.com/mehboobali98/clip-studio): a Claude Code plugin that
+  makes short videos from code. Every frame is a pure function of time, captured with
+  Playwright and encoded with ffmpeg, from product-demo or motion-graphics templates.
 
 ## Publication
 

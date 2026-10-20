@@ -45,6 +45,15 @@ const projects = [
     cta: 'View on GitHub',
     post: '/blog/every-fixture-was-one-line-long/',
   },
+  // One user again, so the claim is the design: a clip is code, not a recording.
+  {
+    name: 'clip-studio',
+    tag: 'Claude Code plugin',
+    repo: 'mehboobali98/clip-studio',
+    desc: 'Short videos as code. Every frame is a pure function of time, so Playwright captures it frame by frame and ffmpeg encodes it: nothing is screen-recorded, and a clip diffs like the rest of the repo.',
+    href: 'https://github.com/mehboobali98/clip-studio',
+    cta: 'View on GitHub',
+  },
 ];
 
 // Fetched once at build time -- not client-side, so no runtime API calls or rate-limit
@@ -170,7 +179,7 @@ const secondary = withStats.slice(2);
         ))}
       </div>
 
-      <div class="grid md:grid-cols-2 gap-5">
+      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
         {secondary.map(({ project, stat }) => (
           <article
             data-reveal
