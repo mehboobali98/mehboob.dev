@@ -105,8 +105,8 @@
      composed page from a typed one.
      ------------------------------------------------------------------------- */
   --type-display-1: clamp(2.5rem, 4.6vw, 4rem);
-  --type-display-2: clamp(2.25rem, 4.2vw, 3.5rem);
-  --type-display-3: 1.75rem;
+  --type-display-2: clamp(1.875rem, 3.2vw, 2.75rem);
+  --type-display-3: clamp(1.5rem, 1.1rem + 1vw, 1.75rem);
   --type-body-lg: 1.125rem;
   --type-body: 1rem;
   --type-meta: 0.8125rem;
@@ -245,7 +245,7 @@ main:focus {
   font-family: var(--font-display);
   font-variation-settings: "WONK" 1;
   font-weight: 600;
-  font-size: 1.75rem;
+  font-size: clamp(1.375rem, 2.4vw, 1.75rem);
   line-height: 1.25;
   color: var(--color-paper);
   margin-top: 2.75em;
