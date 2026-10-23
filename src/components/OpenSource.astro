@@ -134,7 +134,7 @@ const featured = withStats.slice(0, 2);
 const secondary = withStats.slice(2);
 ---
 
-<section id="open-source" class="bg-ink border-t border-line">
+<section id="open-source" class="bg-void border-t border-line">
   <div class="band band--compact shell">
     <div class="measure">
       <p class="marker mb-6">Open source</p>
@@ -187,37 +187,32 @@ const secondary = withStats.slice(2);
         ))}
       </div>
 
-      <div class="grid md:grid-cols-2 gap-5">
+      <ul class="mt-5 flex flex-col border-b border-line">
         {secondary.map(({ project, stat }) => (
-          <article
-            data-reveal
-            class="group flex flex-col min-w-0 p-7 border border-line rounded-lg hover:border-signal transition-colors bg-surface"
-          >
-            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <li data-reveal class="repo-row border-t border-line py-5 sm:py-6">
+            <div class="grid gap-1">
               <h3 class="font-display wonk font-semibold text-xl text-paper min-w-0 break-words">
                 {project.name}
               </h3>
               <span class="font-mono text-xs text-quiet">{project.tag}</span>
             </div>
-            <p class="mt-4 measure-sm text-paper/75 leading-relaxed text-sm">{project.desc}</p>
-            <div class="mt-auto pt-5 flex flex-wrap items-center justify-between gap-3">
-              <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
-                <a href={project.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
-                  {project.cta} &rarr;
+            <p class="measure-sm text-paper/75 leading-relaxed text-sm">{project.desc}</p>
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs">
+              <a href={project.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">
+                {project.cta} &rarr;
+              </a>
+              {project.post && publishedPosts.has(project.post) && (
+                <a href={project.post} class="tap text-quiet hover:text-signal transition-colors">
+                  Read the post &rarr;
                 </a>
-                {project.post && publishedPosts.has(project.post) && (
-                  <a href={project.post} class="tap text-quiet hover:text-signal transition-colors">
-                    Read the post &rarr;
-                  </a>
-                )}
-              </div>
+              )}
               {stat?.pushedAt && (
-                <p class="font-mono text-xs text-quiet shrink-0">pushed <time datetime={stat.pushedAt.toISOString()}>{pushedOn(stat.pushedAt)}</time></p>
+                <span class="text-quiet">pushed <time datetime={stat.pushedAt.toISOString()}>{pushedOn(stat.pushedAt)}</time></span>
               )}
             </div>
-          </article>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </div>
 </section>
@@ -232,3 +227,37 @@ const secondary = withStats.slice(2);
     return host && button ? mountScene(host, button, 'subagents', () => import('../lib/motion/agentsScene')) : undefined;
   });
 </script>
+
+<style>
+  .repo-row {
+    display: grid;
+    gap: 0.6rem 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .repo-row {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      grid-template-areas: "name desc" "name links";
+      align-items: baseline;
+    }
+
+    .repo-row > :nth-child(1) {
+      grid-area: name;
+    }
+
+    .repo-row > :nth-child(2) {
+      grid-area: desc;
+    }
+
+    .repo-row > :nth-child(3) {
+      grid-area: links;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .repo-row {
+      grid-template-columns: 15rem minmax(0, 26rem) minmax(0, 1fr);
+      grid-template-areas: "name desc links";
+    }
+  }
+</style>

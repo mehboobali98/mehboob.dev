@@ -5,9 +5,9 @@ import DeliveryChart from './DeliveryChart.astro';
 // the least interesting figure in the set. They are all plain text now and the section
 // needs no JavaScript at all.
 //
-// Keep the three figures that add information on the homepage. Promotion count already
-// appears in the hero, while "five years" is context rather than evidence. The detailed
-// case pages carry the rest.
+// Keep the two figures that appear nowhere else on the homepage. Promotion count already
+// appears in the hero, "five years" is context rather than evidence, and "7 months"
+// repeats the CMDB card's duration. The detailed case pages carry the rest.
 const stats = [
   {
     // Only tickets I was a developer on and that reached Deployed. Tickets I only wrote,
@@ -21,15 +21,10 @@ const stats = [
     label: 'major launches',
     desc: 'Features Product marked as major releases, all deployed. Not the routine maintenance stuff.',
   },
-  {
-    n: '7',
-    label: 'months to production',
-    desc: 'The CMDB module, from architecture to a production release.',
-  },
 ];
 ---
 
-<section id="numbers" class="bg-ink border-t border-line">
+<section id="numbers" class="bg-surface border-t border-line">
   <div class="band band--compact shell">
     <p class="marker mb-6">By the numbers</p>
     <h2 class="t-display-2 text-paper max-w-[22ch]">
@@ -45,14 +40,10 @@ const stats = [
 
   <!-- Full-bleed. The numbers are the loudest thing in this section, so they get the
        whole width and their own ground rather than sitting politely in a column. -->
-  <div class="bg-surface border-y border-line">
-    <dl class="shell grid grid-cols-2 lg:grid-cols-3 gap-px bg-line">
-      <!-- The lead metric spans the full phone width. At lg all three form one row. -->
+  <div class="bg-ink border-y border-line">
+    <dl class="shell grid sm:grid-cols-2 gap-px bg-line">
       {stats.map((s, index) => (
-        <div class:list={[
-          'bg-surface px-6 sm:px-8 py-9 lg:py-10',
-          index === 0 && 'col-span-2 lg:col-span-1',
-        ]}>
+        <div class="bg-ink px-6 sm:px-8 py-9 lg:py-10">
           <dt class="sr-only">{s.label}</dt>
           <dd class="m-0">
             <p class="font-display wonk font-black text-signal leading-none text-[3.25rem] lg:text-[4rem]">
@@ -61,7 +52,7 @@ const stats = [
             <p class="mt-3 font-mono text-paper" style="font-size: var(--type-meta)">{s.label}</p>
             <p
               class:list={[
-                'mt-4 text-paper/60 leading-relaxed',
+                'mt-4 measure-sm text-paper/60 leading-relaxed',
                 index !== 0 && 'hidden sm:block',
               ]}
               style="font-size: var(--type-meta)"
