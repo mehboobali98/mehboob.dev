@@ -154,8 +154,8 @@ const secondary = withStats.slice(2);
               <h3 class="t-display-3 text-paper">{project.name}</h3>
               <span class="font-mono text-xs text-quiet">{project.tag}</span>
             </div>
-            <p class="mt-4 max-w-[38rem] text-paper/80 leading-relaxed">{project.desc}</p>
-            <p class="mt-4 max-w-[38rem] text-sm text-paper/65 leading-relaxed">{project.detail}</p>
+            <p class="mt-4 measure text-paper/80 leading-relaxed">{project.desc}</p>
+            <p class="mt-4 measure-sm text-sm text-paper/65 leading-relaxed">{project.detail}</p>
 
             <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
               <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
@@ -199,7 +199,7 @@ const secondary = withStats.slice(2);
               </h3>
               <span class="font-mono text-xs text-quiet">{project.tag}</span>
             </div>
-            <p class="mt-4 text-paper/75 leading-relaxed text-sm">{project.desc}</p>
+            <p class="mt-4 measure-sm text-paper/75 leading-relaxed text-sm">{project.desc}</p>
             <div class="mt-auto pt-5 flex flex-wrap items-center justify-between gap-3">
               <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs">
                 <a href={project.href} target="_blank" rel="noopener" class="tap text-signal hover:underline">

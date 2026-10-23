@@ -2,7 +2,7 @@
 import { hops, mobileHops, mobileRelated, others, pathD, quietEdges } from '../data/cmdbGraph';
 ---
 
-<figure>
+<figure class="max-w-[38rem] mx-auto">
   <svg
     viewBox="0 0 512 300"
     class="hidden sm:block w-full h-auto"
@@ -39,7 +39,7 @@ import { hops, mobileHops, mobileRelated, others, pathD, quietEdges } from '../d
           y={n.y - 12}
           text-anchor="middle"
           font-family="var(--font-mono)"
-          font-size="9"
+          font-size="10.5"
           letter-spacing="0.06em"
           fill="var(--color-quiet)"
         >{n.type}</text>
@@ -62,7 +62,7 @@ import { hops, mobileHops, mobileRelated, others, pathD, quietEdges } from '../d
           y={n.y - 15}
           text-anchor="middle"
           font-family="var(--font-mono)"
-          font-size="9"
+          font-size="10.5"
           letter-spacing="0.08em"
           fill="var(--color-quiet)"
         >{n.tier}</text>
@@ -137,7 +137,7 @@ import { hops, mobileHops, mobileRelated, others, pathD, quietEdges } from '../d
     ))}
   </svg>
 
-  <figcaption class="mt-5 max-w-[34rem] text-[0.8125rem] leading-relaxed text-quiet">
+  <figcaption class="mt-5 measure-sm text-[0.8125rem] leading-relaxed text-quiet">
     Level 1 is what the graph shows by default. Each card expands to the next level, so this
     path answers which vendor contract covers the software on one server. Before it, every
     one of those links was a separate lookup. Sanitized from the shipped feature; the record

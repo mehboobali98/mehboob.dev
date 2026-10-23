@@ -132,6 +132,22 @@ body {
   font-family: var(--font-body);
 }
 
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap-style: balance;
+  }
+
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap-style: pretty;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -398,6 +414,7 @@ main:focus {
 
 .prose [data-diagram-note],
 .prose [data-ownership] {
+  max-width: 26rem;
   font-size: 0.8125rem;
   line-height: 1.6;
   color: var(--color-quiet);

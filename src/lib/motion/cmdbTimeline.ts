@@ -223,7 +223,7 @@ function drawDesktop(t: number, vb: ViewBox): string {
     out.push(relatedDot(n.x, n.y, 4 * pop(u), pu, 1, o));
     out.push(ring(n.x, n.y, u, 0.4, 4, 22, C.paper, 1.2, 0.7));
     out.push(burst(n.x, n.y, t, at, 48 + i, C.quiet, { n: 10, speed: 70, grav: 40, life: 0.45, size: 1.3 }));
-    out.push(svgText(n.x, n.y - 12, decode(n.type, span(t, at, at + 0.3), 48 + i, t), 9, C.quiet, `text-anchor="middle" letter-spacing="0.06em" opacity="${f(o)}"`));
+    out.push(svgText(n.x, n.y - 12, decode(n.type, span(t, at, at + 0.3), 48 + i, t), 10.5, C.quiet, `text-anchor="middle" letter-spacing="0.06em" opacity="${f(o)}"`));
     if (u < 1.2) out.push(`<g opacity="${f(o)}">${slam(n.x, n.y + 19, decode(n.label, span(t, at, at + 0.4), 51 + i, t), 11, C.quiet, t, at, '', 'middle')}</g>`);
     else out.push(svgText(n.x, n.y + 19, n.label, 11, C.quiet, `text-anchor="middle" opacity="${f(o)}"`));
   });
@@ -242,8 +242,8 @@ function drawDesktop(t: number, vb: ViewBox): string {
     out.push(hopDot(n.x, n.y, lerp(4.5, 6, lit) * pop(u) * (1 + kick), lit, pu, 1));
     if (u < 0.6) out.push(ring(n.x, n.y, u, 0.45, 4, 24, C.paper, 1.3, 0.7));
     if (i > 0) out.push(impact(n.x, n.y, t, at, 40 + i, i === 3, { r0: 6, bloom: 34, small: 34, wave: 560, echo: 380, inner: 120, n: 30 }));
-    if (i > 0 && t > at && t < at + 1.2) out.push(slam(n.x, n.y - 15, n.tier, 9, mix(C.quiet, C.mysql, Math.exp(-(t - at) * 3)), t, at, 'letter-spacing="0.08em"', 'middle'));
-    else out.push(svgText(n.x, n.y - 15, decode(n.tier, span(t, HOP_AT[i], HOP_AT[i] + 0.3), 90 + i, t), 9, C.quiet, 'text-anchor="middle" letter-spacing="0.08em"'));
+    if (i > 0 && t > at && t < at + 1.2) out.push(slam(n.x, n.y - 15, n.tier, 10.5, mix(C.quiet, C.mysql, Math.exp(-(t - at) * 3)), t, at, 'letter-spacing="0.08em"', 'middle'));
+    else out.push(svgText(n.x, n.y - 15, decode(n.tier, span(t, HOP_AT[i], HOP_AT[i] + 0.3), 90 + i, t), 10.5, C.quiet, 'text-anchor="middle" letter-spacing="0.08em"'));
     if (u < 1.2) out.push(slam(n.x, n.y + 21, decode(n.label, span(t, HOP_AT[i], HOP_AT[i] + 0.4), 95 + i, t), 12, C.paper, t, HOP_AT[i], '', 'middle'));
     else out.push(svgText(n.x, n.y + 21, n.label, 12, C.paper, 'text-anchor="middle"'));
   });
@@ -375,13 +375,13 @@ export function staticFrame(layout: Layout, _vb: ViewBox): string {
   const related = others.map(
     (n) =>
       relatedDot(n.x, n.y, 4, 0, 1, 1) +
-      svgText(n.x, n.y - 12, n.type, 9, C.quiet, 'text-anchor="middle" letter-spacing="0.06em" opacity="1"') +
+      svgText(n.x, n.y - 12, n.type, 10.5, C.quiet, 'text-anchor="middle" letter-spacing="0.06em" opacity="1"') +
       svgText(n.x, n.y + 19, n.label, 11, C.quiet, 'text-anchor="middle" opacity="1"'),
   );
   const nodes = hops.map(
     (n) =>
       hopDot(n.x, n.y, 6, 1, 0, 1) +
-      svgText(n.x, n.y - 15, n.tier, 9, C.quiet, 'text-anchor="middle" letter-spacing="0.08em"') +
+      svgText(n.x, n.y - 15, n.tier, 10.5, C.quiet, 'text-anchor="middle" letter-spacing="0.08em"') +
       svgText(n.x, n.y + 21, n.label, 12, C.paper, 'text-anchor="middle"'),
   );
   return `<g>${edges}</g>` + pathEl(P, 0, 2) + related.join('') + nodes.join('');
