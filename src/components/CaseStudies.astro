@@ -121,31 +121,33 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     </div>
   </article>
 
-  <article id="rack-editor" data-reveal class="border-t border-line bg-surface">
-    <div class="band band--compact shell grid xl:grid-cols-[minmax(0,0.82fr)_minmax(30rem,1.18fr)] gap-10 xl:gap-20 items-center">
-      <div class="measure min-w-0">
-        <p class="t-micro">Also built</p>
-        <h3 class="mt-4 t-display-3 text-paper">A server rack layout editor</h3>
-        <p class="mt-5 text-paper/80 leading-relaxed">
-          Both halves are mine: the Rails API that saves a layout's racks and devices in one
-          transaction, and the React editor on top of it.
-        </p>
-        <p class="mt-4 text-paper/80 leading-relaxed">
-          Drop a device on a rack and it lands in the nearest free slot tall enough to hold it,
-          or the editor says there's no room. Drag one onto occupied units and it goes back
-          where it was.
-        </p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          {['Ruby on Rails', 'React', 'TypeScript', 'React Flow'].map((item) => <span class="tech-pill">{item}</span>)}
+  <aside id="rack-editor" aria-labelledby="rack-editor-title" data-reveal class="bg-ink">
+    <div class="band band--compact shell rack-band">
+      <div class="border-t border-line pt-10 grid xl:grid-cols-[minmax(0,1fr)_auto] gap-8 xl:gap-16 items-center">
+        <div class="max-w-[30rem] min-w-0">
+          <p class="t-micro">Also built</p>
+          <h3 id="rack-editor-title" class="mt-3 font-display wonk font-semibold text-xl text-paper">A server rack layout editor</h3>
+          <p class="mt-4 text-[0.9375rem] text-paper/75 leading-relaxed">
+            Both halves are mine: the Rails API that saves a layout's racks and devices in one
+            transaction, and the React editor on top of it.
+          </p>
+          <p class="mt-3 text-[0.9375rem] text-paper/75 leading-relaxed">
+            Drop a device on a rack and it lands in the nearest free slot tall enough to hold it,
+            or the editor says there's no room. Drag one onto occupied units and it goes back
+            where it was.
+          </p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            {['Ruby on Rails', 'React', 'TypeScript', 'React Flow'].map((item) => <span class="tech-pill">{item}</span>)}
+          </div>
+        </div>
+
+        <div class="rack-panel scene-host min-w-0" data-scene="rack">
+          <RackEditor />
+          <button type="button" class="scene-replay" data-scene-replay hidden>Replay</button>
         </div>
       </div>
-
-      <div class="rack-panel scene-host min-w-0" data-scene="rack">
-        <RackEditor />
-        <button type="button" class="scene-replay" data-scene-replay hidden>Replay</button>
-      </div>
     </div>
-  </article>
+  </aside>
 </section>
 
 <script>
@@ -240,6 +242,14 @@ const cmdbPreviewFacts = cmdb.facts.filter((fact) => ['Team', 'Duration'].includ
     border: 1px solid var(--color-line);
     border-radius: 0.5rem;
     background: var(--color-void);
+  }
+
+  .rack-panel {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  .rack-band {
+    padding-top: 0;
   }
 
   .evidence-row {

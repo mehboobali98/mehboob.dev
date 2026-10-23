@@ -50,75 +50,77 @@ const leverage = [
 ];
 ---
 
-<section id="trajectory" class="bg-surface border-t border-line">
-  <div class="band band--compact shell trajectory-grid">
-    <div class="min-w-0">
-      <div class="measure">
-        <p class="marker mb-6">Career</p>
-        <h2 class="t-display-2 text-paper">
-          How the job changed.
-        </h2>
+<section id="trajectory" class="bg-surface">
+  <div class="band band--compact shell trajectory-band">
+    <div class="trajectory-grid border-t border-line">
+      <div class="min-w-0">
+        <h3 class="t-display-3 text-paper">How the job changed.</h3>
+
+        <ol class="mt-8 flex flex-col border-b border-line">
+          {roles.map((role) => (
+            <li class:list={['career-step border-t border-line py-4 sm:py-5', role.current && 'is-current']}>
+              <div class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 lg:max-xl:block">
+                <h4 class="font-display wonk font-semibold text-xl text-paper">{role.title}</h4>
+                <p class="font-mono text-xs text-quiet shrink-0 lg:max-xl:mt-1">{role.dates}</p>
+              </div>
+              <p class="mt-2 t-micro">{role.scope}</p>
+              <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">{role.proof}</p>
+            </li>
+          ))}
+        </ol>
+
+        <p class="mt-8 t-micro">Publication</p>
+        <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">
+          <a
+            href="https://doi.org/10.1109/ICACS55311.2023.10089637"
+            target="_blank"
+            rel="noopener"
+            class="text-paper underline underline-offset-2 decoration-line-strong hover:text-signal"
+          >Open research knowledge graph for structuring scholarly contributions using transformers</a>.
+          With Abdullah Malik and Maryam Bashir. IEEE ICACS, 2023.
+        </p>
+
+        <p class="mt-6 t-micro">Certification</p>
+        <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">
+          <a
+            href="https://www.credly.com/badges/f55aec75-406b-498c-ae29-14d1aa8d5a8c"
+            target="_blank"
+            rel="noopener"
+            class="text-paper underline underline-offset-2 decoration-line-strong hover:text-signal"
+          >AWS Certified AI Practitioner (AIF-C01)</a>, 2026.
+        </p>
       </div>
 
-      <ol class="mt-8 flex flex-col border-b border-line">
-        {roles.map((role) => (
-          <li class:list={['career-step border-t border-line py-4 sm:py-5', role.current && 'is-current']}>
-            <div class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 lg:max-xl:block">
-              <h3 class="font-display wonk font-semibold text-xl text-paper">{role.title}</h3>
-              <p class="font-mono text-xs text-quiet shrink-0 lg:max-xl:mt-1">{role.dates}</p>
-            </div>
-            <p class="mt-2 t-micro">{role.scope}</p>
-            <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">{role.proof}</p>
-          </li>
-        ))}
-      </ol>
+      <div class="min-w-0">
+        <h3 class="t-display-3 text-paper">What stayed behind</h3>
+        <p class="mt-4 max-w-[34rem] text-paper/70 leading-relaxed">
+          The job moved from building features to changing how features get built. These are
+          three changes the team still carries into new work.
+        </p>
 
-      <p class="mt-8 t-micro">Publication</p>
-      <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">
-        <a
-          href="https://doi.org/10.1109/ICACS55311.2023.10089637"
-          target="_blank"
-          rel="noopener"
-          class="text-paper underline underline-offset-2 decoration-line-strong hover:text-signal"
-        >Open research knowledge graph for structuring scholarly contributions using transformers</a>.
-        With Abdullah Malik and Maryam Bashir. IEEE ICACS, 2023.
-      </p>
-
-      <p class="mt-6 t-micro">Certification</p>
-      <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">
-        <a
-          href="https://www.credly.com/badges/f55aec75-406b-498c-ae29-14d1aa8d5a8c"
-          target="_blank"
-          rel="noopener"
-          class="text-paper underline underline-offset-2 decoration-line-strong hover:text-signal"
-        >AWS Certified AI Practitioner (AIF-C01)</a>, 2026.
-      </p>
-    </div>
-
-    <div class="min-w-0 lg:pt-1">
-      <p class="t-micro mb-3">What stayed behind</p>
-      <p class="max-w-[34rem] text-paper/70 leading-relaxed">
-        The job moved from building features to changing how features get built. These are
-        three changes the team still carries into new work.
-      </p>
-
-      <ul class="mt-6 sm:mt-8 grid gap-3 sm:gap-4">
-        {leverage.map((item) => (
-          <li id={item.id} data-reveal class="impact-card rounded-lg border border-line bg-ink/45 p-5 sm:p-7">
-            <h3 class="t-display-3 text-paper">{item.title}</h3>
-            <p class="mt-2 font-mono text-xs text-quiet">{item.meta}</p>
-            <p class="mt-3 sm:mt-4 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/75">{item.body}</p>
-          </li>
-        ))}
-      </ul>
+        <ul class="mt-6 sm:mt-8 flex flex-col border-b border-line">
+          {leverage.map((item) => (
+            <li id={item.id} data-reveal class="border-t border-line py-4 sm:py-5">
+              <h4 class="font-display wonk font-semibold text-xl text-paper">{item.title}</h4>
+              <p class="mt-2 font-mono text-xs text-quiet">{item.meta}</p>
+              <p class="mt-2 measure-sm text-[0.8125rem] sm:text-sm leading-relaxed text-paper/70">{item.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
+  .trajectory-band {
+    padding-top: 0;
+  }
+
   .trajectory-grid {
     display: grid;
     gap: 2.5rem;
+    padding-top: clamp(2.75rem, 4vw, 3.5rem);
   }
 
   @media (min-width: 640px) {
@@ -161,14 +163,5 @@ const leverage = [
     border-color: var(--color-signal);
     background: var(--color-signal);
     box-shadow: 0 0 0 5px var(--color-signal-dim);
-  }
-
-  .impact-card {
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-  }
-
-  .impact-card:hover {
-    border-color: var(--color-line-strong);
-    background: color-mix(in srgb, var(--color-ink) 65%, transparent);
   }
 </style>
