@@ -45,7 +45,7 @@ function formatDate(date: Date) {
                 <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
                 {featured.data.tags.map((tag) => <span>{tag}</span>)}
               </div>
-              <h2 class="mt-5 font-display wonk font-semibold text-3xl sm:text-5xl leading-[1.08] text-paper group-hover:text-signal transition-colors max-w-[18ch]">
+              <h2 class="mt-5 font-display wonk font-semibold text-2xl sm:text-4xl leading-[1.08] text-paper group-hover:text-signal transition-colors max-w-[18ch]">
                 {featured.data.title}
               </h2>
               <p class="mt-5 measure text-paper/75 leading-relaxed">{featured.data.description}</p>
