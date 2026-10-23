@@ -2,6 +2,8 @@
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import { contact } from '../site';
+import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-wonk-normal.woff2?url';
+import plexSansUrl from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
 
 interface Props {
   title?: string;
@@ -109,6 +111,8 @@ const blogPosting = article && {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexSansUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />

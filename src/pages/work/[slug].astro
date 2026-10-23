@@ -46,7 +46,7 @@ const summary = [
         </a>
         <p class="marker mt-10 mb-5">{study.eyebrow}</p>
         <h1 class="t-display-1 text-paper max-w-[19ch]">{study.title}</h1>
-        <p class="mt-6 text-paper/80 leading-relaxed max-w-[42rem]" style="font-size: var(--type-body-lg)">
+        <p class="mt-6 text-paper/80 leading-relaxed max-w-[34rem]" style="font-size: var(--type-body-lg)">
           {study.description}
         </p>
         <div class="mt-6 flex flex-wrap gap-2">
@@ -92,7 +92,7 @@ const summary = [
             {accountability.map((item) => (
               <div>
                 <p class="t-micro">{item.label}</p>
-                <p class="mt-3 text-sm leading-relaxed text-paper/75">{item.body}</p>
+                <p class="mt-3 measure-sm text-sm leading-relaxed text-paper/75">{item.body}</p>
               </div>
             ))}
           </div>
@@ -226,7 +226,7 @@ const summary = [
 
   .artifact-caption {
     margin-top: 1.25rem;
-    max-width: 34rem;
+    max-width: 26rem;
     color: var(--color-quiet);
     font-size: var(--type-meta);
     line-height: 1.6;
@@ -269,7 +269,7 @@ const summary = [
   }
 
   .case-copy p:last-child {
-    max-width: 38rem;
+    max-width: var(--measure);
     color: color-mix(in srgb, var(--color-paper) 80%, transparent);
     line-height: 1.75;
   }
