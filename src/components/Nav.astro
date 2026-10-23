@@ -10,7 +10,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
 ---
 
 <header data-site-header class="site-header sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-line">
-  <div class="shell flex items-center justify-between gap-6 px-5 sm:px-8 lg:px-20 py-3.5">
+  <div class="shell flex items-center justify-between gap-4 sm:gap-6 px-5 sm:px-8 lg:px-20 py-3.5">
     <a href="/#top" class="tap font-display font-semibold text-paper text-[0.9375rem] tracking-tight shrink-0">
       Mehboob Ali
     </a>
@@ -38,7 +38,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
     <div class="flex lg:hidden items-center gap-3">
       <details data-mobile-index class="mobile-index relative">
         <summary class="tap list-none cursor-pointer t-micro text-quiet border border-line rounded-sm px-3 py-1.5 hover:border-line-strong hover:text-paper transition-colors">
-          Index<span class="hidden sm:inline"> · <span data-current-label class="inline-block w-[5.75rem] whitespace-nowrap">Top</span></span>
+          <span data-index-word>Index</span><span class="hidden sm:inline"> · <span data-current-label class="inline-block w-[5.75rem] whitespace-nowrap">Top</span></span> <span data-phone-label class="hidden whitespace-nowrap"></span>
         </summary>
         <nav aria-label="Portfolio index" class="index-panel absolute right-0 top-[calc(100%+0.75rem)] w-64 border border-line rounded-md bg-surface shadow-2xl p-2">
           {links.map((link, index) => (
@@ -71,6 +71,7 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
 
     const links = Array.from(header.querySelectorAll<HTMLAnchorElement>('[data-section-link]'));
     const currentLabel = header.querySelector<HTMLElement>('[data-current-label]');
+    const phoneLabel = header.querySelector<HTMLElement>('[data-phone-label]');
     const progress = header.querySelector<HTMLElement>('[data-progress-bar]');
     const mobileIndex = header.querySelector<HTMLDetailsElement>('[data-mobile-index]');
     const homeSections = links.flatMap((link) =>
@@ -114,10 +115,11 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
         else link.removeAttribute('aria-current');
       }
 
-      if (currentLabel) {
-        const selected = links.find((link) => link.dataset.sectionLink === active);
-        currentLabel.textContent = labelOverride || selected?.textContent?.trim() || 'Top';
-      }
+      const selected = links.find((link) => link.dataset.sectionLink === active);
+      const label = labelOverride || selected?.textContent?.trim() || '';
+      if (currentLabel) currentLabel.textContent = label || 'Top';
+      if (phoneLabel) phoneLabel.textContent = label;
+      mobileIndex?.toggleAttribute('data-in-section', Boolean(label));
     };
 
     const requestUpdate = () => {
@@ -173,6 +175,28 @@ const primaryResume = '/resume/Mehboob_Ali_Resume.pdf';
 
   .mobile-index summary::-webkit-details-marker {
     display: none;
+  }
+
+  @media (min-width: 360px) and (max-width: 639.98px) {
+    .mobile-index summary {
+      min-width: 7.625rem;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .mobile-index[data-in-section] [data-index-word] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .mobile-index[data-in-section] [data-phone-label] {
+      display: inline-block;
+      width: 6rem;
+    }
   }
 
   .page-progress {
