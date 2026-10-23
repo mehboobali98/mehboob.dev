@@ -33,6 +33,14 @@ const projects = [
     cta: 'View on GitHub',
     post: '/blog/two-years-before-i-published-it/',
   },
+  {
+    name: 'loredock',
+    tag: 'Python',
+    repo: 'mehboobali98/loredock',
+    desc: 'A local RAG kit on AnythingLLM and Ollama that answers with sources. Its evaluation asks 30 questions, some it must refuse, and only a human review can pass the quality gate.',
+    href: 'https://github.com/mehboobali98/loredock',
+    cta: 'View on GitHub',
+  },
   // No adoption line on this one. The other two earned theirs (a team runs rmine daily,
   // the gem was internal for two years) and this is a tool with one user, so the claim
   // it can honestly make is about the design constraint instead.
@@ -179,7 +187,7 @@ const secondary = withStats.slice(2);
         ))}
       </div>
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div class="grid md:grid-cols-2 gap-5">
         {secondary.map(({ project, stat }) => (
           <article
             data-reveal

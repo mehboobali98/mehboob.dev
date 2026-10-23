@@ -56,6 +56,9 @@ ${workLines.join('\n')}
 - [clip-studio](https://github.com/mehboobali98/clip-studio): a Claude Code plugin that
   makes short videos from code. Every frame is a pure function of time, captured with
   Playwright and encoded with ffmpeg, from product-demo or motion-graphics templates.
+- [loredock](https://github.com/mehboobali98/loredock): a local RAG kit on AnythingLLM
+  and Ollama that answers with sources, with a Python CLI for ingestion, backups and a
+  30-question evaluation whose quality gate only a human review can pass.
 
 ## Publication
 
