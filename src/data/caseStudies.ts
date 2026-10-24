@@ -49,7 +49,7 @@ export const caseStudies: CaseStudy[] = [
     visual: 'sync',
     summary: {
       role: 'Backend engineer brought in to diagnose and redesign the production path',
-      constraint: 'A 12–15 hour sync could not keep its intended hourly schedule',
+      constraint: 'A 12–15 hour sync over millions of records could not keep its intended hourly schedule',
       decision: 'Batch the unit of work, eager-load related data, and keep the downstream contract stable',
       result: {
         value: 'Under 1 hour',
