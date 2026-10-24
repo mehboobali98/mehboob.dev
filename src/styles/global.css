@@ -651,8 +651,6 @@ main:focus {
 .exhibit figcaption {
   font-family: var(--font-mono);
   font-size: var(--type-micro);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--color-quiet);
   padding: 0.7rem 1.1rem;
   border-bottom: 1px solid var(--color-line);
