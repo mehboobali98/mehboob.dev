@@ -16,6 +16,7 @@ export interface CaseStudy {
   eyebrow: string;
   title: string;
   description: string;
+  preview?: string;
   stack: string[];
   visual: CaseStudyVisual;
   summary: CaseStudySummary;
@@ -42,6 +43,8 @@ export const caseStudies: CaseStudy[] = [
     title: 'The sync job that took half a day',
     description:
       "AssetSonar's device sync was taking 12 to 15 hours. I rebuilt the pipeline around batched writes and removed the redundant lookups.",
+    preview:
+      "AssetSonar's device sync could no longer keep up with its own schedule. I rebuilt the pipeline around batched writes and removed the redundant lookups.",
     stack: ['Ruby on Rails', 'Delayed Job', 'MySQL'],
     visual: 'sync',
     summary: {

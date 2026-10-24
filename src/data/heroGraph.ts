@@ -14,7 +14,7 @@ export interface WorkNode extends Point {
 
 /** The four things built, in career order, in the 624 x 470 graph viewBox. */
 export const work: WorkNode[] = [
-  { x: 118, y: 322, label: 'sync', note: '12-15h to <1h', href: '#sync', dx: 18, dy: -4, anchor: 'start' },
+  { x: 118, y: 322, label: 'sync', note: 'batched writes', href: '#sync', dx: 18, dy: -4, anchor: 'start' },
   { x: 244, y: 208, label: 'CMDB', note: 'n-level traversal', href: '#cmdb', dx: -18, dy: -26, anchor: 'end' },
   { x: 366, y: 274, label: 'rmine', note: 'Go, open source', href: '#open-source', dx: 18, dy: -4, anchor: 'start' },
   { x: 452, y: 150, label: 'workflow', note: 'node canvas', href: '#workflow', dx: 18, dy: -4, anchor: 'start' },
