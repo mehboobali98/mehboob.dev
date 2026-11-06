@@ -129,8 +129,10 @@ like the site is down. The rule uses a wildcard: `https://www.*` captures host a
 together into `${1}`, and the target `https://${1}` rebuilds the URL against the apex, so
 deep links survive. "Preserve query string" is a separate checkbox and has to be ticked.
 
-Mail is forward-only: `mehboob@mehboob.dev` lands in an Outlook inbox, and nothing sends
-as `@mehboob.dev`. That means a strict DMARC policy is safe (`_dmarc` TXT,
+Mail is forward-only: `mehboob@mehboob.dev` lands in a Gmail inbox, and nothing sends as
+`@mehboob.dev`. The route is a literal rule on that one address. Turning Email Routing on
+and verifying a destination isn't enough: with no rule, the address bounces with a 550 and
+nothing warns you. That means a strict DMARC policy is safe (`_dmarc` TXT,
 `v=DMARC1; p=reject;`), which is worth adding because SPF alone is `~all` and most
 receivers won't act on a softfail.
 
