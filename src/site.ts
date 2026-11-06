@@ -6,7 +6,7 @@
 // people it is trying to reach. Anything that appears in more than one template belongs
 // here.
 export const contact = {
-  // Cloudflare Email Routing forwards this to the Outlook inbox. Forward-only: nothing
+  // Cloudflare Email Routing forwards this to the Gmail inbox. Forward-only: nothing
   // sends as @mehboob.dev, which is why the DMARC policy on the domain can be strict.
   email: 'mehboob@mehboob.dev',
   github: 'https://github.com/mehboobali98',
