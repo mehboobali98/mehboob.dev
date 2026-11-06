@@ -50,6 +50,9 @@ ${workLines.join('\n')}
   subagents and a calibration skill that checks estimates against logged time.
 - [bitwise_attributes](https://github.com/mehboobali98/bitwise_attributes): a Ruby gem
   packing boolean flags into a single ActiveRecord integer column.
+- [stafflow](https://github.com/mehboobali98/stafflow): a multi-tenant HR system in
+  Rails that started as a 2021 team project. He restored it and maintains it, and took
+  it from Rails 6.0 and Ruby 2.7 to Rails 7.2 and Ruby 3.3.
 - [job-search-agent](https://github.com/mehboobali98/job-search-agent): job discovery
   for Codex. The finder and judge agents can't write; one deterministic script owns
   every tracker change, and it never submits an application.
